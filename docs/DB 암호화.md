@@ -115,3 +115,5 @@ values(66, hex(aes_encrypt('this is password', SHA2('this is dummy salt', 512)))
 select cast(aes_decrypt(unhex(value), SHA2('this is dummy salt',512)) as char)
 from enc_table where id=66;
 ```
+- this is dummy salt 부분의 공개 키 값에 대해서
+  - (역순 등의 간단한 암호화를 한)사용자의 ID + 웹 서버에 설정해 놓은 키 값을 조합하여 각 사용자마다 다른 키 값을 사용하도록 조합
