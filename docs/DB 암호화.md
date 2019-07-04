@@ -1,3 +1,7 @@
+### 암호화 해야되는 항목
+- https://ecsupport.cafe24.com/article/%EC%87%BC%ED%95%91%EB%AA%B0-%EC%9A%B4%EC%98%81/1/1725/?page=
+![암호화 항목](https://user-images.githubusercontent.com/20277647/60649068-3ee77400-9e7c-11e9-9de1-46d5673184dc.PNG)
+
 ### MariaDB TDE
 
 - TDE 적용시 혼동하지 말아야할 사항
