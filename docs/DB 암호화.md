@@ -107,6 +107,7 @@ strings /usr/local/cafe24/mariadb/data/webdb/enc_table.ibd
   - 이후 유효성 검사에서 사용자의 암호가 72바이트를 넘어가지 않도록 제한 (bcrypt의 maximum length가 72바이트)
 ### MariaDB의 AES_ENCRYPT() function
 - 회원 테이블에서 이름, 주소, 전화번호, 휴대폰번호, 생년월일, 환불 계좌 은행, 환불 계좌 번호 컬럼은 양방향 암호를 할 예정
+  - 해당 컬럼들의 데이터 타입은 blob 으로 지정
 - 간단한 양방향 예제
 ```
 insert into enc_table
