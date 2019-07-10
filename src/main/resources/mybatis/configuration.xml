@@ -2,13 +2,9 @@
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 	<typeAliases>
-		<!-- 
-		<typeAlias alias="testvo" type="com.cafe24.vo.TestVo"></typeAlias>
-		 -->
+		<typeAlias alias="membervo" type="com.cafe24.vo.MemberVo"></typeAlias>
     </typeAliases>	
 	<mappers>
-		<!-- 
-		<mapper resource="mybatis/mapper/test.xml" />
-		 -->
+		<mapper resource="mybatis/mapper/member.xml" />
 	</mappers>
 </configuration>
