@@ -6,15 +6,14 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.cafe24.vo.TestVo;
-
 @Repository
-public class TestDao {
+public class CartDao {
 
 	@Autowired
 	private SqlSession sqlSession;
-	
-	public List<TestVo> getData(){
-		return sqlSession.selectList("test.getData");
+
+	public int insert(long productNo, String quantity, List<String> productOptionDetailNo) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

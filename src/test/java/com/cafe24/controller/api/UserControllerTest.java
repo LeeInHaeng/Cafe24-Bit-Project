@@ -65,8 +65,7 @@ public class UserControllerTest {
 	public void Test_3_MemberIdCheck() throws Exception {
 		ResultActions resultActions = 
 				mockMvc
-					.perform(get("/api/user/checkId")
-					.param("userid", "user1")
+					.perform(get("/api/user/check/user1")
 					.contentType(MediaType.APPLICATION_JSON));
 		
 		resultActions
@@ -76,9 +75,9 @@ public class UserControllerTest {
 		
 		// userid 에 비어있는 값이 전달 되는 경우 처리
 		
-		// 특수문자 혹은 한글이 입력된 경우 처리
+		// userid에 특수문자 혹은 한글이 입력된 경우 처리
 		
-		// member 테이블에 중복된 아이디가 있는 경우 처리
+		// 입력한 userid가 member 테이블에 중복된 아이디가 있는 경우 처리
 	}
 	
 	@Test
@@ -144,7 +143,7 @@ public class UserControllerTest {
 		
 		// 아이디 비밀번호가 비어있는 경우 처리
 		
-		// 악의적인 공격이 있을만한 특수문자 등의 경우 처리
+		// 아이디와 비밀번호에 악의적인 공격이 있을만한 특수문자 등의 경우 처리
 		
 		// 중복 로그인이 되어있는 경우 처리
 		

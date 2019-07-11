@@ -1,5 +1,6 @@
 package com.cafe24.vo;
 
+// 회원 테이블
 public class MemberVo {
 
 	private String id;

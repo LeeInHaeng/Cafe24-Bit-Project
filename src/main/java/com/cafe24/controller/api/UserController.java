@@ -5,9 +5,9 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cafe24.service.UserService;
@@ -41,7 +41,7 @@ public class UserController {
 		
 		// 아이디 비밀번호가 비어있는 경우 처리
 		
-		// 악의적인 공격이 있을만한 특수문자 등의 경우 처리
+		// 아이디와 비밀번호에 악의적인 공격이 있을만한 특수문자 등의 경우 처리
 		
 		// 중복 로그인이 되어있는 경우 처리
 		
@@ -56,17 +56,17 @@ public class UserController {
 	}
 	
 	@ApiOperation(value = "아이디 중복여부 체크")
-	@RequestMapping(value="/checkId", method=RequestMethod.GET)
+	@RequestMapping(value="/check/{userId}", method=RequestMethod.GET)
 	public Map<String, Object> checkId(
-			@RequestParam(value="userid", required=true, defaultValue="") String userid){
+			@PathVariable(value="userId") String userid){
 		
 		return userService.checkId(userid);
 		
 		// userid 에 비어있는 값이 전달 되는 경우 처리
 		
-		// 특수문자 혹은 한글이 입력된 경우 처리
+		// userid에 특수문자 혹은 한글이 입력된 경우 처리
 		
-		// member 테이블에 중복된 아이디가 있는 경우 처리
+		// 입력한 userid가 member 테이블에 중복된 아이디가 있는 경우 처리
 	}
 	
 	@ApiOperation(value = "회원가입 페이지")
