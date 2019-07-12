@@ -21,10 +21,12 @@ import io.swagger.annotations.ApiOperation;
 public class ProductManageController {
 	
 	@ApiOperation(value = "상품 관리 메인 페이지")
-	@RequestMapping(value= "/main", method=RequestMethod.GET)
+	@RequestMapping(value= "", method=RequestMethod.GET)
 	public Map<String, Object> main() {
 		Map<String, Object> result = new HashMap<String, Object>();
 		return result;
+		
+		// 관리자 계정으로 접속 되어있는지 확인
 	}
 
 	@ApiOperation(value = "상품 등록 페이지")
@@ -32,11 +34,13 @@ public class ProductManageController {
 	public Map<String, Object> register() {
 		Map<String, Object> result = new HashMap<String, Object>();
 		return result;
+		
+		// 관리자 계정으로 접속 되어있는지 확인
 	}
 	
 	@ApiOperation(value = "상품 등록 페이지에서 상품 등록")
 	@RequestMapping(value= "/register", method=RequestMethod.POST)
-	public Map<String, Object> register(@ModelAttribute ProductVo productVo) {
+	public Map<String, Object> register(Object registerInfo) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		return result;
 	}

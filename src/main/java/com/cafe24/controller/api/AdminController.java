@@ -18,5 +18,7 @@ public class AdminController {
 	public Map<String, Object> index() {
 		Map<String, Object> result = new HashMap<String, Object>();
 		return result;
+		
+		// 관리자 계정으로 접속 되어있는지 확인
 	}
 }

@@ -20,7 +20,7 @@ import org.springframework.web.context.WebApplicationContext;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class AdminControllerTest {
+public class ProductManageControllerTest {
 
 	private MockMvc mockMvc;
 	
@@ -33,43 +33,33 @@ public class AdminControllerTest {
 	}
 	
 	@Test
-	public void Test_1_MainPageConnect() throws Exception {
+	public void Test_1_ProductManageMainPageConnect() throws Exception {
+		
 		ResultActions resultActions = 
 				mockMvc
-					.perform(get("/api/admin").contentType(MediaType.APPLICATION_JSON));
+					.perform(get("/api/admin/manage/product").contentType(MediaType.APPLICATION_JSON));
+		
 				resultActions
 					.andExpect(status().isOk());
 				
-				resultActions = 
-						mockMvc
-							.perform(get("/api/admin/").contentType(MediaType.APPLICATION_JSON));
+		// 관리자 계정으로 접속 되어있는지 확인
+	}
+	
+	@Test
+	public void Test_2_ProductRegisterPageConnect() throws Exception {
+		
+		ResultActions resultActions = 
+				mockMvc
+					.perform(get("/api/admin/manage/product/register").contentType(MediaType.APPLICATION_JSON));
+		
 				resultActions
 					.andExpect(status().isOk());
 				
-				resultActions = 
-						mockMvc
-							.perform(get("/api/admin/index").contentType(MediaType.APPLICATION_JSON));
-				resultActions
-					.andExpect(status().isOk());
-						
-				resultActions = 
-						mockMvc
-							.perform(get("/api/admin/index/").contentType(MediaType.APPLICATION_JSON));
-				resultActions
-					.andExpect(status().isOk());
-						
-				resultActions = 
-						mockMvc
-							.perform(get("/api/admin/main").contentType(MediaType.APPLICATION_JSON));
-				resultActions
-					.andExpect(status().isOk());
-						
-				resultActions = 
-						mockMvc
-							.perform(get("/api/admin/main/").contentType(MediaType.APPLICATION_JSON));	
-				resultActions
-					.andExpect(status().isOk());
-				
-				// 관리자 계정으로 접속 되어있는지 확인
+		// 관리자 계정으로 접속 되어있는지 확인
+	}
+	
+	@Test
+	public void Test_3_NewProductRegistRequest() throws Exception {
+		
 	}
 }
