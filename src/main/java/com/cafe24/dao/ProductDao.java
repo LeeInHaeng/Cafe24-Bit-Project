@@ -7,6 +7,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.cafe24.dto.ProductSearch;
 import com.cafe24.vo.ProductVo;
 
 @Repository
@@ -26,6 +27,11 @@ public class ProductDao {
 	}
 
 	public ProductVo get(Optional<String> productNo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<ProductVo> getList(ProductSearch searchParams) {
 		// TODO Auto-generated method stub
 		return null;
 	}
