@@ -15,7 +15,7 @@ public class MainController {
 
 	@ApiOperation(value = "쇼핑몰 메인 페이지")
 	@RequestMapping(value= {"", "/", "/main", "/index"}, method=RequestMethod.GET)
-	public Map<String, Object> index() {
+	public Map<String, Object> main() {
 		Map<String, Object> result = new HashMap<String, Object>();
 		return result;
 	}

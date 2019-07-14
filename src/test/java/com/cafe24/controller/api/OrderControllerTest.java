@@ -6,7 +6,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -123,7 +125,7 @@ public class OrderControllerTest {
 		info2.setProductOptionDetailNo(2L);
 		info2.setQuantity(2L);
 		
-		List<Object> infos = new ArrayList<Object>();
+		List<ProductInfo> infos = new ArrayList<ProductInfo>();
 		infos.add(info1);
 		infos.add(info2);
 		
@@ -135,14 +137,16 @@ public class OrderControllerTest {
 		orderVo.setTotalPrice(100000L);
 		orderVo.setPaymethod("무통장 입금");
 		orderVo.setPayStatus("입금전");
-		
-		infos.add(orderVo);
+	
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("ProductInfo", infos);
+		params.put("OrderVo", orderVo);
 		
 		ResultActions resultActions = 
 				mockMvc
 					.perform(post("/api/order/buy")
 							.contentType(MediaType.APPLICATION_JSON)
-							.content(new Gson().toJson(infos)));
+							.content(new Gson().toJson(params)));
 		
 		resultActions
 			.andExpect(status().isOk());

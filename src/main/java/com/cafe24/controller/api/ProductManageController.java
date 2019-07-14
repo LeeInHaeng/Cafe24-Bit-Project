@@ -47,8 +47,10 @@ public class ProductManageController {
 	
 	@ApiOperation(value = "상품 등록 페이지에서 상품 등록")
 	@RequestMapping(value= "/register", method=RequestMethod.POST)
-	public Map<String, Object> register(@RequestBody Object registerInfo) {
+	public Map<String, Object> register(@RequestBody Map<String, Object> registerInfo) {
 		Map<String, Object> result = new HashMap<String, Object>();
+		
+		System.out.println(registerInfo);
 		
 		productManageService.registerNewProduct(registerInfo);
 		

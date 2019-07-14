@@ -1,6 +1,7 @@
 package com.cafe24.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ public class OrderService {
 
 	}
 
-	public void BuyProducts(List<Object> productInfo) {
+	public void BuyProducts(Map<String, Object> params) {
 		// TODO Auto-generated method stub
 		
 	}

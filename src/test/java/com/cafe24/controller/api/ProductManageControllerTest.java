@@ -7,9 +7,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.assertj.core.util.Arrays;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -100,10 +101,13 @@ public class ProductManageControllerTest {
 		productVo.setIssell(false);
 		
 		ProductImageVo imageVo = new ProductImageVo();
+		imageVo.setProductNo(1L);
 		imageVo.setImageNo(1L);
 		imageVo.setImage("http://추가이미지.jpg");
 		imageVo.setImageTitle("추가 이미지 제목1");
 		imageVo.setImageDescription("추가 이미지 설명1");
+		List<ProductImageVo> imageVoList = new ArrayList<ProductImageVo>();
+		imageVoList.add(imageVo);
 		
 		CategoryVo category = new CategoryVo();
 		category.setCategoryNo(1L);
@@ -119,11 +123,11 @@ public class ProductManageControllerTest {
 		option.setAvailableQuantity(50L);
 		option.setAvailableQuantity(50L);
 		
-		List<Object> params = new ArrayList<Object>();
-		params.add(productVo);
-		params.add(imageVo);
-		params.add(category);
-		params.add(option);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("ProductVo", productVo);
+		params.put("ImageVo", imageVo);
+		params.put("CategoryVo", category);
+		params.put("ProductOptionVo", option);
 	    
 		ResultActions resultActions = 
 				mockMvc

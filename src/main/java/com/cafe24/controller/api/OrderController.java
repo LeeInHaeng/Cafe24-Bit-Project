@@ -1,5 +1,6 @@
 package com.cafe24.controller.api;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cafe24.dto.ProductInfo;
 import com.cafe24.dto.ProductOrder;
 import com.cafe24.service.OrderService;
+import com.cafe24.vo.OrderVo;
+import com.google.gson.Gson;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -59,12 +62,22 @@ public class OrderController {
 	@ApiOperation(value = "주문완료 버튼 클릭")
 	@RequestMapping(value= "/buy", method=RequestMethod.POST)
 	public Map<String, Object> ordering(
-			@RequestBody List<Object> productInfo) {
+			@RequestBody Map<String, Object> params) {
+		
 		Map<String, Object> result = new HashMap<String, Object>();
 		
-		System.out.println(productInfo);
+		/* 서비스 부분에서 json으로 넘어온 Map 데이터를 제대로된 타입으로 변경
+		List<ProductInfo> productInfos = new ArrayList<ProductInfo>();
+		for(Object productInfo : (ArrayList<Object>) params.get("ProductInfo")) {
+			productInfos.add(new Gson().fromJson(productInfo.toString(), ProductInfo.class));
+		}
 		
-		orderService.BuyProducts(productInfo);
+		// 데이터에 string 타입으로 인해 space(공백)가 있으면 toJson으로 한번 더 묶어주어야 제대로 파싱이 동작
+		OrderVo orderVo = new Gson().fromJson(
+				new Gson().toJson(params.get("OrderVo")), OrderVo.class);
+		*/
+		
+		orderService.BuyProducts(params);
 		
 		return result;
 		
