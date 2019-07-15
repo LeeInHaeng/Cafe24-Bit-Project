@@ -3,7 +3,31 @@
 
 <mapper namespace="member">
 	
-	<delete id="clear">
-		delete from member
+	<delete id="deleteTest" parameterType="string">
+		delete from member where id=#{userid}
 	</delete>
+	
+	<select id="checkId" parameterType="string" resultType="string">
+		<![CDATA[
+			select id from member where id=#{userid}
+		]]>
+	</select>
+	
+	<insert id="insert" parameterType="membervo">
+		<![CDATA[
+			insert into member(id, pass, name, address, tel, phone, ismessage, email, isemail, birth, refund_name, refund_number)
+			values(#{id}, #{pass}, 
+				hex(aes_encrypt(#{name}, SHA2('this is dummy salt', 512))),
+				hex(aes_encrypt(#{address}, SHA2('this is dummy salt', 512))),
+				hex(aes_encrypt(#{tel}, SHA2('this is dummy salt', 512))),
+				hex(aes_encrypt(#{phone}, SHA2('this is dummy salt', 512))),
+				#{ismessage},
+				hex(aes_encrypt(#{email}, SHA2('this is dummy salt', 512))),
+				#{ismail},
+				hex(aes_encrypt(#{birth}, SHA2('this is dummy salt', 512))),
+				hex(aes_encrypt(#{refundName}, SHA2('this is dummy salt', 512))),
+				hex(aes_encrypt(#{refundNumber}, SHA2('this is dummy salt', 512)))
+				)
+		]]>
+	</insert>
 </mapper>

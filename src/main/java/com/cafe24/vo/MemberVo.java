@@ -1,20 +1,57 @@
 package com.cafe24.vo;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+
+import org.hibernate.validator.constraints.Length;
+
+import com.cafe24.validator.constraints.DateValid;
+import com.cafe24.validator.constraints.IdValid;
+import com.cafe24.validator.constraints.NameValid;
+import com.cafe24.validator.constraints.PasswordValid;
+import com.cafe24.validator.constraints.PhoneValid;
+import com.cafe24.validator.constraints.TelValid;
+
 // 회원 테이블
 public class MemberVo {
 
+	@IdValid
 	private String id;
+	
+	@PasswordValid
 	private String pass;
+	
+	@NameValid
 	private String name;
+	
+	@NotEmpty(message="주소는 필수 입력 항목 입니다.")
+	@Length(max=255, message="주소를 255자 내로 입력해 주세요.")
 	private String address;
+	
+	@TelValid
 	private String tel;
+	
+	@PhoneValid
 	private String phone;
 	private boolean ismessage;
+	
+	@NotEmpty(message="이메일은 필수 입력 항목 입니다.")
+	@Email
 	private String email;
 	private boolean ismail;
+	
+	@DateValid
 	private String birth;
+	
+	@NotEmpty(message="환불 계좌 은행명은 필수 입력 항목 입니다.")
+	@Length(max=255, message="환불 계좌 은행명을 255자 내로 입력해 주세요.")
 	private String refundName;
+	
+	@NotEmpty(message="환불 계좌 번호는 필수 입력 항목 입니다.")
+	@Length(max=255, message="환불 계좌 번호를 255자 내로 입력해 주세요.")
 	private String refundNumber;
+	
 	private long mileage;
 	private String role;
 	private String regDate;
