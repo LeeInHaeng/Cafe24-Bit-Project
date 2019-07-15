@@ -3,6 +3,7 @@
 <configuration>
 	<typeAliases>
 		<typeAlias alias="membervo" type="com.cafe24.vo.MemberVo"></typeAlias>
+		<typeAlias alias="logindto" type="com.cafe24.dto.LoginDto"></typeAlias>
     </typeAliases>	
 	<mappers>
 		<mapper resource="mybatis/mapper/member.xml" />

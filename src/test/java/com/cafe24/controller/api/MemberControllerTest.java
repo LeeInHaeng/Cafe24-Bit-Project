@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.cafe24.dto.LoginDto;
 import com.cafe24.service.MemberService;
 import com.cafe24.vo.MemberVo;
 import com.google.gson.Gson;
@@ -73,7 +74,7 @@ public class MemberControllerTest {
 		// 정상 동작
 		ResultActions resultActions = 
 				mockMvc
-					.perform(get("/api/member/check/user2")
+					.perform(get("/api/member/check/user100")
 					.contentType(MediaType.APPLICATION_JSON));
 		
 		resultActions
@@ -1033,26 +1034,163 @@ public class MemberControllerTest {
 	@Test
 	public void Test_6_LoginTry() throws Exception {
 		
-		MemberVo memberVo = new MemberVo();
+		// 정상 동작
+		LoginDto loginDto = new LoginDto();
 		
-		memberVo.setId("user1");
-		memberVo.setPass("user1");
+		loginDto.setId("user1");
+		loginDto.setPass("user1!@#$%^&*(");
 		
 		ResultActions resultActions = 
 			mockMvc
 			.perform(post("/api/member/login")
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(new Gson().toJson(memberVo)));
+					.content(new Gson().toJson(loginDto)));
 		
 		resultActions
 			.andExpect(status().isOk());
 		
-		// 아이디 비밀번호가 비어있는 경우 처리
+		/////////////////// 아이디 관련 테스트 /////////////////////
 		
-		// 아이디와 비밀번호에 악의적인 공격이 있을만한 특수문자 등의 경우 처리
+		// 아이디에 한글을 입력한 경우
+		loginDto.setId("유저1");
+		loginDto.setPass("user1!@#$%^&*(");
 		
-		// 중복 로그인이 되어있는 경우 처리
+		resultActions = 
+			mockMvc
+			.perform(post("/api/member/login")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(new Gson().toJson(loginDto)));
 		
-		// member 테이블에 해당 아이디와 비밀번호가 없는 경우 처리
+		resultActions
+		.andExpect(status().isBadRequest())
+		.andExpect(jsonPath("$.result", is("fail")));
+		
+		// 아이디에 특수문자를 입력한 경우
+		loginDto.setId("user%'");
+		loginDto.setPass("user1!@#$%^&*(");
+		
+		resultActions = 
+			mockMvc
+			.perform(post("/api/member/login")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(new Gson().toJson(loginDto)));
+		
+		resultActions
+		.andExpect(status().isBadRequest())
+		.andExpect(jsonPath("$.result", is("fail")));
+		
+		// 아이디가 255자가 넘는 경우
+		loginDto.setId("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+		loginDto.setPass("user1!@#$%^&*(");
+		
+		resultActions = 
+			mockMvc
+			.perform(post("/api/member/login")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(new Gson().toJson(loginDto)));
+		
+		resultActions
+		.andExpect(status().isBadRequest())
+		.andExpect(jsonPath("$.result", is("fail")));
+		
+		/////////////////// 비밀번호 관련 테스트 /////////////////////
+		
+		// 비밀번호를 입력하지 않은 경우
+		loginDto.setId("user1");
+		loginDto.setPass("");
+		
+		resultActions = 
+			mockMvc
+			.perform(post("/api/member/login")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(new Gson().toJson(loginDto)));
+		
+		resultActions
+		.andExpect(status().isBadRequest())
+		.andExpect(jsonPath("$.result", is("fail")));
+		
+		// 비밀번호가 8자 미만인 경우
+		loginDto.setId("user1");
+		loginDto.setPass("a123!b@");
+		
+		resultActions = 
+			mockMvc
+			.perform(post("/api/member/login")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(new Gson().toJson(loginDto)));
+		
+		resultActions
+		.andExpect(status().isBadRequest())
+		.andExpect(jsonPath("$.result", is("fail")));
+		
+		// 비밀번호가 20자 이상인 경우
+		loginDto.setId("user1");
+		loginDto.setPass("asdasd123!@#asd!@#asd");
+		
+		resultActions = 
+			mockMvc
+			.perform(post("/api/member/login")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(new Gson().toJson(loginDto)));
+		
+		resultActions
+		.andExpect(status().isBadRequest())
+		.andExpect(jsonPath("$.result", is("fail")));
+		
+		// 비밀번호에 숫자가 포함되지 않는 경우
+		loginDto.setId("user1");
+		loginDto.setPass("asd!@#asd!@#");
+		
+		resultActions = 
+			mockMvc
+			.perform(post("/api/member/login")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(new Gson().toJson(loginDto)));
+		
+		resultActions
+		.andExpect(status().isBadRequest())
+		.andExpect(jsonPath("$.result", is("fail")));
+		
+		// 비밀번호에 영문이 포함되지 않는 경우
+		loginDto.setId("user1");
+		loginDto.setPass("123!@#123!@#");
+		
+		resultActions = 
+			mockMvc
+			.perform(post("/api/member/login")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(new Gson().toJson(loginDto)));
+		
+		resultActions
+		.andExpect(status().isBadRequest())
+		.andExpect(jsonPath("$.result", is("fail")));
+		
+		// 비밀번호에 특수문자가 포함되지 않는 경우
+		loginDto.setId("user1");
+		loginDto.setPass("asd123asd123");
+		
+		resultActions = 
+			mockMvc
+			.perform(post("/api/member/login")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(new Gson().toJson(loginDto)));
+		
+		resultActions
+		.andExpect(status().isBadRequest())
+		.andExpect(jsonPath("$.result", is("fail")));
+		
+		// member 테이블에 해당 아이디와 비밀번호가 없는 경우
+		loginDto.setId("user100");
+		loginDto.setPass("user100!@#$%^&*(");
+		
+		resultActions = 
+			mockMvc
+			.perform(post("/api/member/login")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(new Gson().toJson(loginDto)));
+		
+		resultActions
+			.andExpect(status().isOk())
+			.andDo(print());
 	}
 }

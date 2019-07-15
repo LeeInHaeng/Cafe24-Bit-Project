@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cafe24.dao.MemberDao;
+import com.cafe24.dto.LoginDto;
 import com.cafe24.vo.MemberVo;
 
 @Service
@@ -26,11 +27,10 @@ public class MemberService {
 		return existUserId;
 	}
 
-	public boolean memberLoginTry(MemberVo memberVo) {
+	public MemberVo memberLoginTry(LoginDto loginDto) {
 		
-		MemberVo query = memberDao.login(memberVo);
-		
-		return false;
+		MemberVo memberVo = memberDao.login(loginDto);
+		return memberVo;
 	}
 
 	public void deleteTestData(String userid) {

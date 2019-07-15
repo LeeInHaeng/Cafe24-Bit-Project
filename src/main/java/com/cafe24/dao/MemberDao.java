@@ -4,6 +4,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.cafe24.dto.LoginDto;
 import com.cafe24.vo.MemberVo;
 
 @Repository
@@ -26,8 +27,8 @@ public class MemberDao {
 		return queryResult==1;
 	}
 
-	public MemberVo login(MemberVo memberVo) {
-		return null;
+	public MemberVo login(LoginDto loginDto) {
+		return sqlSession.selectOne("member.login", loginDto);
 	}
 
 	public void deleteTest(String userid) {

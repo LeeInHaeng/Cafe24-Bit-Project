@@ -30,4 +30,16 @@
 				)
 		]]>
 	</insert>
+	
+	<select id="login" parameterType="logindto" resultType="membervo">
+		<![CDATA[
+			select id,
+				cast(aes_decrypt(unhex(name), SHA2('this is dummy salt',512)) as char),
+				cast(aes_decrypt(unhex(address), SHA2('this is dummy salt',512)) as char),
+				cast(aes_decrypt(unhex(phone), SHA2('this is dummy salt',512)) as char),
+				cast(aes_decrypt(unhex(email), SHA2('this is dummy salt',512)) as char)
+			from member
+			where id=#{id} and pass=#{pass}
+		]]>
+	</select>
 </mapper>

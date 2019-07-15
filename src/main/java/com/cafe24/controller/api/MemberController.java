@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cafe24.dto.JSONResult;
+import com.cafe24.dto.LoginDto;
 import com.cafe24.service.MemberService;
 import com.cafe24.vo.MemberVo;
 
@@ -32,28 +33,38 @@ public class MemberController {
 
 	@ApiOperation(value = "로그인 페이지")
 	@RequestMapping(value="/login", method=RequestMethod.GET)
-	public Map<String, Object> login() {
-		Map<String, Object> result = new HashMap<String, Object>();
-		return result;
+	public ResponseEntity<JSONResult> login() {
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(null));
 	}
 	
 	@ApiOperation(value = "로그인 시도")
 	@RequestMapping(value="/login", method=RequestMethod.POST)
-	public Map<String, Object> login(MemberVo memberVo) {
+	public ResponseEntity<JSONResult> login(
+			@RequestBody @Valid LoginDto loginDto,
+			BindingResult br) {
 		
-		Map<String, Object> result = new HashMap<String, Object>();
+		// 객체 Validation에 맞지 않는 경우
+		if(br.hasErrors())
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail(br.getAllErrors().get(0).getDefaultMessage()));
 		
-		boolean queryResult = memberService.memberLoginTry(memberVo);
+		MemberVo memberVo = memberService.memberLoginTry(loginDto);
+		// member 테이블에 해당 아이디와 비밀번호가 없는 경우 처리
+		if(memberVo == null)
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(JSONResult.success("아이디 혹은 비밀번호가 틀렸습니다."));
 		
-		return result;
-		
-		// 아이디 비밀번호가 비어있는 경우 처리
-		
-		// 아이디와 비밀번호에 악의적인 공격이 있을만한 특수문자 등의 경우 처리
+		// 로그인 성공
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(memberVo));
 		
 		// 중복 로그인이 되어있는 경우 처리
-		
-		// member 테이블에 해당 아이디와 비밀번호가 없는 경우 처리
+		// 일반 Controller에서 세션으로 검사
 	}
 	
 	@ApiOperation(value = "회원가입 약관 페이지")
