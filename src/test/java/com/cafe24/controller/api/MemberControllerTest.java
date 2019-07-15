@@ -150,7 +150,7 @@ public class MemberControllerTest {
 		memberVo.setEmail("user2@cafe24.com");
 		memberVo.setIsmail(true);
 		memberVo.setBirth("2019-07-10");
-		memberVo.setRefundName("유저은행");
+		memberVo.setRefundName("유저은행2");
 		memberVo.setRefundNumber("222-2222-2222-2222");
 		
 		ResultActions resultActions = 
@@ -1190,7 +1190,6 @@ public class MemberControllerTest {
 					.content(new Gson().toJson(loginDto)));
 		
 		resultActions
-			.andExpect(status().isOk())
-			.andDo(print());
+			.andExpect(status().isOk());
 	}
 }

@@ -1,0 +1,13 @@
+insert into member
+values('user1','user1',
+hex(aes_encrypt('이름1', SHA2('this is dummy salt', 512))),
+hex(aes_encrypt('주소1', SHA2('this is dummy salt', 512))),
+hex(aes_encrypt('02-111-1111', SHA2('this is dummy salt', 512))),
+hex(aes_encrypt('010-111-1111', SHA2('this is dummy salt', 512))),
+true,
+hex(aes_encrypt('user1@cafe24.com', SHA2('this is dummy salt', 512))),
+true,
+hex(aes_encrypt(now(), SHA2('this is dummy salt', 512))),
+hex(aes_encrypt('user1 은행', SHA2('this is dummy salt', 512))),
+hex(aes_encrypt('user1 계좌번호', SHA2('this is dummy salt', 512))),
+0, 'USER', now(), '활성');
