@@ -78,7 +78,9 @@ public class MemberControllerTest {
 					.contentType(MediaType.APPLICATION_JSON));
 		
 		resultActions
-			.andExpect(status().isOk());
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result", is("success")))
+			.andExpect(jsonPath("$.data", is(false)));
 		
 		// userid 에 비어있는 값이 전달 되는 경우 처리
 		resultActions = 
@@ -160,7 +162,8 @@ public class MemberControllerTest {
 					.content(new Gson().toJson(memberVo)));
 		
 		resultActions
-			.andExpect(status().isOk());
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result", is("success")));
 		
 		/////////////////// 아이디 관련 테스트 /////////////////////
 		
@@ -1047,7 +1050,9 @@ public class MemberControllerTest {
 					.content(new Gson().toJson(loginDto)));
 		
 		resultActions
-			.andExpect(status().isOk());
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result", is("success")))
+			.andExpect(jsonPath("$.data['id']", is("user1")));
 		
 		/////////////////// 아이디 관련 테스트 /////////////////////
 		
@@ -1179,8 +1184,22 @@ public class MemberControllerTest {
 		.andExpect(status().isBadRequest())
 		.andExpect(jsonPath("$.result", is("fail")));
 		
-		// member 테이블에 해당 아이디와 비밀번호가 없는 경우
+		// member 테이블에 아이디가 틀린경우
 		loginDto.setId("user100");
+		loginDto.setPass("user1!@#$%^&*(");
+		
+		resultActions = 
+			mockMvc
+			.perform(post("/api/member/login")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(new Gson().toJson(loginDto)));
+		
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result", is("success")));
+		
+		// member 테이블에 비밀번호가 틀린경우
+		loginDto.setId("user1");
 		loginDto.setPass("user100!@#$%^&*(");
 		
 		resultActions = 
@@ -1190,6 +1209,7 @@ public class MemberControllerTest {
 					.content(new Gson().toJson(loginDto)));
 		
 		resultActions
-			.andExpect(status().isOk());
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result", is("success")));
 	}
 }

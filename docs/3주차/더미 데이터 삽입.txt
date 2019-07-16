@@ -1,13 +1,13 @@
 insert into member
-values('user1','user1',
-hex(aes_encrypt('ÀÌ¸§1', SHA2('this is dummy salt', 512))),
-hex(aes_encrypt('ÁÖ¼Ò1', SHA2('this is dummy salt', 512))),
+values('user1','user1!@#$%^&*(',
+hex(aes_encrypt('ì´ë¦„1', SHA2('this is dummy salt', 512))),
+hex(aes_encrypt('ì£¼ì†Œ1', SHA2('this is dummy salt', 512))),
 hex(aes_encrypt('02-111-1111', SHA2('this is dummy salt', 512))),
 hex(aes_encrypt('010-111-1111', SHA2('this is dummy salt', 512))),
 true,
 hex(aes_encrypt('user1@cafe24.com', SHA2('this is dummy salt', 512))),
 true,
 hex(aes_encrypt(now(), SHA2('this is dummy salt', 512))),
-hex(aes_encrypt('user1 ÀºÇà', SHA2('this is dummy salt', 512))),
-hex(aes_encrypt('user1 °èÁÂ¹øÈ£', SHA2('this is dummy salt', 512))),
-0, 'USER', now(), 'È°¼º');
+hex(aes_encrypt('user1 ì€í–‰', SHA2('this is dummy salt', 512))),
+hex(aes_encrypt('user1 ê³„ì¢Œë²ˆí˜¸', SHA2('this is dummy salt', 512))),
+0, 'USER', now(), 'í™œì„±');
