@@ -1,0 +1,42 @@
+spring:
+   profiles:
+      active: develope
+
+# 개발 환경
+---
+server:
+   port: 8080
+   context-path: /
+spring:
+   profiles: develope
+   mvc:
+      view:
+         prefix: /WEB-INF/views/
+         suffix: .jsp
+   devtools:
+      livereload:
+         enabled: true
+      restart:
+         enabled: false
+   http:
+      encoding:
+         charset: UTF-8
+         enabled: true
+         force: true
+         force-request: true
+         force-response: true
+   aop:
+      auto: true
+   aop-proxy-target-class: true
+   datasource:
+      driver-class-name: org.mariadb.jdbc.Driver
+      url: jdbc:mariadb://192.168.1.218:3307/cafe24mall
+      username: cafe24mall
+      password: cafe24mall
+   messages:
+      always-use-message-format: true
+      basename: classpath:messages/messages_ko.properties
+      encoding: UTF-8
+mybatis:
+   config-location: classpath:mybatis/configuration.xml
+---
