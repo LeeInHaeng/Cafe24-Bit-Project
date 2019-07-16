@@ -202,15 +202,38 @@ public class ProductControllerTest {
 		// 정상 동작
 		ResultActions resultActions = 
 				mockMvc
-					.perform(get("/api/product/detail/1").contentType(MediaType.APPLICATION_JSON));
+					.perform(get("/api/product/detail/2").contentType(MediaType.APPLICATION_JSON));
 		
 		resultActions
 			.andExpect(status().isOk())
 			.andDo(print());
 		
+		// 상품 번호가 DB 테이블에 없는 경우
+		resultActions = 
+				mockMvc
+					.perform(get("/api/product/detail/9999").contentType(MediaType.APPLICATION_JSON));
 		
-		// 상품 번호가 비어있는 경우 처리
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data").doesNotExist());
 		
-		// 상품 번호에 악의적인 공격이 있을만한 특수문자 등의 경우 처리
+		// 상품 번호가 비어있는 경우
+		resultActions = 
+				mockMvc
+					.perform(get("/api/product/detail").contentType(MediaType.APPLICATION_JSON));
+		
+		resultActions
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.result", is("fail")));
+		
+		// 상품 번호가 숫자가 아닌 경우
+		resultActions = 
+				mockMvc
+					.perform(get("/api/product/detail/가나다").contentType(MediaType.APPLICATION_JSON));
+		
+		resultActions
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.result", is("fail")));
+
 	}
 }

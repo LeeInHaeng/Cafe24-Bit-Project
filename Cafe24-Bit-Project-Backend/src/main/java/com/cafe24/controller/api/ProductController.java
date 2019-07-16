@@ -34,7 +34,7 @@ public class ProductController {
 	public ResponseEntity<JSONResult> list(
 			@PathVariable(value="categoryName") Optional<String> categoryName,
 			@PathVariable(value="pageNo") Optional<String> pageNo) {
-		
+
 		// 페이지와 카테고리를 둘 다 적지 않은 경우
 		if(!categoryName.isPresent() && !pageNo.isPresent())
 			return ResponseEntity
@@ -94,13 +94,23 @@ public class ProductController {
 	}
 	
 	@ApiOperation(value = "상품 상세 조회")
-	@RequestMapping(value="/detail/{productNo}", method=RequestMethod.GET)
+	@RequestMapping(value= {"/detail", "/detail/{productNo}"}, method=RequestMethod.GET)
 	public ResponseEntity<JSONResult> detail(
 			@PathVariable(value="productNo") Optional<String> productNo){
 		
-		// 상품 번호가 비어있는 경우 처리
+		// 상품 번호가 비어있는 경우
+		if(!productNo.isPresent()) {
+			return ResponseEntity
+				.status(HttpStatus.BAD_REQUEST)
+				.body(JSONResult.fail("메인 페이지로 이동"));
+		}
 		
-		// 상품 번호에 악의적인 공격이 있을만한 특수문자 등의 경우 처리
+		// 상품 번호가 숫자가 아닌 경우
+		if(!isNumeric(productNo.get())) {
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail("메인 페이지로 이동"));
+		}
 		
 		// 정상 동작
 		ProductDetailDto product = productService.getProductDetailInfoByNo(Long.parseLong(productNo.get()));

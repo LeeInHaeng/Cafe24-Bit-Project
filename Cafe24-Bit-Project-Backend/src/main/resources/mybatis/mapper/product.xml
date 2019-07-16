@@ -64,10 +64,38 @@
 		]]>
 	</select>
 	
-	<!-- resultmap type="productdetaildto" id="productdetail">
+	<resultMap id="productdetail" type="productdetaildto">
+	
+		<result property="productNo" column="productNo"/>
+		<result property="title" column="title"/>
+		<result property="image" column="image"/>
+		<result property="price" column="price"/>
+		<result property="mileageAdd" column="mileageAdd"/>
+		<result property="description" column="description"/>
+		<result property="descriptionDetail" column="descriptionDetail"/>
+		<result property="shippingPrice" column="shippingPrice"/>
+		<result property="issell" column="issell"/>
 		
-	</resultmap -->
-	<select id="getDetail" parameterType="long" resultType="productdetaildto">
+		<collection property="productImageVo" ofType="productimagevo">
+			<result property="imageDetail" column="imageDetail"/>
+			<result property="imageTitle" column="imageTitle"/>
+			<result property="imageDescription" column="imageDescription"/>
+		</collection>
+		
+		<collection property="productOptionVo" ofType="productoptionvo">
+			<result property="optionName" column="optionName"/>
+			<result property="optionValue" column="optionValue"/>
+		</collection>
+		
+		<collection property="productQuantityVo" ofType="productquantityvo">
+			<result property="optionCode" column="optionCode"/>
+			<result property="realQuantity" column="realQuantity"/>
+			<result property="availableQuantity" column="availableQuantity"/>
+		</collection>
+		
+	</resultMap>
+	
+	<select id="getDetail" parameterType="long" resultMap="productdetail">
 		select a.no as productNo, a.title as title, a.image as image,
 			a.price as price, a.mileage_add as mileageAdd, a.description as description,
 		    a.description_detail as descriptionDetail, a.shipping_price as shippingPrice,
