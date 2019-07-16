@@ -5,7 +5,7 @@ public class ProductImageVo {
 
 	private long imageNo;
 	private long productNo;
-	private String image;
+	private String imageDetail;
 	private String imageTitle;
 	private String imageDescription;
 	
@@ -21,11 +21,11 @@ public class ProductImageVo {
 	public void setProductNo(long productNo) {
 		this.productNo = productNo;
 	}
-	public String getImage() {
-		return image;
+	public String getImageDetail() {
+		return imageDetail;
 	}
-	public void setImage(String image) {
-		this.image = image;
+	public void setImageDetail(String imageDetail) {
+		this.imageDetail = imageDetail;
 	}
 	public String getImageTitle() {
 		return imageTitle;
@@ -42,8 +42,8 @@ public class ProductImageVo {
 	
 	@Override
 	public String toString() {
-		return "ProductImageVo [imageNo=" + imageNo + ", productNo=" + productNo + ", image=" + image + ", imageTitle="
-				+ imageTitle + ", imageDescription=" + imageDescription + "]";
+		return "ProductImageVo [imageNo=" + imageNo + ", productNo=" + productNo + ", imageDetail=" + imageDetail
+				+ ", imageTitle=" + imageTitle + ", imageDescription=" + imageDescription + "]";
 	}
 	
 }

@@ -11,3 +11,48 @@ hex(aes_encrypt(now(), SHA2('this is dummy salt', 512))),
 hex(aes_encrypt('user1 은행', SHA2('this is dummy salt', 512))),
 hex(aes_encrypt('user1 계좌번호', SHA2('this is dummy salt', 512))),
 0, 'USER', now(), '활성');
+
+insert into product_manage values(1, true, true, true);
+insert into product_manage values(2, true, true, false);
+insert into product_manage values(3, true, false, true);
+insert into product_manage values(4, true, false, false);
+insert into product_manage values(5, false, true, false);
+insert into product_manage values(6, false, false, false);
+
+insert into product_category values(1, '외투', '코트', NULL);
+insert into product_category values(2, '외투', '재킷', NULL);
+
+insert into product values(default, 1, 1, '갈색 코트', 'http://갈색코트.jpg', 10000, default, '갈색 코트 메인 설명', '갈색 코드의 상세 설명 입니다', default, now(), NULL);
+insert into product values(default, 1, 1, '주황 코트', 'http://주황코트.jpg', 10000, default, '주황 코트 메인 설명', '주황 코드의 상세 설명 입니다', default, now(), NULL);
+insert into product values(default, 1, 1, '보라 코트', 'http://보라코트.jpg', 10000, default, '보라 코트 메인 설명', '보라 코드의 상세 설명 입니다', default, now(), NULL);
+insert into product values(default, 1, 1, '주황 바바리 코트', 'http://주황바바리코트.jpg', 10000, default, '주황 바바리 코트 메인 설명', '주황 바바리 코드의 상세 설명 입니다', default, now(), NULL);
+
+insert into product_image values(default, 2, 'http://주황코트이미지1.jpg', '주황코트 이미지1 제목', '주황코트 이미지1 상세 설명');
+insert into product_image values(default, 2, 'http://주황코트이미지2.jpg', '주황코트 이미지2 제목', '주황코트 이미지2 상세 설명');
+insert into product_image values(default, 2, 'http://주황코트이미지3.jpg', '주황코트 이미지3 제목', '주황코트 이미지3 상세 설명');
+
+insert into product_option values(default, 1, '색상');
+insert into product_option values(default, 1, '사이즈');
+insert into product_option values(default, 2, '색상');
+insert into product_option values(default, 2, '사이즈');
+insert into product_option values(default, 3, '색상');
+insert into product_option values(default, 3, '사이즈');
+insert into product_option values(default, 4, '색상');
+
+insert into product_option_detail values(default, 1, '갈색');
+insert into product_option_detail values(default, 2, 80);
+insert into product_option_detail values(default, 2, 90);
+insert into product_option_detail values(default, 2, 100);
+
+insert into product_option_detail values(default, 3, '주황색');
+insert into product_option_detail values(default, 4, 80);
+insert into product_option_detail values(default, 4, 90);
+insert into product_option_detail values(default, 4, 100);
+
+insert into product_quantity values(default, 1, '갈색/80', 20, 20);
+insert into product_quantity values(default, 1, '갈색/90', 30, 30);
+insert into product_quantity values(default, 1, '갈색/100', 40, 40);
+
+insert into product_quantity values(default, 2, '주황색/80', 20, 20);
+insert into product_quantity values(default, 2, '주황색/90', 30, 30);
+insert into product_quantity values(default, 2, '주황색/100', 40, 40);

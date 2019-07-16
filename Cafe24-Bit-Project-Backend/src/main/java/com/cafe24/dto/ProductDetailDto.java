@@ -1,7 +1,14 @@
-package com.cafe24.vo;
+package com.cafe24.dto;
 
-// 상품, 상품 관리 테이블
-public class ProductVo {
+import java.util.List;
+
+import com.cafe24.vo.ProductImageVo;
+import com.cafe24.vo.ProductOptionVo;
+import com.cafe24.vo.ProductQuantityVo;
+import com.cafe24.vo.ProductVo;
+
+// 상품 테이블, 상품 관리 테이블, 상품 이미지 테이블, 상품 옵션 테이블, 상품 옵션 상세 테이블, 상품 재고 테이블
+public class ProductDetailDto {
 
 	private long productNo;
 	private long productCategoryNo;
@@ -19,6 +26,10 @@ public class ProductVo {
 	private boolean isdisplay;
 	private boolean issell;
 	private boolean isdisplayMain;
+	
+	private List<ProductImageVo> productImageVo;
+	private List<ProductOptionVo> productOptionVo;
+	private List<ProductQuantityVo> productQuantityVo;
 	
 	public long getProductNo() {
 		return productNo;
@@ -110,14 +121,23 @@ public class ProductVo {
 	public void setIsdisplayMain(boolean isdisplayMain) {
 		this.isdisplayMain = isdisplayMain;
 	}
-	
-	@Override
-	public String toString() {
-		return "ProductVo [productNo=" + productNo + ", productCategoryNo=" + productCategoryNo + ", productManageNo="
-				+ productManageNo + ", title=" + title + ", image=" + image + ", price=" + price + ", mileageAdd="
-				+ mileageAdd + ", description=" + description + ", descriptionDetail=" + descriptionDetail
-				+ ", shippingPrice=" + shippingPrice + ", regDate=" + regDate + ", endDate=" + endDate + ", isdisplay="
-				+ isdisplay + ", issell=" + issell + ", isdisplayMain=" + isdisplayMain + "]";
+	public List<ProductImageVo> getProductImageVo() {
+		return productImageVo;
 	}
-
+	public void setProductImageVo(List<ProductImageVo> productImageVo) {
+		this.productImageVo = productImageVo;
+	}
+	public List<ProductOptionVo> getProductOptionVo() {
+		return productOptionVo;
+	}
+	public void setProductOptionVo(List<ProductOptionVo> productOptionVo) {
+		this.productOptionVo = productOptionVo;
+	}
+	public List<ProductQuantityVo> getProductQuantityVo() {
+		return productQuantityVo;
+	}
+	public void setProductQuantityVo(List<ProductQuantityVo> productQuantityVo) {
+		this.productQuantityVo = productQuantityVo;
+	}
+	
 }

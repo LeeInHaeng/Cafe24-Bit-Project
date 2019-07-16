@@ -1,18 +1,19 @@
 package com.cafe24.controller.api;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cafe24.dto.JSONResult;
+import com.cafe24.dto.ProductDetailDto;
 import com.cafe24.service.ProductService;
-import com.cafe24.vo.ProductVo;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -23,68 +24,89 @@ public class ProductController {
 	@Autowired
 	private ProductService productService;
 	
+	public static boolean isNumeric(String str) {
+		return str.matches("-?\\d+(\\.\\d+)?");
+	}
+	
 	@ApiOperation(value = "상품 리스트 페이지")
-	@RequestMapping(value= {"/{categoryName}", "/{categoryName}/{pageNo}"},
+	@RequestMapping(value= {"", "/{categoryName}", "/{categoryName}/{pageNo}"},
 		method=RequestMethod.GET)
-	public Map<String, Object> list(
+	public ResponseEntity<JSONResult> list(
 			@PathVariable(value="categoryName") Optional<String> categoryName,
 			@PathVariable(value="pageNo") Optional<String> pageNo) {
-		Map<String, Object> result = new HashMap<String, Object>();
 		
-		List<ProductVo> products = productService.getProductList(categoryName, pageNo);
+		// 페이지와 카테고리를 둘 다 적지 않은 경우
+		if(!categoryName.isPresent() && !pageNo.isPresent())
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail("메인 페이지로 이동"));
 		
-		return result;
+		// 페이지를 적지 않은 경우 1페이지로 간주
+		// 페이지 번호가 숫자가 아닌 경우 1페이지로 간주
+		// 페이지가 0보다 작은 경우 1페이지로 간주
+		// 페이지 번호가 최대 페이지 번호를 넘어간 경우 마지막 페이지로 간주 (service)
+		if(!pageNo.isPresent() || !isNumeric(pageNo.get()) || Integer.parseInt(pageNo.get()) < 1) {
+			Map<String, Object> productsWithPageInfo = productService.getProductList(categoryName.get(), 1L);
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(JSONResult.success(productsWithPageInfo));
+		}
 		
-		// 카테고리를 적지 않은 경우 처리
+		// 사용자가 요청한 카테고리가 데이터베이스에 없는 경우 처리 (service)
 		
-		// 사용자가 요청한 카테고리가 데이터베이스에 없는 경우 처리
-		
-		// 페이지번호를 적지 않은 경우 처리
-		
-		// 페이지 번호가 숫자가 아닌 경우 처리
-		
-		// 페이지의 숫자가 1보다 작은 경우 처리
-		
-		// 페이지의 숫자가 최대 페이지의 값보다 큰 경우 처리
+		// 정상 동작
+		Map<String, Object> productsWithPageInfo = productService.getProductList(categoryName.get(), Long.parseLong(pageNo.get()));
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(productsWithPageInfo));
 	}
 	
 	@ApiOperation(value = "상품 리스트 검색 페이지")
 	@RequestMapping(value= {"/search", "/search/{keyword}", "/search/{keyword}/{pageNo}"}, method=RequestMethod.GET)
-	public Map<String, Object> searchList(
+	public ResponseEntity<JSONResult> searchList(
 			@PathVariable(value="keyword") Optional<String> keyword,
 			@PathVariable(value="pageNo") Optional<String> pageNo) {
-		Map<String, Object> result = new HashMap<String, Object>();
 		
-		List<ProductVo> products = productService.getProductListWithSearch(keyword, pageNo);
+		// 페이지와 검색 키워드를 둘 다 적지 않은 경우
+		if(!keyword.isPresent() && !pageNo.isPresent())
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail("메인 페이지로 이동"));
 		
-		return result;
+		// 페이지를 적지 않은 경우 1페이지로 간주
+		// 페이지 번호가 숫자가 아닌 경우 1페이지로 간주
+		// 페이지가 0보다 작은 경우 1페이지로 간주
+		// 페이지 번호가 최대 페이지 번호를 넘어간 경우 마지막 페이지로 간주 (service)
+		if(!pageNo.isPresent() || !isNumeric(pageNo.get()) || Integer.parseInt(pageNo.get()) < 1) {
+			Map<String, Object> productsWithPageInfo = productService.getProductListWithSearch(keyword.get(), 1L);
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(JSONResult.success(productsWithPageInfo));
+		}
 		
-		// 검색 키워드를 적지 않은 경우 처리
+		// 사용자가 요청한 키워드가 데이터베이스에 없는 경우 처리 (service)
 		
-		// 검색 키워드에 악의적인 공격이 있을만한 특수문자 등의 경우 처리
-		
-		// 페이지번호를 적지 않은 경우 처리
-		
-		// 페이지 번호가 숫자가 아닌 경우 처리
-		
-		// 페이지의 숫자가 1보다 작은 경우 처리
-		
-		// 페이지의 숫자가 최대 페이지의 값보다 큰 경우 처리
+		// 정상 동작
+		Map<String, Object> productsWithPageInfo = productService.getProductListWithSearch(keyword.get(), Long.parseLong(pageNo.get()));
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(productsWithPageInfo));
 	}
 	
 	@ApiOperation(value = "상품 상세 조회")
 	@RequestMapping(value="/detail/{productNo}", method=RequestMethod.GET)
-	public Map<String, Object> detail(
+	public ResponseEntity<JSONResult> detail(
 			@PathVariable(value="productNo") Optional<String> productNo){
-		Map<String, Object> result = new HashMap<String, Object>();
-		
-		ProductVo product = productService.getProductDetailInfoByNo(productNo);
-		
-		return result;
 		
 		// 상품 번호가 비어있는 경우 처리
 		
 		// 상품 번호에 악의적인 공격이 있을만한 특수문자 등의 경우 처리
+		
+		// 정상 동작
+		ProductDetailDto product = productService.getProductDetailInfoByNo(Long.parseLong(productNo.get()));
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(product));
 	}
 	
 }

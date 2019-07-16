@@ -36,7 +36,7 @@ public class ProductManageService {
 
 	public List<ProductVo> getProductListWithSearch(ProductSearch searchParams) {
 		
-		List<ProductVo> products = productDao.getList(searchParams);
+		// List<ProductVo> products = productDao.getList(searchParams);
 		
 		return null;
 	}

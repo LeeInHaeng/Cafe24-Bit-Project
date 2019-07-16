@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="product">
+	
+	<select id="getTotalCount" parameterType="string" resultType="integer">
+		<![CDATA[
+			select count(*)
+			from product a
+			join product_category b on a.product_category_no = b.no
+			where b.large_name=#{category} or b.mid_name=#{category} or b.small_name=#{category}
+		]]>
+	</select>
+	
+	<select id="getTotalCountWithSearch" parameterType="string" resultType="integer">
+		<![CDATA[
+			select count(*)
+			from product a
+			join product_category b on a.product_category_no = b.no
+			where b.large_name like concat('%',#{keyword},'%') or b.mid_name like concat('%',#{keyword},'%')
+			or b.small_name like concat('%',#{keyword},'%') or a.title like concat('%',#{keyword},'%')
+		]]>
+	</select>
+	
+	<select id="getList" parameterType="map" resultType="productvo">
+		<![CDATA[
+			select a.no as productNo, a.title as title, a.image as image,
+			    a.price as price, a.description as description
+			from product a
+			join product_category b on a.product_category_no = b.no
+			join product_manage c on a.product_manage_no = c.no
+			where (b.large_name=#{category} or b.mid_name=#{category} or b.small_name=#{category})
+				and isdisplay=true
+		]]>
+			<if test="end_date != null">
+			<![CDATA[
+				and now() < end_date
+			]]>
+			</if>
+		<![CDATA[
+			order by reg_date desc
+			limit #{startIndex}, #{size};		
+		]]>
+	</select>
+	
+	<select id="getListWithSearch" parameterType="map" resultType="productvo">
+		<![CDATA[
+			select a.no as productNo, a.title as title, a.image as image,
+			    a.price as price, a.description as description
+			from product a
+			join product_category b on a.product_category_no = b.no
+			join product_manage c on a.product_manage_no = c.no
+			where (b.large_name like concat('%',#{keyword},'%') or b.mid_name like concat('%',#{keyword},'%')
+				or b.small_name like concat('%',#{keyword},'%') or a.title like concat('%',#{keyword},'%')) and isdisplay=true
+		]]>
+			<if test="end_date != null">
+			<![CDATA[
+				and now() < end_date
+			]]>
+			</if>
+		<![CDATA[
+			order by reg_date desc
+			limit #{startIndex}, #{size};		
+		]]>
+	</select>
+	
+	<!-- resultmap type="productdetaildto" id="productdetail">
+		
+	</resultmap -->
+	<select id="getDetail" parameterType="long" resultType="productdetaildto">
+		select a.no as productNo, a.title as title, a.image as image,
+			a.price as price, a.mileage_add as mileageAdd, a.description as description,
+		    a.description_detail as descriptionDetail, a.shipping_price as shippingPrice,
+		    b.issell as issell,
+		    c.image as imageDetail, c.image_title as imageTitle, c.image_description as imageDescription,
+		    d.name as optionName, e.value as optionValue, 
+		    f.option_code as optionCode, f.real_quantity as realQuantity, f.available_quantity as availableQuantity
+		from product a
+			left join product_manage b on a.product_manage_no = b.no
+			left join product_image c on a.no = c.product_no
+			left join product_option d on a.no = d.product_no
+			left join product_option_detail e on d.no = e.option_no
+			left join product_quantity f on a.no = f.product_no
+		where a.no=#{productNo} and b.isdisplay=true
+	</select>
+	
+</mapper>

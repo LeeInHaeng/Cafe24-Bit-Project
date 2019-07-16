@@ -4,8 +4,17 @@
 	<typeAliases>
 		<typeAlias alias="membervo" type="com.cafe24.vo.MemberVo"></typeAlias>
 		<typeAlias alias="logindto" type="com.cafe24.dto.LoginDto"></typeAlias>
+		
+		<typeAlias alias="productvo" type="com.cafe24.vo.ProductVo"></typeAlias>
+		<typeAlias alias="productimagevo" type="com.cafe24.vo.ProductImageVo"></typeAlias>
+		<typeAlias alias="productoptionvo" type="com.cafe24.vo.ProductOptionVo"></typeAlias>
+		<typeAlias alias="productquantityvo" type="com.cafe24.vo.ProductQuantityVo"></typeAlias>
+		
+		<typeAlias alias="productdetaildto" type="com.cafe24.dto.ProductDetailDto"></typeAlias>
     </typeAliases>	
 	<mappers>
 		<mapper resource="mybatis/mapper/member.xml" />
+		<mapper resource="mybatis/mapper/product.xml" />
 	</mappers>
+	
 </configuration>

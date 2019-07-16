@@ -103,7 +103,7 @@ public class ProductManageControllerTest {
 		ProductImageVo imageVo = new ProductImageVo();
 		imageVo.setProductNo(1L);
 		imageVo.setImageNo(1L);
-		imageVo.setImage("http://추가이미지.jpg");
+		imageVo.setImageDetail("http://추가이미지.jpg");
 		imageVo.setImageTitle("추가 이미지 제목1");
 		imageVo.setImageDescription("추가 이미지 설명1");
 		List<ProductImageVo> imageVoList = new ArrayList<ProductImageVo>();
@@ -120,8 +120,8 @@ public class ProductManageControllerTest {
 		
 		option.setOptionDetailNo(1L);
 		option.setOptionValue("갈색");
-		option.setAvailableQuantity(50L);
-		option.setAvailableQuantity(50L);
+		// option.setAvailableQuantity(50L);
+		// option.setAvailableQuantity(50L);
 		
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("ProductVo", productVo);
@@ -214,7 +214,7 @@ public class ProductManageControllerTest {
 		
 		ProductImageVo imageVo = new ProductImageVo();
 		imageVo.setImageNo(2L);
-		imageVo.setImage("http://빨간색 원피스 추가이미지.jpg");
+		imageVo.setImageDetail("http://빨간색 원피스 추가이미지.jpg");
 		imageVo.setImageTitle("추가 이미지 제목2");
 		imageVo.setImageDescription("추가 이미지 설명2");
 		
