@@ -16,12 +16,12 @@
 				nonmember_mac=#{nonmemberMac} and product_no=#{productNo};
 			</if>
 		
-			<if test="memberId == null">
-				insert into nonmember(mac) values(#{nonmemberMac});
-			</if>
-		
+			SET FOREIGN_KEY_CHECKS=0;
+			
 			insert into cart
 			values(default, #{memberId}, #{nonmemberMac}, #{productNo}, #{quantity});
+			
+			SET FOREIGN_KEY_CHECKS=1;
 			
 			select last_insert_id() as cartNo;
 		</selectKey>
@@ -32,5 +32,17 @@
 			(default, #{cartNo}, #{item})
 		</foreach>
 	</insert>
+	
+	<select id="isValidAdd" parameterType="cartvo" resultType="int">
+		select count(*)
+		from product a
+		join product_manage b on a.product_manage_no = b.no
+		join product_option c on a.no = c.product_no
+		join product_option_detail d on c.no = d.option_no
+		where a.no=#{productNo} and b.isdisplay=true and d.no in
+		<foreach collection="productOptionDetailNo" item="item" open="(" close=")" separator=",">
+		 	#{item}
+		 </foreach>
+	</select>
 	
 </mapper>

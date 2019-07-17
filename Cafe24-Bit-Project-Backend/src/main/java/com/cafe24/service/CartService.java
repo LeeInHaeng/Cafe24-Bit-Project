@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cafe24.dao.CartDao;
-import com.cafe24.dto.ProductInfo;
 import com.cafe24.vo.CartVo;
 
 @Service
@@ -20,6 +19,11 @@ public class CartService {
 		int queryResult = cartDao.insert(cartVo);
 		
 		return queryResult == cartVo.getProductOptionDetailNo().size();
+	}
+	
+	public boolean isValidCartAddRequest(CartVo cartVo) {
+		int queryResult = cartDao.isValidAdd(cartVo);
+		return queryResult>0;
 	}
 
 	public List<CartVo> showCartDetail() {

@@ -6,7 +6,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.cafe24.dto.ProductInfo;
 import com.cafe24.vo.CartVo;
 
 @Repository
@@ -18,6 +17,11 @@ public class CartDao {
 
 	public int insert(CartVo cartVo) {
 		int queryResult = sqlSession.insert("cart.insert", cartVo);
+		return queryResult;
+	}
+	
+	public int isValidAdd(CartVo cartVo) {
+		int queryResult = sqlSession.selectOne("cart.isValidAdd", cartVo);
 		return queryResult;
 	}
 

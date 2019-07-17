@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cafe24.dto.JSONResult;
-import com.cafe24.dto.ProductInfo;
 import com.cafe24.service.CartService;
+import com.cafe24.service.MemberService;
 import com.cafe24.vo.CartVo;
 
 import io.swagger.annotations.ApiOperation;
@@ -27,27 +27,46 @@ public class CartController {
 	@Autowired
 	private CartService cartService;
 	
+	@Autowired
+	private MemberService memberService;
+	
 	@ApiOperation(value = "장바구니 담기")
 	@RequestMapping(value= "", method=RequestMethod.POST)
 	public ResponseEntity<JSONResult> cartAdd(@RequestBody CartVo cartVo) {
 
+		// 회원인 경우 올바른 사용자인지 확인
+		if(cartVo.getMemberId()!=null && !memberService.checkId(cartVo.getMemberId()))
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail("존재하지 않는 사용자가 요청"));
+		
+		// 회원 아이디도 적혀있지 않고 비회원 맥주소도 적혀있지 않은 경우
+		if(cartVo.getMemberId()==null && cartVo.getNonmemberMac()==null)
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail("사용자 정보가 없음"));
+		
+		// 상품 번호나 수량이 적혀있지 않은 경우
+		if(cartVo.getProductNo()==0 || (Long)cartVo.getQuantity()==0)
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail("잘못된 요청"));
+		
+		// 해당 상품의 존재 여부, 진열 되어있는 상품인지, 해당 상품이 갖고 있는 상세 옵션인지 확인
+		if(!cartService.isValidCartAddRequest(cartVo))
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail("유효하지 않은 요청"));
+		
 		boolean queryResult = cartService.addCart(cartVo);
-		
-		// POST로 넘어오는 파라미터인 productInfo가 비어있는 경우 처리
-		
-		// POST로 넘어오는 파라미터에 악의적인 공격이 있을만한 특수문자 등의 경우 처리
-		
-		// 회원인 경우 회원 아이디를 바탕으로 장바구니 정보를 저장
-		
-		// 회원인 경우 세션에 저장되어 있는 회원 아이디와 장바구니에 저장하고자 하는 회원 아이디가 같은지 확인
-		
-		// 비회원인 경우 접속한 맥주소를 바탕으로 장바구니 정보를 저장
-		
-		// 비회원인 경우 접속한 맥주소와 장바구니에 저장하고자 하는 맥주소가 같은지 확인
-		
-		return ResponseEntity
-				.status(HttpStatus.OK)
-				.body(JSONResult.success(queryResult));
+		if(queryResult)
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(JSONResult.success(queryResult));
+		else
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(JSONResult.fail("데이터베이스 쿼리 실패"));
 	}
 	
 	@ApiOperation(value = "장바구니 조회")

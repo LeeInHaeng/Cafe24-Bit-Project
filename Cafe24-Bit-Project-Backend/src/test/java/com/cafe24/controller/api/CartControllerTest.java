@@ -86,7 +86,26 @@ public class CartControllerTest {
 			.andExpect(jsonPath("$.result", is("success")))
 			.andExpect(jsonPath("$.data", is(true)));
 		
-		// 정상 동작 3 비회원인 경우
+		// 정상동작 3 회원인 경우
+		// user1 사용자가 2번 상품을 장바구니에 담음
+		cartVo.setMemberId("user1");
+		cartVo.setProductNo(2L);
+		cartVo.setProductOptionDetailNo(Arrays.asList(5L, 6L));
+		cartVo.setQuantity(1L);
+		
+		resultActions = 
+				mockMvc
+					.perform(post("/api/cart")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(new Gson().toJson(cartVo)));
+		
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result", is("success")))
+			.andExpect(jsonPath("$.data", is(true)));
+		
+		// 정상 동작 4 비회원인 경우
+		// 비회원이 1번 상품을 장바구니에 담음
 		cartVo.setMemberId(null);
 		cartVo.setNonmemberMac("non1-mac-address");
 		cartVo.setProductNo(1L);
@@ -104,18 +123,134 @@ public class CartControllerTest {
 			.andExpect(jsonPath("$.result", is("success")))
 			.andExpect(jsonPath("$.data", is(true)));
 		
+		// 정상 동작 5 비회원인 경우
+		// 동일한 비회원이 1번 상품을 장바구니에 담음 (옵션 및 수량 변경)
+		cartVo.setMemberId(null);
+		cartVo.setNonmemberMac("non1-mac-address");
+		cartVo.setProductNo(1L);
+		cartVo.setProductOptionDetailNo(Arrays.asList(1L, 3L));
+		cartVo.setQuantity(3L);
 		
-		// POST로 넘어오는 파라미터인 productInfo가 비어있는 경우 처리
+		resultActions = 
+				mockMvc
+					.perform(post("/api/cart")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(new Gson().toJson(cartVo)));
 		
-		// POST로 넘어오는 파라미터에 악의적인 공격이 있을만한 특수문자 등의 경우 처리
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result", is("success")))
+			.andExpect(jsonPath("$.data", is(true)));
 		
-		// 회원인 경우 회원 아이디를 바탕으로 장바구니 정보를 저장
+		// 정상 동작 6 비회원인 경우
+		// 동일한 비회원이 2번 상품을 장바구니에 담음
+		cartVo.setMemberId(null);
+		cartVo.setNonmemberMac("non1-mac-address");
+		cartVo.setProductNo(2L);
+		cartVo.setProductOptionDetailNo(Arrays.asList(5L, 7L));
+		cartVo.setQuantity(1L);
 		
-		// 회원인 경우 세션에 저장되어 있는 회원 아이디와 장바구니에 저장하고자 하는 회원 아이디가 같은지 확인
+		resultActions = 
+				mockMvc
+					.perform(post("/api/cart")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(new Gson().toJson(cartVo)));
 		
-		// 비회원인 경우 접속한 맥주소를 바탕으로 장바구니 정보를 저장
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result", is("success")))
+			.andExpect(jsonPath("$.data", is(true)));
 		
-		// 비회원인 경우 접속한 맥주소와 장바구니에 저장하고자 하는 맥주소가 같은지 확인
+		////////// CartVo 유효성 검사 ////////////////
+		
+		// 존재하지 않는 사용자가 요청하는 경우
+		String json = "{\"memberId\":\"user100\",\"productNo\":1,\"quantity\":2,\"productOptionDetailNo\":[1,3]}";
+		
+		resultActions = 
+				mockMvc
+					.perform(post("/api/cart")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(json));
+		
+		resultActions
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.result", is("fail")));
+		
+		// 회원 아이디도 적혀있지 않고 비회원 맥주소도 적혀있지 않은 경우
+		json = "{\"productNo\":1,\"quantity\":2,\"productOptionDetailNo\":[1,3]}";
+		
+		resultActions = 
+				mockMvc
+					.perform(post("/api/cart")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(json));
+		
+		resultActions
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.result", is("fail")));
+		
+		// 상품 번호나 수량이 적혀있지 않은 경우
+		json = "{\"memberId\":\"user1\",\"productOptionDetailNo\":[1,3]}";
+		
+		resultActions = 
+				mockMvc
+					.perform(post("/api/cart")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(json));
+		
+		resultActions
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.result", is("fail")));
+		
+		// 상품 번호나 수량에 숫자가 들어가있지 않은 경우
+		json = "{\"memberId\":\"user1\",\"productNo\":a,\"quantity\":b,\"productOptionDetailNo\":[1,3]}";
+		
+		resultActions = 
+				mockMvc
+					.perform(post("/api/cart")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(json));
+		
+		resultActions
+			.andExpect(status().isBadRequest());
+		
+		// 상품 옵션에 숫자가 들어있지 않은 경우
+		json = "{\"memberId\":\"user1\",\"productNo\":1,\"quantity\":1,\"productOptionDetailNo\":[a,3]}";
+		
+		resultActions = 
+				mockMvc
+					.perform(post("/api/cart")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(json));
+		
+		resultActions
+			.andExpect(status().isBadRequest());
+		
+		// 존재하지 않은 상품이거나, 진열 가능인 상품이 아닌 경우
+		json = "{\"memberId\":\"user1\",\"productNo\":100,\"quantity\":1,\"productOptionDetailNo\":[1,3]}";
+		
+		resultActions = 
+				mockMvc
+					.perform(post("/api/cart")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(json));
+		
+		resultActions
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.result", is("fail")));
+		
+		// 상품 상세 옵션이 해당 상품의 옵션이 아닌 경우
+		json = "{\"memberId\":\"user1\",\"productNo\":1,\"quantity\":1,\"productOptionDetailNo\":[99,100]}";
+		
+		resultActions = 
+				mockMvc
+					.perform(post("/api/cart")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(json));
+		
+		resultActions
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.result", is("fail")));
 	}
 	
 	@Test
