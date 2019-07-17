@@ -36,7 +36,7 @@ spring:
    profiles: dev
    datasource:
       driver-class-name: org.mariadb.jdbc.Driver
-      url: jdbc:mariadb://192.168.1.218:3307/cafe24mall_test
+      url: jdbc:mariadb://192.168.1.218:3307/cafe24mall_test?allowMultiQueries=true
       username: cafe24mall
       password: cafe24mall
 ---

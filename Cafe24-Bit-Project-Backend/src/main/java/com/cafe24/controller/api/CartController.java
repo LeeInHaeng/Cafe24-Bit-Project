@@ -5,11 +5,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cafe24.dto.JSONResult;
 import com.cafe24.dto.ProductInfo;
 import com.cafe24.service.CartService;
 import com.cafe24.vo.CartVo;
@@ -25,12 +29,9 @@ public class CartController {
 	
 	@ApiOperation(value = "장바구니 담기")
 	@RequestMapping(value= "", method=RequestMethod.POST)
-	public Map<String, Object> cartAdd(ProductInfo productInfo) {
-		Map<String, Object> result = new HashMap<String, Object>();
-		
-		boolean queryResult = cartService.addCart(productInfo);
-		
-		return result;
+	public ResponseEntity<JSONResult> cartAdd(@RequestBody CartVo cartVo) {
+
+		boolean queryResult = cartService.addCart(cartVo);
 		
 		// POST로 넘어오는 파라미터인 productInfo가 비어있는 경우 처리
 		
@@ -43,6 +44,10 @@ public class CartController {
 		// 비회원인 경우 접속한 맥주소를 바탕으로 장바구니 정보를 저장
 		
 		// 비회원인 경우 접속한 맥주소와 장바구니에 저장하고자 하는 맥주소가 같은지 확인
+		
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(queryResult));
 	}
 	
 	@ApiOperation(value = "장바구니 조회")

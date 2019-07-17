@@ -15,11 +15,11 @@ public class CartService {
 	@Autowired
 	private CartDao cartDao;
 
-	public boolean addCart(ProductInfo productInfo) {
+	public boolean addCart(CartVo cartVo) {
 		
-		int queryResult = cartDao.insert(productInfo);
+		int queryResult = cartDao.insert(cartVo);
 		
-		return false;
+		return queryResult == cartVo.getProductOptionDetailNo().size();
 	}
 
 	public List<CartVo> showCartDetail() {

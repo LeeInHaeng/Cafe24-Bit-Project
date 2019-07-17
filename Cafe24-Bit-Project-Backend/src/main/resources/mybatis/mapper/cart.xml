@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cart">
+	
+	<insert id="insert" parameterType="cartvo">
+
+		<selectKey keyProperty="cartNo" resultType="long" order="BEFORE">
+			
+			delete from cart
+			where 
+			<if test="memberId != null">
+				member_id=#{memberId} and product_no=#{productNo};
+			</if>
+			<if test="memberId == null">
+				nonmember_mac=#{nonmemberMac} and product_no=#{productNo};
+			</if>
+		
+			<if test="memberId == null">
+				insert into nonmember(mac) values(#{nonmemberMac});
+			</if>
+		
+			insert into cart
+			values(default, #{memberId}, #{nonmemberMac}, #{productNo}, #{quantity});
+			
+			select last_insert_id() as cartNo;
+		</selectKey>
+
+		insert into cart_product_option
+		values
+		<foreach collection="productOptionDetailNo" item="item" separator=" , ">
+			(default, #{cartNo}, #{item})
+		</foreach>
+	</insert>
+	
+</mapper>

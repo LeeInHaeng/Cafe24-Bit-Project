@@ -16,9 +16,9 @@ public class CartDao {
 	private SqlSession sqlSession;
 
 
-	public int insert(ProductInfo productInfo) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int insert(CartVo cartVo) {
+		int queryResult = sqlSession.insert("cart.insert", cartVo);
+		return queryResult;
 	}
 
 	public List<CartVo> getList() {

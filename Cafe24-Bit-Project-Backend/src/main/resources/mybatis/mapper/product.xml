@@ -83,7 +83,9 @@
 		</collection>
 		
 		<collection property="productOptionVo" ofType="productoptionvo">
+			<result property="optionNo" column="optionNo"/>
 			<result property="optionName" column="optionName"/>
+			<result property="optionDetailNo" column="optionDetailNo"/>
 			<result property="optionValue" column="optionValue"/>
 		</collection>
 		
@@ -101,7 +103,7 @@
 		    a.description_detail as descriptionDetail, a.shipping_price as shippingPrice,
 		    b.issell as issell,
 		    c.image as imageDetail, c.image_title as imageTitle, c.image_description as imageDescription,
-		    d.name as optionName, e.value as optionValue, 
+		    d.no as optionNo, d.name as optionName, e.no as optionDetailNo, e.value as optionValue, 
 		    f.option_code as optionCode, f.real_quantity as realQuantity, f.available_quantity as availableQuantity
 		from product a
 			left join product_manage b on a.product_manage_no = b.no

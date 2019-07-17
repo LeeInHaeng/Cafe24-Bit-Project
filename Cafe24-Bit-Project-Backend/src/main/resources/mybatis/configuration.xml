@@ -11,10 +11,13 @@
 		<typeAlias alias="productquantityvo" type="com.cafe24.vo.ProductQuantityVo"></typeAlias>
 		
 		<typeAlias alias="productdetaildto" type="com.cafe24.dto.ProductDetailDto"></typeAlias>
+		
+		<typeAlias alias="cartvo" type="com.cafe24.vo.CartVo"></typeAlias>
     </typeAliases>	
 	<mappers>
 		<mapper resource="mybatis/mapper/member.xml" />
 		<mapper resource="mybatis/mapper/product.xml" />
+		<mapper resource="mybatis/mapper/cart.xml" />
 	</mappers>
 	
 </configuration>

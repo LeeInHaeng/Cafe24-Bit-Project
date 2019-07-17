@@ -1,10 +1,13 @@
 package com.cafe24.controller.api;
 
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +28,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.cafe24.dto.ProductInfo;
 import com.cafe24.vo.CartVo;
 import com.google.gson.Gson;
 
@@ -47,19 +49,61 @@ public class CartControllerTest {
 	@Test
 	public void Test_1_AddCartProduct() throws Exception {
 		
-		ProductInfo info = new ProductInfo();
-		info.setProductNo(1L);
-		info.setQuantity(2L);
-		info.setProductOptionDetailNo(1L);
+		// 정상 동작 1 회원인 경우
+		// user1 사용자가 1번 상품을 장바구니에 담음
+		CartVo cartVo = new CartVo();
+		cartVo.setMemberId("user1");
+		cartVo.setProductNo(1L);
+		cartVo.setProductOptionDetailNo(Arrays.asList(1L, 3L));
+		cartVo.setQuantity(2L);
 		
 		ResultActions resultActions = 
 				mockMvc
 					.perform(post("/api/cart")
 							.contentType(MediaType.APPLICATION_JSON)
-							.content(new Gson().toJson(info)));
+							.content(new Gson().toJson(cartVo)));
 		
 		resultActions
-			.andExpect(status().isOk());
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result", is("success")))
+			.andExpect(jsonPath("$.data", is(true)));
+		
+		// 정사 동작 2 회원인 경우
+		// user1 사용자가 1번 상품을 장바구니에 다시 담음 (상품 상세 옵션과 수량을 변경하고)
+		cartVo.setMemberId("user1");
+		cartVo.setProductNo(1L);
+		cartVo.setProductOptionDetailNo(Arrays.asList(1L, 2L));
+		cartVo.setQuantity(3L);
+		
+		resultActions = 
+				mockMvc
+					.perform(post("/api/cart")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(new Gson().toJson(cartVo)));
+		
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result", is("success")))
+			.andExpect(jsonPath("$.data", is(true)));
+		
+		// 정상 동작 3 비회원인 경우
+		cartVo.setMemberId(null);
+		cartVo.setNonmemberMac("non1-mac-address");
+		cartVo.setProductNo(1L);
+		cartVo.setProductOptionDetailNo(Arrays.asList(1L, 2L));
+		cartVo.setQuantity(2L);
+		
+		resultActions = 
+				mockMvc
+					.perform(post("/api/cart")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(new Gson().toJson(cartVo)));
+		
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result", is("success")))
+			.andExpect(jsonPath("$.data", is(true)));
+		
 		
 		// POST로 넘어오는 파라미터인 productInfo가 비어있는 경우 처리
 		
