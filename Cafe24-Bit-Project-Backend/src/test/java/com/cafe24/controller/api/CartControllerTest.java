@@ -1,16 +1,16 @@
 package com.cafe24.controller.api;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -24,10 +24,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.cafe24.dao.CartDao;
+import com.cafe24.dto.CartOptionUpdateDto;
 import com.cafe24.vo.CartVo;
 import com.google.gson.Gson;
 
@@ -37,9 +37,12 @@ import com.google.gson.Gson;
 public class CartControllerTest {
 
 	private MockMvc mockMvc;
-	
+		
 	@Autowired
 	private WebApplicationContext webApplicationContext;
+	
+	@Autowired
+	private CartDao cartDao;
 	
 	@Before
 	public void setup() {
@@ -48,6 +51,8 @@ public class CartControllerTest {
 	
 	@Test
 	public void Test_1_AddCartProduct() throws Exception {
+		
+		cartDao.clear();
 		
 		// 정상 동작 1 회원인 경우
 		// user1 사용자가 1번 상품을 장바구니에 담음
@@ -256,70 +261,196 @@ public class CartControllerTest {
 	@Test
 	public void Test_2_ShowCartDetail() throws Exception {
 		
+		// 정상 동작
 		ResultActions resultActions = 
 				mockMvc
 					.perform(get("/api/cart")
 							.contentType(MediaType.APPLICATION_JSON));
 		
 		resultActions
-			.andExpect(status().isOk());
-		
-		// 회원인 경우 세션에 저장되어 있는 회원 아이디를 바탕으로 장바구니 정보를 조회
-		
-		// 비회원인 경우 접속한 맥주소를 바탕으로 장바구니 정보를 조회
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result", is("success")))
+			.andDo(print());
 	}
 	
 	@Test
-	public void Test_3_UpdateCartInfo() throws Exception {
+	public void Test_3_UpdateCartProductCount() throws Exception {
 		
-		CartVo cart = new CartVo();
-		cart.setMemberId("user1");
-		cart.setProductNo(1L);
-		cart.setQuantity(2L);
-		cart.setProductOptionDetailNo(Arrays.asList(1L, 2L));
+		// 정상 동작
+		ResultActions resultActions = 
+				mockMvc
+					.perform(put("/api/cart/count")
+							.contentType(MediaType.APPLICATION_JSON)
+							.param("cartNo", "2")
+							.param("count", "1"));
+		
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result", is("success")))
+			.andExpect(jsonPath("$.data", is(true)));
+		
+		////////// count 유효성 검사 ////////////////
+		
+		// count가 문자인 경우
+		resultActions = 
+				mockMvc
+					.perform(put("/api/cart/count")
+							.contentType(MediaType.APPLICATION_JSON)
+							.param("cartNo", "2")
+							.param("count", "asd"));
+		
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result", is("success")))
+			.andExpect(jsonPath("$.data", is(true)));
+		
+		// count가 특수문자인 경우
+		resultActions = 
+				mockMvc
+					.perform(put("/api/cart/count")
+							.contentType(MediaType.APPLICATION_JSON)
+							.param("cartNo", "2")
+							.param("count", "''"));
+		
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result", is("success")))
+			.andExpect(jsonPath("$.data", is(true)));
+		
+		// count가 0보다 작은 경우
+		resultActions = 
+				mockMvc
+					.perform(put("/api/cart/count")
+							.contentType(MediaType.APPLICATION_JSON)
+							.param("cartNo", "2")
+							.param("count", "-1"));
+		
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result", is("success")))
+			.andExpect(jsonPath("$.data", is(true)));
+		
+		// count가 999보다 큰 경우
+		resultActions = 
+				mockMvc
+					.perform(put("/api/cart/count")
+							.contentType(MediaType.APPLICATION_JSON)
+							.param("cartNo", "2")
+							.param("count", "1000"));
+		
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result", is("success")))
+			.andExpect(jsonPath("$.data", is(true)));
+	}
+	
+	@Test
+	public void Test_5_GetProductOptionListInCart() throws Exception {
+		
+		// 정상 동작
+		ResultActions resultActions = 
+				mockMvc
+					.perform(get("/api/cart/option/1")
+							.contentType(MediaType.APPLICATION_JSON));
+		
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result", is("success")))
+			.andDo(print());
+		
+		// productNo가 문자인 경우
+		resultActions = 
+				mockMvc
+					.perform(get("/api/cart/option/aa")
+							.contentType(MediaType.APPLICATION_JSON));
+		
+		resultActions
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.result", is("fail")));
+		
+		// productNo가 특수문자인 경우
+		resultActions = 
+				mockMvc
+					.perform(get("/api/cart/option/'%'")
+							.contentType(MediaType.APPLICATION_JSON));
+		
+		resultActions
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.result", is("fail")));
+		
+		// productNo가 1보다 작은 경우
+		resultActions = 
+				mockMvc
+					.perform(get("/api/cart/option/-1")
+							.contentType(MediaType.APPLICATION_JSON));
+		
+		resultActions
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.result", is("fail")));
+		
+		// productNo가 존재하지 않는 상품의 경우
+		resultActions = 
+				mockMvc
+					.perform(get("/api/cart/option/999")
+							.contentType(MediaType.APPLICATION_JSON));
+		
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result", is("success")))
+			.andExpect(jsonPath("$.data", hasSize(0)));
+	}
+	
+	@Test
+	public void Test_6_ProductOptionUpdateInCart() throws Exception {
+		
+		// 정상 동작
+		// 2번 카트에 대해 싱픔 옵션을 2번, 3번으로 변경
+		CartOptionUpdateDto updateDto = new CartOptionUpdateDto();
+		updateDto.setCartNo(2L);
+		updateDto.setProductOptionDetailNo(Arrays.asList(2L,3L));
 		
 		ResultActions resultActions = 
 				mockMvc
-					.perform(put("/api/cart")
+					.perform(put("/api/cart/option")
 							.contentType(MediaType.APPLICATION_JSON)
-							.content(new Gson().toJson(cart)));
+							.content(new Gson().toJson(updateDto)));
 		
 		resultActions
-			.andExpect(status().isOk());
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result", is("success")))
+			.andExpect(jsonPath("$.data", is(true)));
 		
-		// 넘어오는 CartVo의 값이 정확하게 들어있는지 확인
+		// 2번 카트에 들어있는 상품이 존재하지 않는 상품 상세 옵션으로 변경을 요청하는 경우
+		updateDto = new CartOptionUpdateDto();
+		updateDto.setCartNo(2L);
+		updateDto.setProductOptionDetailNo(Arrays.asList(99L,100L));
 		
-		// 회원인 경우 세션에 저장되어 있는 회원 아이디를 바탕으로 장바구니 업데이트 및 정보 조회
+		resultActions = 
+				mockMvc
+					.perform(put("/api/cart/option")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(new Gson().toJson(updateDto)));
 		
-		// 회원인 경우 세션에 저장되어 있는 회원 아이디와 장바구니에 업데이트 하고자 하는 회원 아이디가 같은지 확인
-		
-		// 비회원인 경우 접속한 맥주소를 바탕으로 장바구니 업데이트 및 정보 조회
-		
-		// 비회원인 경우 접속한 맥주소와 장바구니에 업데이트 하고자 하는 맥주소가 같은지 확인
+		resultActions
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.result", is("fail")));
 	}
 	
 	@Test
-	public void Test_4_DeleteCartCheckProduct() throws Exception {
+	public void Test_7_DeleteCartCheckProduct() throws Exception {
 
-	    List<String> cartNo = Arrays.asList("2", "3");
-	    MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-	    params.addAll("cartNo", cartNo);
-	    
+		// 정상 동작
+		// 2번 3번의 카트를 삭제
 		ResultActions resultActions = 
 				mockMvc
 					.perform(delete("/api/cart")
 							.contentType(MediaType.APPLICATION_JSON)
-							.params(params));
+							.content(new Gson().toJson(Arrays.asList(2L, 3L))));
 		
 		resultActions
-			.andExpect(status().isOk());
-		
-		// 넘어오는 카트 번호가 비어있지 않은지 확인
-		
-		// 넘어오는 카트 번호에 악의적인 공격이 있을만한 특수문자 등의 경우 처리
-		
-		// 회원인 경우 세션에 저장되어 있는 회원 아이디와 장바구니를 삭제 하고자 하는 회원 아이디가 같은지 확인
-		
-		// 비회원인 경우 접속한 맥주소와 장바구니에 삭제하고자 하는 맥주소가 같은지 확인
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.result", is("success")))
+		.andExpect(jsonPath("$.data", is(true)));
+
 	}
 }

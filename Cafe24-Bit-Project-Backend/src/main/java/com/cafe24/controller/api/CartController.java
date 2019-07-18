@@ -1,22 +1,24 @@
 package com.cafe24.controller.api;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cafe24.dto.CartDetailDto;
+import com.cafe24.dto.CartOptionUpdateDto;
 import com.cafe24.dto.JSONResult;
 import com.cafe24.service.CartService;
 import com.cafe24.service.MemberService;
 import com.cafe24.vo.CartVo;
+import com.cafe24.vo.ProductOptionVo;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -29,6 +31,10 @@ public class CartController {
 	
 	@Autowired
 	private MemberService memberService;
+	
+	public static boolean isNumeric(String str) {
+		return str.matches("-?\\d+(\\.\\d+)?");
+	}
 	
 	@ApiOperation(value = "장바구니 담기")
 	@RequestMapping(value= "", method=RequestMethod.POST)
@@ -71,53 +77,111 @@ public class CartController {
 	
 	@ApiOperation(value = "장바구니 조회")
 	@RequestMapping(value= "", method=RequestMethod.GET)
-	public Map<String, Object> cartDetail() {
-		Map<String, Object> result = new HashMap<String, Object>();
+	public ResponseEntity<JSONResult> cartDetail() {
 		
-		List<CartVo> carts = cartService.showCartDetail();
+		// 세션에대한 예외 처리는 프론트엔드의 컨트롤러에서 처리
 		
-		return result;
+		// 세션에서 얻어온 사용자가 회원인 경우
+		String userid = "user1";
+		List<CartDetailDto> carts = cartService.showCartDetail(userid);
 		
-		// 회원인 경우 세션에 저장되어 있는 회원 아이디를 바탕으로 장바구니 정보를 조회
+		// 세션에서 얻어온 사용자가 비회원인 경우
+//		String userid = "non1-mac-address";
+//		List<CartDetailDto> carts = cartService.showCartDetail(userid);
 		
-		// 비회원인 경우 접속한 맥주소를 바탕으로 장바구니 정보를 조회
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(carts));
 	}
 	
-	@ApiOperation(value = "장바구니 내의 물품 내용 변경")
-	@RequestMapping(value= "", method=RequestMethod.PUT)
-	public Map<String, Object> cartUpdate(CartVo cartVo) {
-		Map<String, Object> result = new HashMap<String, Object>();
+	@ApiOperation(value = "장바구니 내에서 수량 변경")
+	@RequestMapping(value= "/count", method=RequestMethod.PUT)
+	public ResponseEntity<JSONResult> cartCountUpdate(
+			@RequestParam(value="cartNo", required=true) long cartNo,
+			@RequestParam(value="count", required=true, defaultValue="1") String count) {
 		
-		boolean isUpdate = cartService.updateCartProductImmediately(cartVo);
+		long updateCount = 1L;
 		
-		return result;
+		// 변경하고자 하는 물품의 수량이 숫자가 아닌 경우 1로 셋팅
+		// 변경하고자 하는 물품의 수량이 1보다 작은 경우 1로 셋팅
+		// 변경하고자 하는 물품의 수량이 999보다 큰 경우 1로 셋팅
+		if(!isNumeric(count) || Long.parseLong(count) < 1L)
+			updateCount = 1L;
+		else if(Long.parseLong(count) > 999L)
+			updateCount = 1L;
+		else
+			updateCount = Long.parseLong(count);
 		
-		// 넘어오는 CartVo의 값이 정확하게 들어있는지 확인
+		boolean queryResult = cartService.updateProductCountInCart(cartNo, updateCount);
+		if(!queryResult)
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(JSONResult.fail("DB 쿼리 실패"));
 		
-		// 회원인 경우 세션에 저장되어 있는 회원 아이디를 바탕으로 장바구니 업데이트 및 정보 조회
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(queryResult));
+	}
+	
+	@ApiOperation(value = "장바구니 내에서 옵션 조회")
+	@RequestMapping(value= "/option/{productNo}", method=RequestMethod.GET)
+	public ResponseEntity<JSONResult> getCartProductOptionList(
+			@PathVariable(value="productNo") String productNo) {
 		
-		// 회원인 경우 세션에 저장되어 있는 회원 아이디와 장바구니에 업데이트 하고자 하는 회원 아이디가 같은지 확인
+		// productNo가 숫자가 아닌 경우
+		// productNo가 1보다 작은 경우
+		if(!isNumeric(productNo) || Long.parseLong(productNo) < 1)
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail("productNo가 잘못된 요청"));
 		
-		// 비회원인 경우 접속한 맥주소를 바탕으로 장바구니 업데이트 및 정보 조회
+		// 정상 동작
+		List<ProductOptionVo> productOptionVo = cartService.getProductOptionList(Long.parseLong(productNo));
 		
-		// 비회원인 경우 접속한 맥주소와 장바구니에 업데이트 하고자 하는 맥주소가 같은지 확인
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(productOptionVo));
+	}
+	
+	@ApiOperation(value = "장바구니 내에서 옵션 변경")
+	@RequestMapping(value= "/option", method=RequestMethod.PUT)
+	public ResponseEntity<JSONResult> cartOptionUpdate(
+			@RequestBody CartOptionUpdateDto cartOptionUpdateDto) {
+				
+		// 해당 카트의 상품이 전달 받은 상품 상세 옵션 번호가 존재하는지 여부 확인
+		if(cartOptionUpdateDto.getProductOptionDetailNo().size()
+				!= cartService.isExistProductOptionDetailNo(cartOptionUpdateDto)) {
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail("해당 상품이 해당 상품 옵션 상세 번호를 갖고 있지 않음"));
+		}
+		
+		// 정상 동작
+		boolean queryResult = cartService.updateProductOptionInCart(cartOptionUpdateDto);
+		if(!queryResult)
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(JSONResult.fail("DB 쿼리 실패"));
+		
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(queryResult));
 	}
 	
 	@ApiOperation(value = "장바구니 내의 물품 삭제")
 	@RequestMapping(value= "", method=RequestMethod.DELETE)
-	public Map<String, Object> cartDelete(@RequestParam(value="cartNo") List<String> cartNo) {
-		Map<String, Object> result = new HashMap<String, Object>();
+	public ResponseEntity<JSONResult> cartDelete(
+			@RequestBody List<Long> cartNo) {
+
+		// 정상 동작
+		boolean queryResult = cartService.deleteCheckedCartProduct(cartNo);
+		if(!queryResult)
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(JSONResult.fail("DB 쿼리 실패"));
 		
-		boolean isDelete = cartService.deleteCheckedCartProduct(cartNo);
-		
-		return result;
-		
-		// 넘어오는 카트 번호가 비어있지 않은지 확인
-		
-		// 넘어오는 카트 번호에 악의적인 공격이 있을만한 특수문자 등의 경우 처리
-		
-		// 회원인 경우 세션에 저장되어 있는 회원 아이디와 장바구니를 삭제 하고자 하는 회원 아이디가 같은지 확인
-		
-		// 비회원인 경우 접속한 맥주소와 장바구니에 삭제하고자 하는 맥주소가 같은지 확인
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(queryResult));
 	}
 }

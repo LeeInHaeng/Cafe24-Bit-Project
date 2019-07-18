@@ -1,12 +1,17 @@
 package com.cafe24.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cafe24.dao.CartDao;
+import com.cafe24.dto.CartDetailDto;
+import com.cafe24.dto.CartOptionUpdateDto;
 import com.cafe24.vo.CartVo;
+import com.cafe24.vo.ProductOptionVo;
 
 @Service
 public class CartService {
@@ -26,24 +31,41 @@ public class CartService {
 		return queryResult>0;
 	}
 
-	public List<CartVo> showCartDetail() {
+	public List<CartDetailDto> showCartDetail(String userid) {
 		
-		List<CartVo> queryResult = cartDao.getList();
+		List<CartDetailDto> carts = cartDao.getList(userid);
 		
-		return null;
+		return carts;
 	}
 
-	public boolean updateCartProductImmediately(CartVo cartVo) {
+	public boolean updateProductCountInCart(long cartNo, long updateCount) {
 		
-		int queryResult = cartDao.update(cartVo);
+		Map<String, Long> params = new HashMap<String, Long>();
+		params.put("cartNo", cartNo);
+		params.put("updateCount", updateCount);
 		
-		return false;
+		int queryResult = cartDao.updateCount(params);
+		return queryResult==1;
+	}
+	
+	public List<ProductOptionVo> getProductOptionList(long productNo) {
+		return cartDao.getOptionList(productNo);
+	}
+	
+	public boolean updateProductOptionInCart(CartOptionUpdateDto cartOptionUpdateDto) {
+		
+		int queryResult = cartDao.updateOption(cartOptionUpdateDto);
+		return queryResult==cartOptionUpdateDto.getProductOptionDetailNo().size();
 	}
 
-	public boolean deleteCheckedCartProduct(List<String> cartNo) {
+	public boolean deleteCheckedCartProduct(List<Long> cartNo) {
 		
 		int queryResult = cartDao.delete(cartNo);
-		
-		return false;
+		return queryResult==cartNo.size();
 	}
+
+	public int isExistProductOptionDetailNo(CartOptionUpdateDto cartOptionUpdateDto) {
+		return cartDao.isExistOptionDetailNo(cartOptionUpdateDto);
+	}
+
 }

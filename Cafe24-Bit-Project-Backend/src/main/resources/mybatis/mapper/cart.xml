@@ -3,6 +3,13 @@
 
 <mapper namespace="cart">
 	
+	<delete id="clear">
+		delete from cart;
+		alter table cart auto_increment=0;
+		delete from cart_product_option;
+		alter table cart_product_option auto_increment=0;
+	</delete>
+	
 	<insert id="insert" parameterType="cartvo">
 
 		<selectKey keyProperty="cartNo" resultType="long" order="BEFORE">
@@ -45,4 +52,87 @@
 		 </foreach>
 	</select>
 	
+	
+	<resultMap id="cartdetail" type="cartdetaildto">
+	
+		<result property="cartNo" column="cartNo"/>
+		<result property="memberId" column="memberId"/>
+		<result property="nonmemberMac" column="nonmemberMac"/>
+		<result property="productNo" column="productNo"/>
+		<result property="quantity" column="quantity"/>
+		
+		<result property="title" column="title"/>
+		<result property="image" column="image"/>
+		<result property="price" column="price"/>
+		<result property="mileageAdd" column="mileageAdd"/>
+		<result property="shippingPrice" column="shippingPrice"/>
+		
+		<collection property="productOptionVo" ofType="productoptionvo">
+			<result property="optionNo" column="optionNo"/>
+			<result property="optionDetailNo" column="optionDetailNo"/>
+			<result property="optionName" column="optionName"/>
+			<result property="optionValue" column="optionValue"/>
+		</collection>
+		
+	</resultMap>
+	
+	<select id="getList" parameterType="string" resultMap="cartdetail">
+		select a.no as cartNo, a.member_id as memberId, a.nonmember_mac as nonmemberMac,
+			a.product_no as productNo, a.quantity as quantity,
+		    c.option_no as optionNo, c.no as optionDetailNo, 
+		    d.name as optionName, c.value as optionValue,
+		    e.title as title, e.image as image, e.price as price,
+		    e.mileage_add as mileageAdd, e.shipping_price as shippingPrice
+		from cart a
+		join cart_product_option b on a.no = b.cart_no
+		join product_option_detail c on b.product_option_detail_no = c.no
+		join product_option d on c.option_no = d.no
+		join product e on a.product_no = e.no
+		where a.member_id=#{userid} or a.nonmember_mac=#{userid}
+	</select>
+	
+	<update id="updateCount" parameterType="map">
+		update cart set quantity=#{updateCount}
+		where no=#{cartNo}
+	</update>
+	
+	<select id="getOptionList" parameterType="long" resultType="productoptionvo">
+		select a.no as optionNo, a.product_no as productNo, a.name as optionName,
+			b.option_no as optionDetailNo, b.value as optionValue
+		from product_option a
+		join product_option_detail b on a.no = b.option_no
+		where product_no=#{productNo}
+	</select>
+	
+	<insert id="updateOption" parameterType="cartoptionupdatedto">
+		delete from cart_product_option
+		where cart_no=#{cartNo};
+		
+		insert into cart_product_option
+		values
+		<foreach collection="productOptionDetailNo" item="item" separator=" , ">
+			(default, #{cartNo}, #{item})
+		</foreach>
+	</insert>
+	
+	<delete id="delete" parameterType="java.util.List">
+		delete from cart where
+		<foreach collection="list" item="item" separator=" or ">
+			no=#{item}
+		</foreach>
+	</delete>
+	
+	<select id="isExistOptionDetailNo" parameterType="cartoptionupdatedto" resultType="int">
+		select count(*)
+		from product a
+		join product_option b on a.no = b.product_no
+		join product_option_detail c on b.no = c.option_no
+		where a.no=(select product_no
+					from cart where no=#{cartNo})
+			and
+		<foreach collection="productOptionDetailNo" item="item" separator=" or ">
+			c.no=#{item}
+		</foreach>
+	</select>
+
 </mapper>
