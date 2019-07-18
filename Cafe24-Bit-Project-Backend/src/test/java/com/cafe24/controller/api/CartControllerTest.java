@@ -434,6 +434,50 @@ public class CartControllerTest {
 		resultActions
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.result", is("fail")));
+		
+		// 카트 번호가 비어있는 경우
+		String json = "{\"cartNo\":,\"productOptionDetailNo\":[2,3]}";
+		resultActions = 
+				mockMvc
+					.perform(put("/api/cart/option")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(json));
+		
+		resultActions
+			.andExpect(status().isBadRequest());
+		
+		// 카트 번호가 숫자가 아닌 경우
+		json = "{\"cartNo\":\"a\",\"productOptionDetailNo\":[2,3]}";
+		resultActions = 
+				mockMvc
+					.perform(put("/api/cart/option")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(json));
+		
+		resultActions
+			.andExpect(status().isBadRequest());
+		
+		// 상품 옵션 번호가 비어있는 경우
+		json = "{\"cartNo\":2,\"productOptionDetailNo\":}";
+		resultActions = 
+				mockMvc
+					.perform(put("/api/cart/option")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(json));
+		
+		resultActions
+			.andExpect(status().isBadRequest());
+		
+		// 상품 옵션 번호가 숫자가 아닌 경우
+		json = "{\"cartNo\":2,\"productOptionDetailNo\":[\"a\",\"'\"]}";
+		resultActions = 
+				mockMvc
+					.perform(put("/api/cart/option")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(json));
+		
+		resultActions
+			.andExpect(status().isBadRequest());
 	}
 	
 	@Test
@@ -451,6 +495,29 @@ public class CartControllerTest {
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.result", is("success")))
 		.andExpect(jsonPath("$.data", is(true)));
+		
+		// 파라미터가 비어있는 경우
+		String json = "[]";
+		resultActions = 
+				mockMvc
+					.perform(delete("/api/cart")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(json));
+		
+		resultActions
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.result", is("fail")));
 
+		// 파라미터가 숫자가 아닌 경우
+		json = "[\"a\"]";
+		resultActions = 
+				mockMvc
+					.perform(delete("/api/cart")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(json));
+		
+		resultActions
+			.andExpect(status().isBadRequest());
+		
 	}
 }

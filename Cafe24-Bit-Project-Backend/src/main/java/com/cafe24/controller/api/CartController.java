@@ -156,6 +156,17 @@ public class CartController {
 					.body(JSONResult.fail("해당 상품이 해당 상품 옵션 상세 번호를 갖고 있지 않음"));
 		}
 		
+		// 객체 안의 데이터 존재여부 확인
+		System.out.println(cartOptionUpdateDto.getCartNo());
+		System.out.println(cartOptionUpdateDto.getProductOptionDetailNo());
+		System.out.println(cartOptionUpdateDto.getProductOptionDetailNo().size());
+		if((Long)cartOptionUpdateDto.getCartNo()==null || cartOptionUpdateDto.getProductOptionDetailNo() == null
+				|| cartOptionUpdateDto.getProductOptionDetailNo().size()==0) {
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail("잘못된 요청"));
+		}
+		
 		// 정상 동작
 		boolean queryResult = cartService.updateProductOptionInCart(cartOptionUpdateDto);
 		if(!queryResult)
@@ -172,6 +183,13 @@ public class CartController {
 	@RequestMapping(value= "", method=RequestMethod.DELETE)
 	public ResponseEntity<JSONResult> cartDelete(
 			@RequestBody List<Long> cartNo) {
+		
+		// cartNo에 대해 유효성 검사
+		if(cartNo == null || cartNo.size()==0) {
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail("잘못된 요청"));
+		}
 
 		// 정상 동작
 		boolean queryResult = cartService.deleteCheckedCartProduct(cartNo);
