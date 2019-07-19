@@ -27,7 +27,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.cafe24.dao.CartDao;
-import com.cafe24.dto.CartOptionUpdateDto;
+import com.cafe24.dto.CartOptionDto;
 import com.cafe24.vo.CartVo;
 import com.google.gson.Gson;
 
@@ -405,7 +405,7 @@ public class CartControllerTest {
 		
 		// 정상 동작
 		// 2번 카트에 대해 싱픔 옵션을 2번, 3번으로 변경
-		CartOptionUpdateDto updateDto = new CartOptionUpdateDto();
+		CartOptionDto updateDto = new CartOptionDto();
 		updateDto.setCartNo(2L);
 		updateDto.setProductOptionDetailNo(Arrays.asList(2L,3L));
 		
@@ -421,7 +421,7 @@ public class CartControllerTest {
 			.andExpect(jsonPath("$.data", is(true)));
 		
 		// 2번 카트에 들어있는 상품이 존재하지 않는 상품 상세 옵션으로 변경을 요청하는 경우
-		updateDto = new CartOptionUpdateDto();
+		updateDto = new CartOptionDto();
 		updateDto.setCartNo(2L);
 		updateDto.setProductOptionDetailNo(Arrays.asList(99L,100L));
 		

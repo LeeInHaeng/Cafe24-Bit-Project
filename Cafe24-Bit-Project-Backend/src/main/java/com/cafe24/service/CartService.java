@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.cafe24.dao.CartDao;
 import com.cafe24.dto.CartDetailDto;
-import com.cafe24.dto.CartOptionUpdateDto;
+import com.cafe24.dto.CartOptionDto;
 import com.cafe24.vo.CartVo;
 import com.cafe24.vo.ProductOptionVo;
 
@@ -52,7 +52,7 @@ public class CartService {
 		return cartDao.getOptionList(productNo);
 	}
 	
-	public boolean updateProductOptionInCart(CartOptionUpdateDto cartOptionUpdateDto) {
+	public boolean updateProductOptionInCart(CartOptionDto cartOptionUpdateDto) {
 		
 		int queryResult = cartDao.updateOption(cartOptionUpdateDto);
 		return queryResult==cartOptionUpdateDto.getProductOptionDetailNo().size();
@@ -64,7 +64,7 @@ public class CartService {
 		return queryResult==cartNo.size();
 	}
 
-	public int isExistProductOptionDetailNo(CartOptionUpdateDto cartOptionUpdateDto) {
+	public int isExistProductOptionDetailNo(CartOptionDto cartOptionUpdateDto) {
 		return cartDao.isExistOptionDetailNo(cartOptionUpdateDto);
 	}
 

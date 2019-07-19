@@ -104,7 +104,7 @@
 		where product_no=#{productNo}
 	</select>
 	
-	<insert id="updateOption" parameterType="cartoptionupdatedto">
+	<insert id="updateOption" parameterType="cartoptiondto">
 		delete from cart_product_option
 		where cart_no=#{cartNo};
 		
@@ -122,7 +122,7 @@
 		</foreach>
 	</delete>
 	
-	<select id="isExistOptionDetailNo" parameterType="cartoptionupdatedto" resultType="int">
+	<select id="isExistOptionDetailNo" parameterType="cartoptiondto" resultType="int">
 		select count(*)
 		from product a
 		join product_option b on a.no = b.product_no

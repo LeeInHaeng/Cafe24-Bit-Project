@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,11 +15,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cafe24.dto.ProductInfo;
+import com.cafe24.dto.JSONResult;
+import com.cafe24.dto.OrderPageDto;
+import com.cafe24.dto.ProductOptionDto;
 import com.cafe24.dto.ProductOrder;
 import com.cafe24.service.OrderService;
-import com.cafe24.vo.OrderVo;
-import com.google.gson.Gson;
+import com.cafe24.vo.ProductQuantityVo;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -30,33 +33,57 @@ public class OrderController {
 
 	@ApiOperation(value = "상품 재고 확인")
 	@RequestMapping(value= "/check/quantity", method=RequestMethod.POST)
-	public Map<String, Object> checkQuantity(@RequestBody List<ProductInfo> productInfo) {
-		Map<String, Object> result = new HashMap<String, Object>();
+	public ResponseEntity<JSONResult> checkQuantity(
+			@RequestBody List<ProductOptionDto> productOptionDto) {
 		
-		orderService.checkProductQuantityAndQuantityReduce(productInfo);
+		if(!orderService.isValidProductOptionDto(productOptionDto)) {
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail("잘못된 요청"));
+		}
 		
-		return result;
+		// 정상 동작
+		List<ProductQuantityVo> productQuantity = orderService.getProductQuantity(productOptionDto);
 		
-		// POST로 넘어오는 파라미터인 productInfo가 비어있는 경우 처리
+		List<HashMap<String, Object>> quantityResult = new ArrayList<HashMap<String, Object>>();
+		for(ProductQuantityVo quantity : productQuantity) {
+			HashMap<String, Object> quantityInfo = new HashMap<String, Object>();
+			quantityInfo.put("상품 번호", quantity.getProductNo());
+			quantityInfo.put("옵션 코드", quantity.getOptionCode());
+			if(quantity.getAvailableQuantity()>0 && quantity.getRealQuantity()>0)
+				quantityInfo.put("재고", "있음");
+			else
+				quantityInfo.put("재고", "없음");
+			
+			quantityResult.add(quantityInfo);
+		}
 		
-		// POST로 넘어오는 파라미터에 악의적인 공격이 있을만한 특수문자 등의 경우 처리
-		
-		// 상품의 판매 가능 수량이 정상적으로 있는 경우 아직 주문 전이더라도 상품 옵션 상세 테이블의 판매 가능 수량의 값을 미리 감소시켜 놓는다
-		
-		// 이후에 실제 주문이 다 이루어지면 상품 옵션 상세 테이블에서 재고의 값을 감소 시킨다
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(quantityResult));
 	}
 	
 	@ApiOperation(value = "주문 작성 페이지")
 	@RequestMapping(value= "", method=RequestMethod.POST)
-	public Map<String, Object> orderPage(@RequestBody List<ProductInfo> infos) {
-		Map<String, Object> result = new HashMap<String, Object>();
-		return result;
+	public ResponseEntity<JSONResult> orderPage(
+			@RequestBody OrderPageDto orderPageDto) {
 		
-		// 재고 확인 후의 데이터가 그대로 넘어오는지 확인
+		if(orderPageDto.getMemberId()==null && orderPageDto.getNonmemberMac()==null)
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail("잘못된 요청"));
 		
-		// 회원인 경우 추가 입력폼 생성
+		if(orderPageDto.getProductOptionDto()==null || orderPageDto.getProductOptionDto().size()==0)
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail("잘못된 요청"));
 		
-		// 비회원인 경우 추가 입력폼 생성
+		// 정상 동작
+		Map<String, Object> queryResult = orderService.orderPageConnectWithOrderProducts(orderPageDto);
+		
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(queryResult));
 	}
 	
 	@ApiOperation(value = "주문완료 버튼 클릭")

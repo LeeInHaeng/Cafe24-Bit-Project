@@ -34,4 +34,8 @@ public class MemberDao {
 	public void deleteTest(String userid) {
 		sqlSession.delete("member.deleteTest", userid);
 	}
+	
+	public MemberVo get(String userid) {
+		return sqlSession.selectOne("member.get", userid);
+	}
 }

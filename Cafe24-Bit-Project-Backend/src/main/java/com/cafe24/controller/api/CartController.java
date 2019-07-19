@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cafe24.dto.CartDetailDto;
-import com.cafe24.dto.CartOptionUpdateDto;
+import com.cafe24.dto.CartOptionDto;
 import com.cafe24.dto.JSONResult;
 import com.cafe24.service.CartService;
 import com.cafe24.service.MemberService;
@@ -82,12 +82,12 @@ public class CartController {
 		// 세션에대한 예외 처리는 프론트엔드의 컨트롤러에서 처리
 		
 		// 세션에서 얻어온 사용자가 회원인 경우
-		String userid = "user1";
-		List<CartDetailDto> carts = cartService.showCartDetail(userid);
+//		String userid = "user1";
+//		List<CartDetailDto> carts = cartService.showCartDetail(userid);
 		
 		// 세션에서 얻어온 사용자가 비회원인 경우
-//		String userid = "non1-mac-address";
-//		List<CartDetailDto> carts = cartService.showCartDetail(userid);
+		String userid = "non1-mac-address";
+		List<CartDetailDto> carts = cartService.showCartDetail(userid);
 		
 		return ResponseEntity
 				.status(HttpStatus.OK)
@@ -146,7 +146,7 @@ public class CartController {
 	@ApiOperation(value = "장바구니 내에서 옵션 변경")
 	@RequestMapping(value= "/option", method=RequestMethod.PUT)
 	public ResponseEntity<JSONResult> cartOptionUpdate(
-			@RequestBody CartOptionUpdateDto cartOptionUpdateDto) {
+			@RequestBody CartOptionDto cartOptionUpdateDto) {
 				
 		// 해당 카트의 상품이 전달 받은 상품 상세 옵션 번호가 존재하는지 여부 확인
 		if(cartOptionUpdateDto.getProductOptionDetailNo().size()

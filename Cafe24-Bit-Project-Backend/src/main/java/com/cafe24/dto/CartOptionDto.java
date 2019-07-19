@@ -2,7 +2,7 @@ package com.cafe24.dto;
 
 import java.util.List;
 
-public class CartOptionUpdateDto {
+public class CartOptionDto {
 
 	private long cartNo;
 	private List<Long> productOptionDetailNo;

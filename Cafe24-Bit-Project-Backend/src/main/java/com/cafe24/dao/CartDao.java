@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.cafe24.dto.CartDetailDto;
-import com.cafe24.dto.CartOptionUpdateDto;
+import com.cafe24.dto.CartOptionDto;
 import com.cafe24.vo.CartVo;
 import com.cafe24.vo.ProductOptionVo;
 
@@ -45,7 +45,7 @@ public class CartDao {
 		return sqlSession.selectList("cart.getOptionList", productNo);
 	}
 	
-	public int updateOption(CartOptionUpdateDto cartOptionUpdateDto) {
+	public int updateOption(CartOptionDto cartOptionUpdateDto) {
 		int queryResult = sqlSession.insert("cart.updateOption", cartOptionUpdateDto);
 		return queryResult;
 	}
@@ -55,7 +55,7 @@ public class CartDao {
 		return queryResult;
 	}
 
-	public int isExistOptionDetailNo(CartOptionUpdateDto cartOptionUpdateDto) {
+	public int isExistOptionDetailNo(CartOptionDto cartOptionUpdateDto) {
 		int queryResult = sqlSession.selectOne("cart.isExistOptionDetailNo", cartOptionUpdateDto);
 		return queryResult;
 	}

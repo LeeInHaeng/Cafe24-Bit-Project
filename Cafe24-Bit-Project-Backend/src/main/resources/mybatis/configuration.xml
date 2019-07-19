@@ -15,12 +15,19 @@
 		<typeAlias alias="cartvo" type="com.cafe24.vo.CartVo"></typeAlias>
 		
 		<typeAlias alias="cartdetaildto" type="com.cafe24.dto.CartDetailDto"></typeAlias>
-		<typeAlias alias="cartoptionupdatedto" type="com.cafe24.dto.CartOptionUpdateDto"></typeAlias>
+		<typeAlias alias="cartoptiondto" type="com.cafe24.dto.CartOptionDto"></typeAlias>
+		
+		<typeAlias alias="productoptiondto" type="com.cafe24.dto.ProductOptionDto"></typeAlias>
+		<typeAlias alias="productquantityvo" type="com.cafe24.vo.ProductQuantityVo"></typeAlias>
+		
+		<typeAlias alias="orderpagedto" type="com.cafe24.dto.OrderPageDto"></typeAlias>
+		<typeAlias alias="orderproductdto" type="com.cafe24.dto.OrderProductDto"></typeAlias>
     </typeAliases>	
 	<mappers>
 		<mapper resource="mybatis/mapper/member.xml" />
 		<mapper resource="mybatis/mapper/product.xml" />
 		<mapper resource="mybatis/mapper/cart.xml" />
+		<mapper resource="mybatis/mapper/order.xml" />
 	</mappers>
 	
 </configuration>

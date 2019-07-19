@@ -1,11 +1,15 @@
 package com.cafe24.controller.api;
 
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +28,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.cafe24.dto.OrderPageDto;
 import com.cafe24.dto.ProductInfo;
+import com.cafe24.dto.ProductOptionDto;
 import com.cafe24.dto.ProductOrder;
 import com.cafe24.vo.OrderVo;
 import com.google.gson.Gson;
@@ -46,70 +52,181 @@ public class OrderControllerTest {
 	
 	@Test
 	public void Test_1_CheckProductQuantity() throws Exception {
+
+		// 정상 동작
+		List<ProductOptionDto> params = new ArrayList<ProductOptionDto>();
 		
-		ProductInfo info1 = new ProductInfo();
-		info1.setProductNo(1L);
-		info1.setProductOptionDetailNo(1L);
-		info1.setQuantity(2L);
+		ProductOptionDto dto = new ProductOptionDto();
+		dto.setProductNo(1L);
+		dto.setProductOptionDetailNo(Arrays.asList(1L, 3L));
 		
-		ProductInfo info2 = new ProductInfo();
-		info2.setProductNo(1L);
-		info2.setProductOptionDetailNo(2L);
-		info2.setQuantity(2L);
+		ProductOptionDto dto2 = new ProductOptionDto();
+		dto2.setProductNo(2L);
+		dto2.setProductOptionDetailNo(Arrays.asList(5L, 7L));
 		
-		List<ProductInfo> infos = new ArrayList<ProductInfo>();
-		infos.add(info1);
-		infos.add(info2);
-	    
+		params.add(dto);
+		params.add(dto2);
+		
 		ResultActions resultActions = 
 				mockMvc
 					.perform(post("/api/order/check/quantity")
 							.contentType(MediaType.APPLICATION_JSON)
-							.content(new Gson().toJson(infos)));
+							.content(new Gson().toJson(params)));
 		
 		resultActions
-			.andExpect(status().isOk());
+			.andExpect(status().isOk())
+			.andDo(print());
+	
 		
-		// POST로 넘어오는 파라미터인 productInfo가 비어있는 경우 처리
+		// 해당 상품이 상품 옵션을 갖고 있지 않은 경우
+		params = new ArrayList<ProductOptionDto>();
 		
-		// POST로 넘어오는 파라미터에 악의적인 공격이 있을만한 특수문자 등의 경우 처리
+		dto = new ProductOptionDto();
+		dto.setProductNo(999L);
+		dto.setProductOptionDetailNo(Arrays.asList(1L, 3L));
 		
-		// 상품의 판매 가능 수량이 정상적으로 있는 경우 아직 주문 전이더라도 상품 옵션 상세 테이블의 판매 가능 수량의 값을 미리 감소시켜 놓는다
+		params.add(dto);
 		
-		// 이후에 실제 주문이 다 이루어지면 상품 옵션 상세 테이블에서 재고의 값을 감소 시킨다
+		resultActions = 
+				mockMvc
+					.perform(post("/api/order/check/quantity")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(new Gson().toJson(params)));
+		
+		resultActions
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.result", is("fail")));
+		
+		// 상품 번호가 비어있는 경우
+		params = new ArrayList<ProductOptionDto>();
+		
+		dto = new ProductOptionDto();
+		dto.setProductOptionDetailNo(Arrays.asList(1L, 3L));
+		
+		params.add(dto);
+		
+		resultActions = 
+				mockMvc
+					.perform(post("/api/order/check/quantity")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(new Gson().toJson(params)));
+		
+		resultActions
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.result", is("fail")));
+		
+		// 상품 옵션 번호가 비어있는 경우
+		params = new ArrayList<ProductOptionDto>();
+		
+		dto = new ProductOptionDto();
+		dto.setProductNo(1L);
+		
+		params.add(dto);
+		
+		resultActions = 
+				mockMvc
+					.perform(post("/api/order/check/quantity")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(new Gson().toJson(params)));
+		
+		resultActions
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.result", is("fail")));
 	}
 	
 	@Test
 	public void Test_2_OrderPageConnect() throws Exception {
 		
-		ProductInfo info1 = new ProductInfo();
-		info1.setProductNo(1L);
-		info1.setProductOptionDetailNo(1L);
-		info1.setQuantity(2L);
+		// 정상 동작 회원인 경우
+		OrderPageDto orderPageDto = new OrderPageDto();
+		orderPageDto.setMemberId("user1");
 		
-		ProductInfo info2 = new ProductInfo();
-		info2.setProductNo(1L);
-		info2.setProductOptionDetailNo(2L);
-		info2.setQuantity(2L);
+		ProductOptionDto productOptionDto1 = new ProductOptionDto();
+		productOptionDto1.setProductNo(1L);
+		productOptionDto1.setProductOptionDetailNo(Arrays.asList(1L, 3L));
+		productOptionDto1.setQuantity(2L);
 		
-		List<ProductInfo> infos = new ArrayList<ProductInfo>();
-		infos.add(info1);
-		infos.add(info2);
+		ProductOptionDto productOptionDto2 = new ProductOptionDto();
+		productOptionDto2.setProductNo(2L);
+		productOptionDto2.setProductOptionDetailNo(Arrays.asList(5L, 7L));
+		productOptionDto2.setQuantity(1L);
+		
+		orderPageDto.setProductOptionDto(Arrays.asList(productOptionDto1, productOptionDto2));
 	    
 		ResultActions resultActions = 
 				mockMvc
 					.perform(post("/api/order")
 							.contentType(MediaType.APPLICATION_JSON)
-							.content(new Gson().toJson(infos)));
+							.content(new Gson().toJson(orderPageDto)));
 		
 		resultActions
-			.andExpect(status().isOk());
+			.andExpect(status().isOk())
+			.andDo(print());
 		
-		// 재고 확인 후의 데이터가 그대로 넘어오는지 확인
+		// 정상 동작 비회원인 경우
+		orderPageDto = new OrderPageDto();
+		orderPageDto.setNonmemberMac("non1-mac-address");
 		
-		// 회원인 경우 추가 입력폼 생성
+		productOptionDto1 = new ProductOptionDto();
+		productOptionDto1.setProductNo(1L);
+		productOptionDto1.setProductOptionDetailNo(Arrays.asList(1L, 3L));
+		productOptionDto1.setQuantity(2L);
 		
-		// 비회원인 경우 추가 입력폼 생성
+		productOptionDto2 = new ProductOptionDto();
+		productOptionDto2.setProductNo(2L);
+		productOptionDto2.setProductOptionDetailNo(Arrays.asList(5L, 7L));
+		productOptionDto2.setQuantity(1L);
+		
+		orderPageDto.setProductOptionDto(Arrays.asList(productOptionDto1, productOptionDto2));
+		
+		resultActions = 
+				mockMvc
+					.perform(post("/api/order")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(new Gson().toJson(orderPageDto)));
+		
+		resultActions
+			.andExpect(status().isOk())
+			.andDo(print());
+		
+		// 회원 비회원의 정보가 모두 없는 경우
+		orderPageDto = new OrderPageDto();
+		
+		productOptionDto1 = new ProductOptionDto();
+		productOptionDto1.setProductNo(1L);
+		productOptionDto1.setProductOptionDetailNo(Arrays.asList(1L, 3L));
+		productOptionDto1.setQuantity(2L);
+		
+		productOptionDto2 = new ProductOptionDto();
+		productOptionDto2.setProductNo(2L);
+		productOptionDto2.setProductOptionDetailNo(Arrays.asList(1L, 2L));
+		productOptionDto2.setQuantity(1L);
+		
+		orderPageDto.setProductOptionDto(Arrays.asList(productOptionDto1, productOptionDto2));
+		
+		resultActions = 
+				mockMvc
+					.perform(post("/api/order")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(new Gson().toJson(orderPageDto)));
+		
+		resultActions
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.result", is("fail")));
+		
+		// 주문하는 상품이 비어있는 경우
+		orderPageDto = new OrderPageDto();
+		orderPageDto.setMemberId("user1");
+
+		resultActions = 
+				mockMvc
+					.perform(post("/api/order")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(new Gson().toJson(orderPageDto)));
+		
+		resultActions
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.result", is("fail")));
 	}
 	
 	@Test

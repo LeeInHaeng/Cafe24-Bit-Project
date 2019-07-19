@@ -3,7 +3,6 @@ package com.cafe24.dto;
 import java.util.List;
 
 import com.cafe24.vo.ProductOptionVo;
-import com.cafe24.vo.ProductVo;
 
 public class CartDetailDto {
 

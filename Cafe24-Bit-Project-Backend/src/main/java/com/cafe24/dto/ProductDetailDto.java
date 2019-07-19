@@ -5,7 +5,6 @@ import java.util.List;
 import com.cafe24.vo.ProductImageVo;
 import com.cafe24.vo.ProductOptionVo;
 import com.cafe24.vo.ProductQuantityVo;
-import com.cafe24.vo.ProductVo;
 
 // 상품 테이블, 상품 관리 테이블, 상품 이미지 테이블, 상품 옵션 테이블, 상품 옵션 상세 테이블, 상품 재고 테이블
 public class ProductDetailDto {

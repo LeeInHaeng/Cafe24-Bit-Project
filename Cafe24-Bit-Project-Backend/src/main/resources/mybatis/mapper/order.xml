@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="order">
+
+	<select id="getOptionValue" parameterType="list" resultType="string">
+		select value from product_option_detail
+		where
+		<foreach collection="list" item="item" separator=" or ">
+			no=#{item}
+		</foreach>
+	</select>
+
+	<select id="getProductQuantity" parameterType="map" resultType="productquantityvo">
+		select no as quantityNo, product_no as productNo, option_code as optionCode,
+			real_quantity as realQuantity, available_quantity as availableQuantity
+		from product_quantity
+		where product_no=#{productNo} and option_code=#{optionCode}
+	</select>
+	
+	<select id="isExistOptionDetailNo" parameterType="productoptiondto" resultType="int">
+		select count(*)
+		from product_option a
+		join product_option_detail b on a.no=b.option_no
+		where a.product_no=#{productNo} and
+		<foreach collection="productOptionDetailNo" item="item" separator=" or ">
+			b.no=#{item}
+		</foreach>
+	</select>
+	
+	
+	<resultMap id="productdetail" type="OrderProductDto">
+	
+		<result property="productNo" column="productNo"/>
+		<result property="title" column="title"/>
+		<result property="image" column="image"/>
+		<result property="price" column="price"/>
+		<result property="mileageAdd" column="mileageAdd"/>
+		<result property="description" column="description"/>
+		<result property="shippingPrice" column="shippingPrice"/>
+		<result property="isdisplay" column="isdisplay"/>
+		<result property="issell" column="issell"/>
+	
+		<collection property="productOptionVo" ofType="productoptionvo">
+			<result property="optionNo" column="optionNo"/>
+			<result property="optionDetailNo" column="optionDetailNo"/>
+			<result property="optionName" column="optionName"/>
+			<result property="optionValue" column="optionValue"/>
+		</collection>
+		
+	</resultMap>
+	
+	<select id="getProduct" parameterType="productoptiondto" resultMap="productdetail">
+		select a.no as productNo, a.title as title, a.image as image, a.price as price, a.mileage_add as mileageAdd,
+			a.description as description, a.shipping_price as shippingPrice,
+		    b.isdisplay as isdisplay, b.issell as issell,
+		    c.no as optionNo, c.name as optionName,
+		    d.no as optionDetailNo, d.value as optionValue
+		from product a
+		join product_manage b on a.product_manage_no=b.no
+		join product_option c on a.no=c.product_no
+		join product_option_detail d on c.no=d.option_no
+		where a.no=#{productNo} and
+		<foreach collection="productOptionDetailNo" item="item" separator=" or ">
+			d.no=#{item}
+		</foreach> 
+	</select>
+	
+	<update id="decreaseQuantity" parameterType="map">
+		update product_quantity set
+		available_quantity=available_quantity-#{quantity}
+		where product_no=#{productNo} and option_code=#{optionCode}
+	</update>
+
+</mapper>
