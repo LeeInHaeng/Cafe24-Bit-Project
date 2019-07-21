@@ -71,5 +71,171 @@
 		available_quantity=available_quantity-#{quantity}
 		where product_no=#{productNo} and option_code=#{optionCode}
 	</update>
+	
+	<delete id="clear">
+		delete from order_product_option;
+		alter table order_product_option auto_increment=1;
+				
+		delete from order_product;
+		alter table order_product auto_increment=1;
+		
+		delete from `order`;
+		alter table `order` auto_increment=1;
+		
+		SET FOREIGN_KEY_CHECKS=0;
+		delete from nonmember;
+		SET FOREIGN_KEY_CHECKS=1;
+	</delete>
+	
+	<insert id="memberBuy" parameterType="orderbuydto">
+		<selectKey keyProperty="orderNo" resultType="long" order="BEFORE">
+			insert into `order`
+			values(default, #{memberId}, null,
+				hex(aes_encrypt(#{reciever}, SHA2('this is dummy salt', 512))),
+				hex(aes_encrypt(#{recieverAddress}, SHA2('this is dummy salt', 512))),
+				#{message}, #{totalPrice}, #{paymethod}, default, #{payStatus});
+			
+			select last_insert_id() as orderNo;
+		</selectKey>
+		
+		<foreach collection="productOptionDto" item="product">
+			insert into order_product values
+			(#{orderNo}, #{product.productNo}, #{product.quantity}, null, null, null);
+			
+			<foreach collection="product.productOptionDetailNo" item="option">
+				insert into order_product_option values
+				(default, #{orderNo}, #{product.productNo}, #{option});
+			</foreach>
+		</foreach>
+	</insert>
+	
+	<insert id="nonmemberBuy" parameterType="orderbuydto">
+		<selectKey keyProperty="orderNo" resultType="long" order="BEFORE">
+		
+			insert into nonmember
+			values(#{nonmemberMac}, 
+				hex(aes_encrypt(#{nonmemberPhone}, SHA2('this is dummy salt', 512))),
+				#{nonmemberPass},
+				hex(aes_encrypt(#{nonmemberName}, SHA2('this is dummy salt', 512))),
+				hex(aes_encrypt(#{nonmemberRefundName}, SHA2('this is dummy salt', 512))),
+				hex(aes_encrypt(#{nonmemberRefundNumber}, SHA2('this is dummy salt', 512))));
+		
+			insert into `order`
+			values(default, null, #{nonmemberMac},
+				hex(aes_encrypt(#{reciever}, SHA2('this is dummy salt', 512))),
+				hex(aes_encrypt(#{recieverAddress}, SHA2('this is dummy salt', 512))),
+				#{message}, #{totalPrice}, #{paymethod}, default, #{payStatus});
+			
+			select last_insert_id() as orderNo;
+		</selectKey>
+		
+		<foreach collection="productOptionDto" item="product">
+			insert into order_product values
+			(#{orderNo}, #{product.productNo}, #{product.quantity}, null, null, null);
+			
+			<foreach collection="product.productOptionDetailNo" item="option">
+				insert into order_product_option values
+				(default, #{orderNo}, #{product.productNo}, #{option});
+			</foreach>
+		</foreach>
+	</insert>
+	
+	<select id="checkPrice" parameterType="list" resultType="long">
+		select 
+		<foreach collection="list" item="product" separator="+">
+			(select price*#{product.quantity}
+			from product
+			where no=#{product.productNo})
+		</foreach>
+		as totalPrice
+	</select>
+	
+	
+	<resultMap id="orderhistorymap" type="orderhistorydto">
+	
+		<result property="reciever" column="reciever"/>
+		<result property="recieverAddress" column="recieverAddress"/>
+		<result property="message" column="message"/>
+		<result property="totalPrice" column="totalPrice"/>
+		<result property="paymethod" column="paymethod"/>
+		<result property="orderDate" column="orderDate"/>
+		<result property="payStatus" column="payStatus"/>
+	
+		<collection property="orderProductVo" ofType="orderproductvo">
+			<result property="productNo" column="productNo"/>
+			<result property="quantity" column="quantity"/>
+			<result property="shippingStatus" column="shippingStatus"/>
+			<result property="orderStatus" column="orderStatus"/>
+			<result property="orderStatusChangeReason" column="orderStatusChangeReason"/>
+		</collection>
+		
+		<collection property="orderProductDto" ofType="orderproductdto">
+			<result property="productNo" column="productNo"/>
+			<result property="title" column="title"/>
+			<result property="image" column="image"/>
+			<result property="price" column="price"/>
+			<result property="mileageAdd" column="mileageAdd"/>
+			<result property="description" column="description"/>
+			<result property="shippingPrice" column="shippingPrice"/>
+			<result property="quantity" column="quantity"/>
+			
+			<collection property="productOptionVo" ofType="productoptionvo">
+				<result property="optionNo" column="optionNo"/>
+				<result property="optionDetailNo" column="optionDetailNo"/>
+				<result property="optionValue" column="optionValue"/>
+			</collection>
+			
+		</collection>
+		
+	</resultMap>
+	<select id="showHistoryMember" parameterType="string" resultMap="orderhistorymap">
+		select 
+			cast(aes_decrypt(unhex(a.reciever), SHA2('this is dummy salt',512)) as char) as reciever,
+			cast(aes_decrypt(unhex(a.reciever_address), SHA2('this is dummy salt',512)) as char) as recieverAddress,
+			a.message as message, a.total_price as totalPrice, a.paymethod as paymethod,
+		    a.order_date as orderDate, a.pay_status as payStatus,
+		    b.product_no as productNo, b.quantity as quantity, b.shipping_status as shippingStatus,
+		    b.order_status as orderStatus, b.order_status_change_reason as orderStatusChangeReason,
+		    c.title as title, c.image as image, c.price as price, c.mileage_add as mileageAdd,
+		    c.description as description, c.shipping_price as shippingPrice,
+		    d.no as optionNo,
+		    e.no as optionDetailNo, e.value as optionValue
+		from `order` a
+		join order_product b on a.no=b.order_no
+		join product c on b.product_no=c.no
+		join order_product_option d on b.order_no=d.order_no and b.product_no=d.product_no
+		join product_option_detail e on d.product_option_detail_no=e.no
+		where member_id=#{memberId}
+		order by order_date desc
+	</select>
+	
+	<select id="showHistoryNonmember" parameterType="nonmembervo" resultMap="orderhistorymap">
+		select
+			cast(aes_decrypt(unhex(a.reciever), SHA2('this is dummy salt',512)) as char) as reciever,
+			cast(aes_decrypt(unhex(a.reciever_address), SHA2('this is dummy salt',512)) as char) as recieverAddress,
+			a.message as message, a.total_price as totalPrice, a.paymethod as paymethod,
+		    a.order_date as orderDate, a.pay_status as payStatus,
+		    b.product_no as productNo, b.quantity as quantity, b.shipping_status as shippingStatus,
+		    b.order_status as orderStatus, b.order_status_change_reason as orderStatusChangeReason,
+		    c.title as title, c.image as image, c.price as price, c.mileage_add as mileageAdd,
+		    c.description as description, c.shipping_price as shippingPrice,
+		    d.no as optionNo,
+		    e.no as optionDetailNo, e.value as optionValue
+		from `order` a
+		join order_product b on a.no=b.order_no
+		join product c on b.product_no=c.no
+		join order_product_option d on b.order_no=d.order_no and b.product_no=d.product_no
+		join product_option_detail e on d.product_option_detail_no=e.no
+		where a.nonmember_mac=(select mac from nonmember
+								where phone=hex(aes_encrypt(#{nonmemberPhone}, SHA2('this is dummy salt', 512)))
+									and pass=#{nonmemberPass})
+		order by order_date desc
+	</select>
+	
+	<update id="updateOrderProduct" parameterType="orderproductvo">
+		update order_product
+		set order_status=#{orderStatus}, order_status_change_reason=#{orderStatusChangeReason}
+		where order_no=#{orderNo} and product_no=#{productNo}
+	</update>
 
 </mapper>

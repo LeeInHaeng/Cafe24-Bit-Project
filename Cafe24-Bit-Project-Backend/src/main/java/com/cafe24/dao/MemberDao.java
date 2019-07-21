@@ -1,5 +1,7 @@
 package com.cafe24.dao;
 
+import javax.validation.Valid;
+
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -37,5 +39,10 @@ public class MemberDao {
 	
 	public MemberVo get(String userid) {
 		return sqlSession.selectOne("member.get", userid);
+	}
+
+	public boolean update(@Valid MemberVo memberVo) {
+		int queryResult = sqlSession.update("member.update", memberVo);
+		return queryResult==1;
 	}
 }

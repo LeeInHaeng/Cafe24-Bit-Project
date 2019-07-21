@@ -3,6 +3,7 @@
 <configuration>
 	<typeAliases>
 		<typeAlias alias="membervo" type="com.cafe24.vo.MemberVo"></typeAlias>
+		<typeAlias alias="nonmembervo" type="com.cafe24.vo.NonmemberVo"></typeAlias>
 		<typeAlias alias="logindto" type="com.cafe24.dto.LoginDto"></typeAlias>
 		
 		<typeAlias alias="productvo" type="com.cafe24.vo.ProductVo"></typeAlias>
@@ -20,8 +21,11 @@
 		<typeAlias alias="productoptiondto" type="com.cafe24.dto.ProductOptionDto"></typeAlias>
 		<typeAlias alias="productquantityvo" type="com.cafe24.vo.ProductQuantityVo"></typeAlias>
 		
+		<typeAlias alias="orderproductvo" type="com.cafe24.vo.OrderProductVo"></typeAlias>
 		<typeAlias alias="orderpagedto" type="com.cafe24.dto.OrderPageDto"></typeAlias>
 		<typeAlias alias="orderproductdto" type="com.cafe24.dto.OrderProductDto"></typeAlias>
+		<typeAlias alias="orderbuydto" type="com.cafe24.dto.OrderBuyDto"></typeAlias>
+		<typeAlias alias="orderhistorydto" type="com.cafe24.dto.OrderHistoryDto"></typeAlias>
     </typeAliases>	
 	<mappers>
 		<mapper resource="mybatis/mapper/member.xml" />

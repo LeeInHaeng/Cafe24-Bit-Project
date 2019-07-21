@@ -5,16 +5,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cafe24.dao.MemberDao;
 import com.cafe24.dao.OrderDao;
+import com.cafe24.dto.OrderBuyDto;
+import com.cafe24.dto.OrderHistoryDto;
 import com.cafe24.dto.OrderPageDto;
 import com.cafe24.dto.OrderProductDto;
 import com.cafe24.dto.ProductOptionDto;
-import com.cafe24.dto.ProductOrder;
 import com.cafe24.vo.MemberVo;
+import com.cafe24.vo.NonmemberVo;
+import com.cafe24.vo.OrderProductVo;
 import com.cafe24.vo.ProductOptionVo;
 import com.cafe24.vo.ProductQuantityVo;
 
@@ -101,21 +106,34 @@ public class OrderService {
 		return result;
 	}
 
-	public void BuyProducts(Map<String, Object> params) {
-		// TODO Auto-generated method stub
-		
+	public boolean BuyProducts(OrderBuyDto orderBuyDto) {
+		// 회원 주문
+		boolean queryResult = false;
+		if(orderBuyDto.getMemberId() != null) {
+			queryResult = orderDao.memberBuy(orderBuyDto);
+		}
+		// 비회원 주문
+		else {
+			queryResult = orderDao.nonmemberBuy(orderBuyDto);
+		}
+		return queryResult;
+	}
+	
+	public boolean isMatchPrice(List<ProductOptionDto> productOptionDto, long totalPrice) {
+		long queryTotalPrice = orderDao.checkPrice(productOptionDto);
+		return queryTotalPrice==totalPrice;
 	}
 
-	public void showProductHistory() {
-		// TODO Auto-generated method stub
-		
+	public OrderHistoryDto showProductHistoryMember(String memberId) {
+		return orderDao.showProductHistoryMember(memberId);
 	}
 
-	public boolean changeProductStatus(ProductOrder productOrder) {
-		
-		int queryResult = orderDao.update(productOrder);
-		
-		return false;
+	public OrderHistoryDto showProductHistoryNonmember(NonmemberVo nonmemberVo) {
+		return orderDao.showProductHistoryNonmember(nonmemberVo);
+	}
+
+	public boolean changeOrderStatusWithReason(@Valid OrderProductVo orderProductVo) {
+		return orderDao.updateOrderProduct(orderProductVo);
 	}
 
 }

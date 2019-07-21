@@ -1,13 +1,21 @@
-package com.cafe24.dto;
+package com.cafe24.vo;
+
+import javax.validation.constraints.NotEmpty;
+import com.cafe24.validator.constraints.OrderStatusValid;
 
 // 주문 상품 테이블
-public class ProductOrder {
+public class OrderProductVo {
 
 	private long orderNo;
+	
 	private long productNo;
 	private long quantity;
 	private String shippingStatus;
+	
+	@OrderStatusValid
 	private String orderStatus;
+	
+	@NotEmpty
 	private String orderStatusChangeReason;
 	
 	public long getOrderNo() {
@@ -49,9 +57,8 @@ public class ProductOrder {
 	
 	@Override
 	public String toString() {
-		return "ProductOrder [orderNo=" + orderNo + ", productNo=" + productNo + ", quantity=" + quantity
+		return "OrderProductVo [orderNo=" + orderNo + ", productNo=" + productNo + ", quantity=" + quantity
 				+ ", shippingStatus=" + shippingStatus + ", orderStatus=" + orderStatus + ", orderStatusChangeReason="
 				+ orderStatusChangeReason + "]";
 	}
-	
 }

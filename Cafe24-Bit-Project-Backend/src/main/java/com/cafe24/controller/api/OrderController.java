@@ -4,22 +4,28 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cafe24.dto.JSONResult;
+import com.cafe24.dto.OrderBuyDto;
+import com.cafe24.dto.OrderHistoryDto;
 import com.cafe24.dto.OrderPageDto;
 import com.cafe24.dto.ProductOptionDto;
-import com.cafe24.dto.ProductOrder;
 import com.cafe24.service.OrderService;
+import com.cafe24.vo.NonmemberVo;
+import com.cafe24.vo.OrderProductVo;
 import com.cafe24.vo.ProductQuantityVo;
 
 import io.swagger.annotations.ApiOperation;
@@ -79,6 +85,7 @@ public class OrderController {
 					.body(JSONResult.fail("잘못된 요청"));
 		
 		// 정상 동작
+		// 해당 부분에서 available_quantity 감소
 		Map<String, Object> queryResult = orderService.orderPageConnectWithOrderProducts(orderPageDto);
 		
 		return ResponseEntity
@@ -88,86 +95,147 @@ public class OrderController {
 	
 	@ApiOperation(value = "주문완료 버튼 클릭")
 	@RequestMapping(value= "/buy", method=RequestMethod.POST)
-	public Map<String, Object> ordering(
-			@RequestBody Map<String, Object> params) {
+	public ResponseEntity<JSONResult> productBuy(
+			@RequestBody @Valid OrderBuyDto orderBuyDto,
+			BindingResult br) {
+	
+		// 객체 Validation에 맞지 않는 경우
+		if(br.hasErrors())
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail(br.getAllErrors().get(0).getDefaultMessage()));
 		
-		Map<String, Object> result = new HashMap<String, Object>();
+		// 회원의 아이디, 비회원의 맥주소가 둘 다 없는 경우
+		if(orderBuyDto.getMemberId()==null && orderBuyDto.getNonmemberMac()==null)
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail("잘못된 요청"));
 		
-		/* 서비스 부분에서 json으로 넘어온 Map 데이터를 제대로된 타입으로 변경
-		List<ProductInfo> productInfos = new ArrayList<ProductInfo>();
-		for(Object productInfo : (ArrayList<Object>) params.get("ProductInfo")) {
-			productInfos.add(new Gson().fromJson(productInfo.toString(), ProductInfo.class));
+		// TotalPrice 유효성 검사
+		if((Long)orderBuyDto.getTotalPrice()==null ||
+				!orderService.isMatchPrice(orderBuyDto.getProductOptionDto(), orderBuyDto.getTotalPrice())) {
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail("잘못된 요청"));
 		}
 		
-		// 데이터에 string 타입으로 인해 space(공백)가 있으면 toJson으로 한번 더 묶어주어야 제대로 파싱이 동작
-		OrderVo orderVo = new Gson().fromJson(
-				new Gson().toJson(params.get("OrderVo")), OrderVo.class);
-		*/
+		// 비회원 입력값 유효성 검사
+		if(orderBuyDto.getNonmemberMac()!=null) {
+			
+			// 필수 입력 항목 검사
+			if(orderBuyDto.getNonmemberPhone()==null || orderBuyDto.getNonmemberPass()==null ||
+					orderBuyDto.getNonmemberName()==null || orderBuyDto.getNonmemberRefundName()==null ||
+					orderBuyDto.getNonmemberRefundNumber()==null)
+				return ResponseEntity
+						.status(HttpStatus.BAD_REQUEST)
+						.body(JSONResult.fail("필수 입력 항목을 입력해 주세요."));
+			
+			Pattern pattern = null;
+			// 핸드폰 유효성 검사
+			pattern = Pattern.compile("^01(?:0|1|[6-9])-(?:\\d{3}|\\d{4})-\\d{4}$");
+			if(!pattern.matcher(orderBuyDto.getNonmemberPhone()).matches())
+				return ResponseEntity
+						.status(HttpStatus.BAD_REQUEST)
+						.body(JSONResult.fail("휴대폰번호 형식이 올바르지 않습니다."));
+			
+			// 이름 유효성 검사
+			pattern = Pattern.compile("^[가-힣]{2,4}|[a-zA-Z]{2,10}\\s[a-zA-Z]{2,10}$");
+			if(!pattern.matcher(orderBuyDto.getNonmemberName()).matches())
+				return ResponseEntity
+						.status(HttpStatus.BAD_REQUEST)
+						.body(JSONResult.fail("이름의 형식이 올바르지 않습니다."));
+		}
 		
-		orderService.BuyProducts(params);
+		// 정상 동작
+		boolean queryResult = orderService.BuyProducts(orderBuyDto);
+		if(!queryResult)
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(JSONResult.fail("데이터베이스 쿼리 실패"));
 		
-		return result;
-		
-		// 주문 페이지에서의 주문하는 상품 데이터가 그대로 넘어오는지 확인
-		
-		// OrderVo 객체의 유효성 검사
-		
-		// 회원인 경우 세션에 저장되어있는 아이디와 요청하는 회원아이디가 같은지 확인
-		
-		// 비회원인 경우 세션에 저장되어있는 맥주소와 요청하는 맥주소가 같은지 확인
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(queryResult));
 	}
 	
 	@ApiOperation(value = "주문완료 후 화면")
 	@RequestMapping(value= "/success", method=RequestMethod.GET)
-	public Map<String, Object> success() {
-		Map<String, Object> result = new HashMap<String, Object>();
-		return result;
+	public ResponseEntity<JSONResult> success() {
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(null));
 	}
 	
-	@ApiOperation(value = "주문 내역 조회")
-	@RequestMapping(value= "/history", method=RequestMethod.GET)
-	public Map<String, Object> history() {
-		Map<String, Object> result = new HashMap<String, Object>();
+	@ApiOperation(value = "회원 주문 내역 조회")
+	@RequestMapping(value= "/history/{memberId}", method=RequestMethod.GET)
+	public ResponseEntity<JSONResult> historyMember(
+			@PathVariable(value="memberId") String memberId) {
 		
-		orderService.showProductHistory();
+		// 정상 동작
+		OrderHistoryDto orderHistory = orderService.showProductHistoryMember(memberId);
 		
-		return result;
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(orderHistory));
 	}
 	
-	@ApiOperation(value = "주문 상태 변경 페이지")
-	@RequestMapping(value= "/status/change", method=RequestMethod.POST)
-	public Map<String, Object> statusChangePage(
-			@RequestParam(value="orderNo", required=true, defaultValue="") String orderNo,
-			@RequestParam(value="productNo", required=true, defaultValue="") String productNo) {
-		Map<String, Object> result = new HashMap<String, Object>();
-		
-		return result;
-		
-		// orderNo와 productNo가 비어있는지 확인
-		
-		// orderNo와 productNo에 악의적인 공격에 사용할 수 있는 특수 문자 등을 입력했는지 검사
-		
-		// 회원인 경우 세션에 저장되어 있는 아이디와 orderNo를 바탕으로 주문 테이블의 회원 아이디와  비교하여 일치하는지 확인 
+	@ApiOperation(value = "비회원 주문 내역 조회 요청 페이지")
+	@RequestMapping(value= "/history/nonmember", method=RequestMethod.GET)
+	public ResponseEntity<JSONResult> historyNonmemberPage() {
 
-		// 비회원인 경우 세션에 저장되어 있는 맥주소와 orderNo를 바탕으로 주문 테이블의 맥주소와 비교하여 일치하는지 확인
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(null));
+	}
+	
+	@ApiOperation(value = "비회원 주문 내역 조회 요청")
+	@RequestMapping(value= "/history/nonmember", method=RequestMethod.POST)
+	public ResponseEntity<JSONResult> historyNonmember(
+			@RequestBody @Valid NonmemberVo nonmemberVo,
+			BindingResult br) {
+
+		// nonmemberVo 객체의 유효성 검사
+		if(br.hasErrors())
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail(br.getAllErrors().get(0).getDefaultMessage()));
+		
+		// 정상 동작
+		OrderHistoryDto orderHistory = orderService.showProductHistoryNonmember(nonmemberVo);
+		
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(orderHistory));
 	}
 	
 	@ApiOperation(value = "주문 상태 변경 요청")
-	@RequestMapping(value= "/status/change", method=RequestMethod.PUT)
-	public Map<String, Object> statusChangeRequest(@ModelAttribute ProductOrder productOrder) {
-		Map<String, Object> result = new HashMap<String, Object>();
-		
-		boolean isChange = orderService.changeProductStatus(productOrder);
-		
-		return result;
-		
-		// productOrder 객체가 비어있는지 검사
-		
-		// productOrder 객체의 형식 유효성 검사
-		
-		// 회원인 경우 세션에 저장되어 있는 아이디와 orderNo를 바탕으로 주문 테이블의 회원 아이디와  비교하여 일치하는지 확인 
+	@RequestMapping(value= "/status", method=RequestMethod.PUT)
+	public ResponseEntity<JSONResult> statusChangePage(
+			@RequestBody @Valid OrderProductVo orderProductVo,
+			BindingResult br) {
 
-		// 비회원인 경우 세션에 저장되어 있는 맥주소와 orderNo를 바탕으로 주문 테이블의 맥주소와 비교하여 일치하는지 확인
+		// OrderProductVo 객체의 유효성 검사
+		if(br.hasErrors())
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail(br.getAllErrors().get(0).getDefaultMessage()));
+		
+		if(orderProductVo.getOrderNo()==0 || orderProductVo.getProductNo()==0
+				|| (Long)orderProductVo.getQuantity()!=0)
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail("잘못된 요청 입니다."));
+		
+		// 정상 동작
+		boolean queryResult = orderService.changeOrderStatusWithReason(orderProductVo);
+		if(!queryResult)
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(JSONResult.fail("데이터베이스 쿼리 실패"));
+		
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(queryResult));
 	}
-
+	
 }

@@ -3,7 +3,7 @@ package com.cafe24.controller.api;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -1211,5 +1211,37 @@ public class MemberControllerTest {
 		resultActions
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.result", is("success")));
+	}
+	
+	@Test
+	public void Test_7_MemberInfoChange() throws Exception {
+		
+		// 정상 동작
+		MemberVo memberVo = new MemberVo();
+		memberVo.setId("user1");
+		memberVo.setPass("user1!@#$%^&*(");
+		memberVo.setName("이름일");
+		memberVo.setAddress("유저1의 주소");
+		memberVo.setTel("02-111-1111");
+		memberVo.setPhone("010-1111-1111");
+		memberVo.setIsmessage(true);
+		memberVo.setEmail("user1@cafe24.com");
+		memberVo.setIsmail(true);
+		memberVo.setBirth("2019-07-20");
+		memberVo.setRefundName("유저은행1");
+		memberVo.setRefundNumber("111-1111-1111-1111");
+		
+		ResultActions resultActions = 
+			mockMvc
+			.perform(put("/api/member/change")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(new Gson().toJson(memberVo)));
+		
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result", is("success")))
+			.andExpect(jsonPath("$.data", is(true)));
+		
+		// 예외 테스트 케이스는 회원가입에서 진행한 테스트케이스와 동일
 	}
 }

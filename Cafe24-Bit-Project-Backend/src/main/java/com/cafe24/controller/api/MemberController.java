@@ -146,4 +146,40 @@ public class MemberController {
 				.status(HttpStatus.OK)
 				.body(JSONResult.success(null));
 	}
+	
+	@ApiOperation(value = "회원 정보 수정 페이지")
+	@RequestMapping(value="/change", method=RequestMethod.GET)
+	public ResponseEntity<JSONResult> change(){
+		
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(null));
+
+	}
+	
+	@ApiOperation(value = "회원 정보 수정 요청")
+	@RequestMapping(value="/change", method=RequestMethod.PUT)
+	public ResponseEntity<JSONResult> change(
+			@RequestBody @Valid MemberVo memberVo,
+			BindingResult br){
+		
+		// 객체 Validation에 맞지 않는 경우
+		if(br.hasErrors())
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail(br.getAllErrors().get(0).getDefaultMessage()));
+		
+		// 쿼리로 변경 가능 목록
+		// 비밀번호, 이름, 주소, 전화번호, 핸드폰번호, 문자수신여부, 이메일, 메일 수신 여부, 환불 계좌 이름, 환불 계좌 번호
+		boolean queryResult = memberService.memberInfoChange(memberVo);
+		if(!queryResult)
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(JSONResult.fail("데이터베이스 쿼리 실패"));
+		// 정상 동작
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(queryResult));
+
+	}
 }

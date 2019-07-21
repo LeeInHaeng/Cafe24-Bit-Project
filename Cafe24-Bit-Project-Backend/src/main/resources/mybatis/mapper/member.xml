@@ -53,4 +53,19 @@
 		from member
 		where id=#{userid}
 	</select>
+	
+	<update id="update" parameterType="membervo">
+		update member 
+		set pass=#{pass},
+			name=hex(aes_encrypt(#{name}, SHA2('this is dummy salt', 512))),
+			address=hex(aes_encrypt(#{address}, SHA2('this is dummy salt', 512))),
+			tel=hex(aes_encrypt(#{tel}, SHA2('this is dummy salt', 512))),
+			phone=hex(aes_encrypt(#{phone}, SHA2('this is dummy salt', 512))),
+			ismessage=#{ismessage},
+			email=hex(aes_encrypt(#{email}, SHA2('this is dummy salt', 512))),
+			isemail=#{ismail},
+			refund_name=hex(aes_encrypt(#{refundName}, SHA2('this is dummy salt', 512))),
+			refund_number=hex(aes_encrypt(#{refundNumber}, SHA2('this is dummy salt', 512)))
+		where id=#{id}
+	</update>
 </mapper>
