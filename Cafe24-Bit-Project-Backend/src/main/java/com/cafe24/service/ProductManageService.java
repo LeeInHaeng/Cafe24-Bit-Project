@@ -1,15 +1,12 @@
 package com.cafe24.service;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cafe24.dao.CategoryDao;
 import com.cafe24.dao.ProductDao;
-import com.cafe24.dao.ProductImageDao;
-import com.cafe24.dao.ProductOptionDao;
+import com.cafe24.dto.AdminProductRegisterDto;
 import com.cafe24.dto.ProductSearch;
 import com.cafe24.vo.CategoryVo;
 import com.cafe24.vo.ProductVo;
@@ -20,18 +17,18 @@ public class ProductManageService {
 	@Autowired
 	private ProductDao productDao;
 	
-	@Autowired
-	private ProductImageDao productImageDao;
-	
-	@Autowired
-	private CategoryDao categoryDao;
-	
-	@Autowired
-	private ProductOptionDao productOptionDao;
+//	@Autowired
+//	private ProductImageDao productImageDao;
+//	
+//	@Autowired
+//	private CategoryDao categoryDao;
+//	
+//	@Autowired
+//	private ProductOptionDao productOptionDao;
 
-	public void registerNewProduct(Map<String, Object> registerInfo) {
-		// TODO Auto-generated method stub
-		
+	public boolean registerNewProduct(AdminProductRegisterDto adminProductRegisterDto) {
+		System.out.println(adminProductRegisterDto);
+		return false;
 	}
 
 	public List<ProductVo> getProductListWithSearch(ProductSearch searchParams) {
@@ -63,7 +60,7 @@ public class ProductManageService {
 
 	public List<CategoryVo> getCategoryList() {
 		
-		List<CategoryVo> categorys = categoryDao.getList();
+		// List<CategoryVo> categorys = categoryDao.getList();
 		
 		return null;
 	}

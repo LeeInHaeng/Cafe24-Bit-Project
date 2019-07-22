@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cafe24.dto.AdminProductRegisterDto;
+import com.cafe24.dto.JSONResult;
 import com.cafe24.dto.ProductSearch;
 import com.cafe24.service.ProductManageService;
 import com.cafe24.vo.CategoryVo;
@@ -29,32 +33,34 @@ public class ProductManageController {
 	
 	@ApiOperation(value = "상품 관리 메인 페이지")
 	@RequestMapping(value= {"/main", "/index"}, method=RequestMethod.GET)
-	public Map<String, Object> main() {
-		Map<String, Object> result = new HashMap<String, Object>();
-		return result;
+	public ResponseEntity<JSONResult> main() {
+		
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(null));
 		
 		// 관리자 계정으로 접속 되어있는지 확인
 	}
 
 	@ApiOperation(value = "상품 등록 페이지")
 	@RequestMapping(value= "/register", method=RequestMethod.GET)
-	public Map<String, Object> register() {
-		Map<String, Object> result = new HashMap<String, Object>();
-		return result;
+	public ResponseEntity<JSONResult> register() {
 		
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(null));
 		// 관리자 계정으로 접속 되어있는지 확인
 	}
 	
 	@ApiOperation(value = "상품 등록 페이지에서 상품 등록")
 	@RequestMapping(value= "/register", method=RequestMethod.POST)
-	public Map<String, Object> register(@RequestBody Map<String, Object> registerInfo) {
-		Map<String, Object> result = new HashMap<String, Object>();
+	public ResponseEntity<JSONResult> register(@RequestBody AdminProductRegisterDto adminProductRegisterDto) {
+
+		boolean queryResult = productManageService.registerNewProduct(adminProductRegisterDto);
 		
-		System.out.println(registerInfo);
-		
-		productManageService.registerNewProduct(registerInfo);
-		
-		return result;
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(null));
 		
 		// POST로 넘어오는 모든 객체에 대해 유효성 검사
 		

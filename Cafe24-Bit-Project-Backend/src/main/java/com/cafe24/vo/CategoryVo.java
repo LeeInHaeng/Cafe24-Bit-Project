@@ -4,9 +4,11 @@ package com.cafe24.vo;
 public class CategoryVo {
 
 	private long categoryNo;
-	private String bigClassifyName;
-	private String midClassifyName;
-	private String smallClassifyName;
+	private String categoryName;
+	private long groupno;
+	private long orderno;
+	private long depth;
+	private long parentno;
 	
 	public long getCategoryNo() {
 		return categoryNo;
@@ -14,29 +16,41 @@ public class CategoryVo {
 	public void setCategoryNo(long categoryNo) {
 		this.categoryNo = categoryNo;
 	}
-	public String getBigClassifyName() {
-		return bigClassifyName;
+	public String getCategoryName() {
+		return categoryName;
 	}
-	public void setBigClassifyName(String bigClassifyName) {
-		this.bigClassifyName = bigClassifyName;
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
 	}
-	public String getMidClassifyName() {
-		return midClassifyName;
+	public long getGroupno() {
+		return groupno;
 	}
-	public void setMidClassifyName(String midClassifyName) {
-		this.midClassifyName = midClassifyName;
+	public void setGroupno(long groupno) {
+		this.groupno = groupno;
 	}
-	public String getSmallClassifyName() {
-		return smallClassifyName;
+	public long getOrderno() {
+		return orderno;
 	}
-	public void setSmallClassifyName(String smallClassifyName) {
-		this.smallClassifyName = smallClassifyName;
+	public void setOrderno(long orderno) {
+		this.orderno = orderno;
+	}
+	public long getDepth() {
+		return depth;
+	}
+	public void setDepth(long depth) {
+		this.depth = depth;
+	}
+	public long getParentno() {
+		return parentno;
+	}
+	public void setParentno(long parentno) {
+		this.parentno = parentno;
 	}
 	
 	@Override
 	public String toString() {
-		return "CategoryVo [categoryNo=" + categoryNo + ", bigClassifyName=" + bigClassifyName + ", midClassifyName="
-				+ midClassifyName + ", smallClassifyName=" + smallClassifyName + "]";
+		return "CategoryVo [categoryNo=" + categoryNo + ", categoryName=" + categoryName + ", groupno=" + groupno
+				+ ", orderno=" + orderno + ", depth=" + depth + ", parentno=" + parentno + "]";
 	}
 	
 }

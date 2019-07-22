@@ -1,15 +1,16 @@
 package com.cafe24.controller.api;
 
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -27,10 +28,12 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.cafe24.dto.AdminProductRegisterDto;
 import com.cafe24.dto.ProductSearch;
 import com.cafe24.vo.CategoryVo;
 import com.cafe24.vo.ProductImageVo;
 import com.cafe24.vo.ProductOptionVo;
+import com.cafe24.vo.ProductQuantityVo;
 import com.cafe24.vo.ProductVo;
 import com.google.gson.Gson;
 
@@ -64,7 +67,8 @@ public class ProductManageControllerTest {
 							.perform(get("/api/admin/manage/product/index").contentType(MediaType.APPLICATION_JSON));
 				
 						resultActions
-							.andExpect(status().isOk());
+							.andExpect(status().isOk())
+							.andExpect(jsonPath("$.result", is("success")));
 				
 		// 관리자 계정으로 접속 되어있는지 확인
 	}
@@ -77,7 +81,8 @@ public class ProductManageControllerTest {
 					.perform(get("/api/admin/manage/product/register").contentType(MediaType.APPLICATION_JSON));
 		
 				resultActions
-					.andExpect(status().isOk());
+					.andExpect(status().isOk())
+					.andExpect(jsonPath("$.result", is("success")));
 				
 		// 관리자 계정으로 접속 되어있는지 확인
 	}
@@ -85,55 +90,72 @@ public class ProductManageControllerTest {
 	@Test
 	public void Test_3_NewProductRegistRequest() throws Exception {
 		
-		ProductVo productVo = new ProductVo();
-		productVo.setProductNo(1L);
-		productVo.setProductCategoryNo(1L);
-		productVo.setProductManageNo(1L);
-		productVo.setTitle("갈색 원피스");
-		productVo.setImage("http://대표이미지.jpg");
-		productVo.setPrice(10000L);
-		productVo.setMileageAdd(100L);
-		productVo.setDescription("갈색 원피스 설명");
-		productVo.setDescriptionDetail("갈색 원피스 상세 설명");
-		productVo.setShippingPrice(1000L);
+		//////////// 정상 동작 /////////
 		
-		productVo.setIsdisplay(false);
-		productVo.setIssell(false);
+		AdminProductRegisterDto dto = new AdminProductRegisterDto();
+		// 상품 정보 추가
+		dto.setProductCategoryNo(2L);
+		dto.setTitle("신상 코트");
+		dto.setImage("http://신상 코트의 대표이미지.jpg");
+		dto.setPrice(10000L);
+		dto.setMileageAdd(100L);
+		dto.setDescription("신상 코트 설명");
+		dto.setDescriptionDetail("신상 코트 상세 설명");
+		dto.setShippingPrice(1000L);
 		
-		ProductImageVo imageVo = new ProductImageVo();
-		imageVo.setProductNo(1L);
-		imageVo.setImageNo(1L);
-		imageVo.setImageDetail("http://추가이미지.jpg");
-		imageVo.setImageTitle("추가 이미지 제목1");
-		imageVo.setImageDescription("추가 이미지 설명1");
-		List<ProductImageVo> imageVoList = new ArrayList<ProductImageVo>();
-		imageVoList.add(imageVo);
+		// 상품의 추가 이미지 여러개 추가
+		ProductImageVo imageVo1 = new ProductImageVo();
+		imageVo1.setImageDetail("http://신상 코트의 추가이미지1.jpg");
+		imageVo1.setImageTitle("신상 코트 추가 이미지 제목1");
+		imageVo1.setImageDescription("신상 코트 추가 이미지 설명1");
 		
-		CategoryVo category = new CategoryVo();
-		category.setCategoryNo(1L);
-		category.setBigClassifyName("상의");
-		category.setMidClassifyName("원피스");
+		ProductImageVo imageVo2 = new ProductImageVo();
+		imageVo2.setImageDetail("http://신상 코트의 추가이미지2.jpg");
+		imageVo2.setImageTitle("신상 코트 추가 이미지 제목2");
+		imageVo2.setImageDescription("신상 코트 추가 이미지 설명2");
+
+		dto.setProductImageVo(Arrays.asList(imageVo1, imageVo2));
 		
-		ProductOptionVo option = new ProductOptionVo();
-		option.setOptionNo(1L);
-		option.setOptionName("색상");
+		// 상품 진열정보 추가
+		dto.setIsdisplay(false);
+		dto.setIssell(false);
+		dto.setIsdisplayMain(false);
+
 		
-		option.setOptionDetailNo(1L);
-		option.setOptionValue("갈색");
-		// option.setAvailableQuantity(50L);
-		// option.setAvailableQuantity(50L);
+		// 상품 옵션 여러개 추가
+		ProductOptionVo option1 = new ProductOptionVo();
+		option1.setOptionName("색상");
+		option1.setOptionValue("베이지색");
 		
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("ProductVo", productVo);
-		params.put("ImageVo", imageVo);
-		params.put("CategoryVo", category);
-		params.put("ProductOptionVo", option);
+		ProductOptionVo option2 = new ProductOptionVo();
+		option2.setOptionName("사이즈");
+		option2.setOptionValue("80");
+		
+		ProductOptionVo option3 = new ProductOptionVo();
+		option3.setOptionName("사이즈");
+		option3.setOptionValue("90");
+		
+		dto.setProductOptionVo(Arrays.asList(option1, option2, option3));
+
+		// 상품 옵션에 따른 재고 추가
+		ProductQuantityVo quantity1 = new ProductQuantityVo();
+		quantity1.setOptionCode("베이지색/80");
+		quantity1.setRealQuantity(50L);
+		quantity1.setAvailableQuantity(50L);
+		
+		ProductQuantityVo quantity2 = new ProductQuantityVo();
+		quantity2.setOptionCode("베이지색/90");
+		quantity2.setRealQuantity(50L);
+		quantity2.setAvailableQuantity(50L);
+		
+		dto.setProductQuantityVo(Arrays.asList(quantity1, quantity2));
+		
 	    
 		ResultActions resultActions = 
 				mockMvc
 					.perform(post("/api/admin/manage/product/register")
 							.contentType(MediaType.APPLICATION_JSON)
-							.content(new Gson().toJson(params)));
+							.content(new Gson().toJson(dto)));
 		
 		resultActions
 			.andExpect(status().isOk());
@@ -330,7 +352,7 @@ public class ProductManageControllerTest {
 		
 		CategoryVo category = new CategoryVo();
 		category.setCategoryNo(2L);
-		category.setBigClassifyName("코트");
+		//category.setBigClassifyName("코트");
 		
 		ResultActions resultActions = 
 				mockMvc
@@ -353,7 +375,7 @@ public class ProductManageControllerTest {
 		
 		CategoryVo category = new CategoryVo();
 		category.setCategoryNo(2L);
-		category.setBigClassifyName("하의");
+		//category.setBigClassifyName("하의");
 		
 		ResultActions resultActions = 
 				mockMvc
