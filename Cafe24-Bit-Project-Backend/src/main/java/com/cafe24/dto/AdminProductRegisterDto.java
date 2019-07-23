@@ -2,20 +2,39 @@ package com.cafe24.dto;
 
 import java.util.List;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+
+import org.hibernate.validator.constraints.Length;
+
 import com.cafe24.vo.ProductImageVo;
 import com.cafe24.vo.ProductOptionVo;
 import com.cafe24.vo.ProductQuantityVo;
 
 public class AdminProductRegisterDto {
 
+	private long productNo;
 	private long productCategoryNo;
+	
+	@NotEmpty(message="상품명은 필수 입력 항목 입니다.")
+	@Length(max=200, message="상품명을 200자 이내로 입력해 주세요.")
 	private String title;
 	private String image;
+	
+	@Min(value = 0L, message = "가격은 양수만 가능 합니다.")
 	private long price;
+	
+	@Min(value = 0L, message = "추가되는 마일리지는 양수만 가능 합니다.")
 	private long mileageAdd;
+	
+	@Length(max=255, message="상품 요약 설명을 255자 내로 입력해 주세요.")
 	private String description;
 	private String descriptionDetail;
+	
+	@Min(value = 0L, message = "배송 가격은 양수만 가능 합니다.")
 	private long shippingPrice;
+	
+	private String endDate;
 	
 	private boolean isdisplay;
 	private boolean issell;
@@ -28,6 +47,21 @@ public class AdminProductRegisterDto {
 	List<ProductQuantityVo> productQuantityVo;
 
 	
+	public String getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
+	}
+
+	public long getProductNo() {
+		return productNo;
+	}
+
+	public void setProductNo(long productNo) {
+		this.productNo = productNo;
+	}
 	public long getProductCategoryNo() {
 		return productCategoryNo;
 	}
@@ -142,12 +176,12 @@ public class AdminProductRegisterDto {
 
 	@Override
 	public String toString() {
-		return "AdminProductRegisterDto [productCategoryNo=" + productCategoryNo + ", title=" + title + ", image="
-				+ image + ", price=" + price + ", mileageAdd=" + mileageAdd + ", description=" + description
-				+ ", descriptionDetail=" + descriptionDetail + ", shippingPrice=" + shippingPrice + ", isdisplay="
-				+ isdisplay + ", issell=" + issell + ", isdisplayMain=" + isdisplayMain + ", productImageVo="
-				+ productImageVo + ", productOptionVo=" + productOptionVo + ", productQuantityVo=" + productQuantityVo
-				+ "]";
+		return "AdminProductRegisterDto [productNo=" + productNo + ", productCategoryNo=" + productCategoryNo
+				+ ", title=" + title + ", image=" + image + ", price=" + price + ", mileageAdd=" + mileageAdd
+				+ ", description=" + description + ", descriptionDetail=" + descriptionDetail + ", shippingPrice="
+				+ shippingPrice + ", endDate=" + endDate + ", isdisplay=" + isdisplay + ", issell=" + issell
+				+ ", isdisplayMain=" + isdisplayMain + ", productImageVo=" + productImageVo + ", productOptionVo="
+				+ productOptionVo + ", productQuantityVo=" + productQuantityVo + "]";
 	}
 	
 }

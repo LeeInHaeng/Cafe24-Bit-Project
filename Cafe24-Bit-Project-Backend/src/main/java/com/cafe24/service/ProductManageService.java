@@ -2,50 +2,40 @@ package com.cafe24.service;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cafe24.dao.ProductDao;
+import com.cafe24.dao.ProductManageDao;
 import com.cafe24.dto.AdminProductRegisterDto;
-import com.cafe24.dto.ProductSearch;
+import com.cafe24.dto.AdminProductSearchDto;
+import com.cafe24.dto.AdminProductSearchResultDto;
 import com.cafe24.vo.CategoryVo;
-import com.cafe24.vo.ProductVo;
 
 @Service
 public class ProductManageService {
 
 	@Autowired
-	private ProductDao productDao;
-	
-//	@Autowired
-//	private ProductImageDao productImageDao;
-//	
-//	@Autowired
-//	private CategoryDao categoryDao;
-//	
-//	@Autowired
-//	private ProductOptionDao productOptionDao;
+	private ProductManageDao productManageDao;
 
 	public boolean registerNewProduct(AdminProductRegisterDto adminProductRegisterDto) {
-		System.out.println(adminProductRegisterDto);
-		return false;
+		boolean queryResult = productManageDao.insert(adminProductRegisterDto);
+		return queryResult;
 	}
 
-	public List<ProductVo> getProductListWithSearch(ProductSearch searchParams) {
-		
-		// List<ProductVo> products = productDao.getList(searchParams);
-		
-		return null;
+	public List<AdminProductSearchResultDto> getProductListWithSearch(AdminProductSearchDto adminProductSearchDto) {
+
+		return productManageDao.searchProductList(adminProductSearchDto);
 	}
 
-	public void getOneProductEntierInfo(String productNo) {
-		// TODO Auto-generated method stub
-		
+	public AdminProductRegisterDto getOneProductEntierInfo(long productNo) {
+		return productManageDao.getOneProduct(productNo);
 	}
 
-	public void updateOneProductEntierInfo(Object updateInfo) {
-		// TODO Auto-generated method stub
-		
+	public boolean updateOneProductEntierInfo(AdminProductRegisterDto adminProductRegisterDto) {
+		boolean queryResult = productManageDao.update(adminProductRegisterDto);
+		return queryResult;
 	}
 
 	public void updateDisplaySelectedProducts(Object updateInfo) {

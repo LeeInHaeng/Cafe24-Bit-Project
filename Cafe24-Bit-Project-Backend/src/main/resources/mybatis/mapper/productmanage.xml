@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="productmanage">
+	
+	<insert id="insert" parameterType="adminproductregisterdto">
+		<selectKey keyProperty="productNo" resultType="long" order="BEFORE">
+			insert into product
+			values(default, #{productCategoryNo}, (select no from product_manage
+								where isdisplay=#{isdisplay} and issell=#{issell} and isdisplay_main=#{isdisplayMain}),
+					#{title}, #{image}, #{price}, #{mileageAdd}, #{description}, #{descriptionDetail},
+					#{shippingPrice}, now(), #{endDate});
+			
+			select last_insert_id() as productNo;
+		</selectKey>
+
+		insert into product_image values
+		<foreach collection="productImageVo" item="image" separator=", " close=";">
+			(default, #{productNo}, #{image.imageDetail}, #{image.imageTitle}, #{image.imageDescription})
+		</foreach>
+		
+		<foreach collection="productOptionVo" item="option">
+			insert into product_option(product_no, name)
+			select #{productNo}, #{option.optionName} from dual
+			where not exists(select no from product_option
+							where product_no=#{productNo} and name=#{option.optionName});
+				
+			insert into product_option_detail
+			values(default, (select max(no) from product_option), #{option.optionValue});
+		</foreach>
+		
+		insert into product_quantity values
+		<foreach collection="productQuantityVo" item="quantity" separator=", " close=";">
+			(default, #{productNo}, #{quantity.optionCode}, #{quantity.realQuantity}, #{quantity.availableQuantity})
+		</foreach>
+
+	</insert>
+	
+	
+	
+	<resultMap id="searchproductmap" type="adminproductsearchresultdto">
+	
+		<result property="productNo" column="productNo"/>
+		<result property="title" column="title"/>
+		<result property="image" column="image"/>
+		<result property="price" column="price"/>
+		<result property="regDate" column="regDate"/>
+		<result property="endDate" column="endDate"/>
+		<result property="isdisplay" column="isdisplay"/>
+		<result property="issell" column="issell"/>
+		<result property="isdisplayMain" column="isdisplayMain"/>
+		<result property="category" column="category"/>
+		
+		<collection property="productOptionVo" ofType="productoptionvo">
+			<result property="optionName" column="optionName"/>
+			<result property="optionValue" column="optionValue"/>
+		</collection>
+
+	</resultMap>
+	
+	<select id="searchProductList" parameterType="adminproductsearchdto" resultMap="searchproductmap">
+		select a.no as productNo, a.title as title, a.image as image, a.price as price,
+			a.reg_date as regDate, a.end_date as endDate,
+		    b.isdisplay as isdisplay, b.issell as issell, b.isdisplay_main as isdisplayMain,
+		    c.name as category,
+		    d.name as optionName, e.value as optionValue
+		from product a
+		join product_manage b on a.product_manage_no=b.no
+		join product_category c on a.product_category_no=c.no
+		join product_option d on a.no=d.product_no
+		join product_option_detail e on d.no=e.option_no
+		where b.isdisplay=#{isdisplay} and b.issell=#{issell} and b.isdisplay_main=#{isdisplayMain}
+		<if test="productName != null">
+			 and a.title like concat('%',#{productName},'%')
+		</if>
+		<if test="categoryName != null">
+			and c.name like concat('%',#{categoryName},'%')
+		</if> 
+		<if test="regDateStart != null">
+			<![CDATA[
+			and DATE(a.reg_date) >= #{regDateStart}
+			]]>
+		</if>
+		<if test="regDateEnd != null">
+			<![CDATA[
+			and DATE(a.reg_date) <= #{regDateEnd}
+			]]>
+		</if>
+		order by a.reg_date desc
+	</select>
+	
+	
+	<resultMap id="registeredproductmap" type="adminproductregisterdto">
+	
+		<result property="productNo" column="productNo"/>
+		<result property="productCategoryNo" column="productCategoryNo"/>
+		<result property="title" column="title"/>
+		<result property="image" column="image"/>
+		<result property="price" column="price"/>
+		<result property="mileageAdd" column="mileageAdd"/>
+		<result property="description" column="description"/>
+		<result property="descriptionDetail" column="descriptionDetail"/>
+		<result property="shippingPrice" column="shippingPrice"/>
+		<result property="endDate" column="endDate"/>
+		<result property="isdisplay" column="isdisplay"/>
+		<result property="issell" column="issell"/>
+		<result property="isdisplayMain" column="isdisplayMain"/>
+		
+		<collection property="productImageVo" ofType="productimagevo">
+			<result property="imageNo" column="imageNo"/>
+			<result property="imageDetail" column="imageDetail"/>
+			<result property="imageTitle" column="imageTitle"/>
+			<result property="imageDescription" column="imageDescription"/>
+		</collection>
+		
+		<collection property="productOptionVo" ofType="productoptionvo">
+			<result property="optionNo" column="optionNo"/>
+			<result property="optionName" column="optionName"/>
+			<result property="optionDetailNo" column="optionDetailNo"/>
+			<result property="optionValue" column="optionValue"/>
+		</collection>
+		
+		<collection property="productQuantityVo" ofType="productquantityvo">
+			<result property="optionCode" column="optionCode"/>
+			<result property="realQuantity" column="realQuantity"/>
+			<result property="availableQuantity" column="availableQuantity"/>
+		</collection>
+
+	</resultMap>
+	
+	<select id="getOneProduct" parameterType="long" resultMap="registeredproductmap">
+		select a.no as productNo, a.product_category_no as productCategoryNo,
+			a.title as title, a.image as image, a.price as price, a.mileage_add as mileageAdd,
+		    a.description as description, a.description_detail as descriptionDetail,
+		    a.shipping_price as shippingPrice, a.end_date as endDate,
+		    b.isdisplay as isdisplay, b.issell as issell, b.isdisplay_main as isdisplayMain,
+		    c.no as imageNo, c.image as imageDetail, c.image_title as imageTitle, c.image_description as imageDescription,
+		    d.no as optionNo, d.name as optionName,
+		    e.no as optionDetailNo, e.value as optionValue,
+		    f.no as quantityNo,
+		    f.option_code as optionCode, f.real_quantity as realQuantity, f.available_quantity as availableQuantity
+		from product a
+		join product_manage b on a.product_manage_no=b.no
+		join product_image c on a.no=c.product_no
+		join product_option d on a.no=d.product_no
+		join product_option_detail e on d.no=e.option_no
+		join product_quantity f on a.no=f.product_no
+		where a.no=#{productNo}
+	</select>
+	
+	<update id="update" parameterType="adminproductregisterdto">
+		
+	</update>
+	
+</mapper>

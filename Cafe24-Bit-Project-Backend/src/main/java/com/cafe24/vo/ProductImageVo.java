@@ -1,11 +1,17 @@
 package com.cafe24.vo;
 
+import javax.validation.constraints.NotEmpty;
+
+import org.hibernate.validator.constraints.Length;
+
 // 상품 이미지 테이블
 public class ProductImageVo {
 
 	private long imageNo;
 	private long productNo;
 	private String imageDetail;
+
+	@Length(max=200, message="이미지 제목을 200자 이내로 입력해 주세요.")
 	private String imageTitle;
 	private String imageDescription;
 	
@@ -21,6 +27,7 @@ public class ProductImageVo {
 	public void setProductNo(long productNo) {
 		this.productNo = productNo;
 	}
+	
 	public String getImageDetail() {
 		return imageDetail;
 	}

@@ -228,7 +228,7 @@
 		join product_option_detail e on d.product_option_detail_no=e.no
 		where a.nonmember_mac=(select mac from nonmember
 								where phone=hex(aes_encrypt(#{nonmemberPhone}, SHA2('this is dummy salt', 512)))
-									and pass=#{nonmemberPass})
+									and pass=#{nonmemberPass} limit 0,1)
 		order by order_date desc
 	</select>
 	

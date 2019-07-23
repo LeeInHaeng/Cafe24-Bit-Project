@@ -1,13 +1,19 @@
 package com.cafe24.vo;
 
+import org.hibernate.validator.constraints.Length;
+
 // 상품 옵션, 상품 옵션 상세 테이블
 public class ProductOptionVo {
 
 	private long optionNo;
 	private long productNo;
+	
+	@Length(max=255, message="상품 옵션의 이름을 255자 내로 입력해 주세요.")
 	private String optionName;
 	
 	private long optionDetailNo;
+	
+	@Length(max=255, message="상품 옵션의 값을 255자 내로 입력해 주세요.")
 	private String optionValue;
 	
 	public long getOptionNo() {

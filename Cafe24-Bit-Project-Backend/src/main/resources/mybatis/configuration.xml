@@ -26,12 +26,18 @@
 		<typeAlias alias="orderproductdto" type="com.cafe24.dto.OrderProductDto"></typeAlias>
 		<typeAlias alias="orderbuydto" type="com.cafe24.dto.OrderBuyDto"></typeAlias>
 		<typeAlias alias="orderhistorydto" type="com.cafe24.dto.OrderHistoryDto"></typeAlias>
+		
+		<typeAlias alias="adminproductregisterdto" type="com.cafe24.dto.AdminProductRegisterDto"></typeAlias>
+		<typeAlias alias="adminproductsearchdto" type="com.cafe24.dto.AdminProductSearchDto"></typeAlias>
+		<typeAlias alias="adminproductsearchresultdto" type="com.cafe24.dto.AdminProductSearchResultDto"></typeAlias>
     </typeAliases>	
 	<mappers>
 		<mapper resource="mybatis/mapper/member.xml" />
 		<mapper resource="mybatis/mapper/product.xml" />
 		<mapper resource="mybatis/mapper/cart.xml" />
 		<mapper resource="mybatis/mapper/order.xml" />
+		<mapper resource="mybatis/mapper/order.xml" />
+		<mapper resource="mybatis/mapper/productmanage.xml" />
 	</mappers>
 	
 </configuration>
