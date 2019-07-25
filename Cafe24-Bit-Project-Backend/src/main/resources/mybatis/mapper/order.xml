@@ -114,12 +114,15 @@
 		<selectKey keyProperty="orderNo" resultType="long" order="BEFORE">
 		
 			insert into nonmember
-			values(#{nonmemberMac}, 
-				hex(aes_encrypt(#{nonmemberPhone}, SHA2('this is dummy salt', 512))),
+			select #{nonmemberMac}, hex(aes_encrypt(#{nonmemberPhone}, SHA2('this is dummy salt', 512))),
 				#{nonmemberPass},
 				hex(aes_encrypt(#{nonmemberName}, SHA2('this is dummy salt', 512))),
 				hex(aes_encrypt(#{nonmemberRefundName}, SHA2('this is dummy salt', 512))),
-				hex(aes_encrypt(#{nonmemberRefundNumber}, SHA2('this is dummy salt', 512))));
+				hex(aes_encrypt(#{nonmemberRefundNumber}, SHA2('this is dummy salt', 512)))
+			from dual
+			where not exists(select mac from nonmember
+								where phone=hex(aes_encrypt(#{nonmemberPhone}, SHA2('this is dummy salt', 512))) and
+									pass=#{nonmemberPass});
 		
 			insert into `order`
 			values(default, null, #{nonmemberMac},
