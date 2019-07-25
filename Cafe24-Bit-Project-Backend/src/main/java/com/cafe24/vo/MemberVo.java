@@ -42,6 +42,7 @@ public class MemberVo {
 	
 	@DateValid
 	private String birth;
+	private int age;
 	
 	@NotEmpty(message="환불 계좌 은행명은 필수 입력 항목 입니다.")
 	@Length(max=255, message="환불 계좌 은행명을 255자 내로 입력해 주세요.")
@@ -128,6 +129,13 @@ public class MemberVo {
 	public void setBirth(String birth) {
 		this.birth = birth;
 	}
+	
+	public int getAge() {
+		return age;
+	}
+	public void setAge(int age) {
+		this.age = age;
+	}
 	public long getMileage() {
 		return mileage;
 	}
@@ -157,8 +165,8 @@ public class MemberVo {
 	public String toString() {
 		return "MemberVo [id=" + id + ", pass=" + pass + ", name=" + name + ", address=" + address + ", tel=" + tel
 				+ ", phone=" + phone + ", ismessage=" + ismessage + ", email=" + email + ", ismail=" + ismail
-				+ ", birth=" + birth + ", refundName=" + refundName + ", refundNumber=" + refundNumber + ", mileage="
-				+ mileage + ", role=" + role + ", regDate=" + regDate + ", status=" + status + "]";
+				+ ", birth=" + birth + ", age=" + age + ", refundName=" + refundName + ", refundNumber=" + refundNumber
+				+ ", mileage=" + mileage + ", role=" + role + ", regDate=" + regDate + ", status=" + status + "]";
 	}
 	
 }

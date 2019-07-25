@@ -1,18 +1,20 @@
 package com.cafe24.controller.api;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cafe24.dto.UserSearch;
+import com.cafe24.dto.AdminCheckedUserUpdateDto;
+import com.cafe24.dto.AdminUserSearchDto;
+import com.cafe24.dto.JSONResult;
 import com.cafe24.service.UserManageService;
+import com.cafe24.vo.MemberVo;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -25,34 +27,44 @@ public class UserManageController {
 
 	@ApiOperation(value = "고객 관리 메인 페이지")
 	@RequestMapping(value= "", method=RequestMethod.GET)
-	public Map<String, Object> main() {
-		Map<String, Object> result = new HashMap<String, Object>();
-		return result;
+	public ResponseEntity<JSONResult> main() {
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(null));
 	}
 	
 	@ApiOperation(value = "고객 목록 검색")
 	@RequestMapping(value= "/list", method=RequestMethod.POST)
-	public Map<String, Object> list(@ModelAttribute UserSearch searchVo) {
-		Map<String, Object> result = new HashMap<String, Object>();
+	public ResponseEntity<JSONResult> list(
+			@RequestBody AdminUserSearchDto searchDto) {
+
+		if(searchDto==null)
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail("잘못된 요청 입니다."));
 		
-		userManageService.getUserListWithSearch(searchVo);
+		List<MemberVo> members = userManageService.getUserListWithSearch(searchDto);
 		
-		return result;
-		
-		// 검색 객체의 유효성 검사
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(members));
 		
 		// 관리자 계정으로 접속 되어있는지 확인
 	}
 	
 	@ApiOperation(value = "고객 상태 변경")
 	@RequestMapping(value= "", method=RequestMethod.PUT)
-	public Map<String, Object> change(
-			@RequestBody Object updateInfo) {
-		Map<String, Object> result = new HashMap<String, Object>();
+	public ResponseEntity<JSONResult> change(
+			@RequestBody AdminCheckedUserUpdateDto updateDto) {
 		
-		userManageService.updateCheckedUser(updateInfo);
-		
-		return result;
+		boolean queryResult = userManageService.updateCheckedUser(updateDto);
+		if(!queryResult)
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(JSONResult.fail("데이터베이스 쿼리 실패"));
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(queryResult));
 		
 		// 사용자의 아이디와 사용자 상태가 제대로 넘어오는지 확인
 		

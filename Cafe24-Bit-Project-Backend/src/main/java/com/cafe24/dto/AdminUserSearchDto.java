@@ -1,6 +1,6 @@
 package com.cafe24.dto;
 
-public class UserSearch {
+public class AdminUserSearchDto {
 	
 	private String memberId;
 	private String name;
@@ -10,6 +10,7 @@ public class UserSearch {
 	private long ageEnd;
 	private String joinDateStart;
 	private String joinDateEnd;
+	private String status;
 	
 	private long buyPriceStart;
 	private long buyPriceEnd;
@@ -17,8 +18,6 @@ public class UserSearch {
 	private long buyCountEnd;
 	private String orderDateStart;
 	private String orderDateEnd;
-	
-	private long productNo;
 
 	public String getMemberId() {
 		return memberId;
@@ -84,6 +83,14 @@ public class UserSearch {
 		this.joinDateEnd = joinDateEnd;
 	}
 
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
 	public long getBuyPriceStart() {
 		return buyPriceStart;
 	}
@@ -132,22 +139,13 @@ public class UserSearch {
 		this.orderDateEnd = orderDateEnd;
 	}
 
-	public long getProductNo() {
-		return productNo;
-	}
-
-	public void setProductNo(long productNo) {
-		this.productNo = productNo;
-	}
-
 	@Override
 	public String toString() {
-		return "UserSearch [memberId=" + memberId + ", name=" + name + ", ismessage=" + ismessage + ", ismail=" + ismail
-				+ ", ageStart=" + ageStart + ", ageEnd=" + ageEnd + ", joinDateStart=" + joinDateStart
-				+ ", joinDateEnd=" + joinDateEnd + ", buyPriceStart=" + buyPriceStart + ", buyPriceEnd=" + buyPriceEnd
-				+ ", buyCountStart=" + buyCountStart + ", buyCountEnd=" + buyCountEnd + ", orderDateStart="
-				+ orderDateStart + ", orderDateEnd=" + orderDateEnd + ", productNo=" + productNo + "]";
+		return "AdminUserSearchDto [memberId=" + memberId + ", name=" + name + ", ismessage=" + ismessage + ", ismail="
+				+ ismail + ", ageStart=" + ageStart + ", ageEnd=" + ageEnd + ", joinDateStart=" + joinDateStart
+				+ ", joinDateEnd=" + joinDateEnd + ", status=" + status + ", buyPriceStart=" + buyPriceStart
+				+ ", buyPriceEnd=" + buyPriceEnd + ", buyCountStart=" + buyCountStart + ", buyCountEnd=" + buyCountEnd
+				+ ", orderDateStart=" + orderDateStart + ", orderDateEnd=" + orderDateEnd + "]";
 	}
-	
 	
 }

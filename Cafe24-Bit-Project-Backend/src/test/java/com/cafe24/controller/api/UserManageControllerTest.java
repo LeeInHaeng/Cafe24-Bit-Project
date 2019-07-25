@@ -1,13 +1,14 @@
 package com.cafe24.controller.api;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -21,11 +22,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.cafe24.dto.UserSearch;
+import com.cafe24.dto.AdminCheckedUserUpdateDto;
+import com.cafe24.dto.AdminUserSearchDto;
 import com.google.gson.Gson;
 
 @RunWith(SpringRunner.class)
@@ -59,11 +59,8 @@ public class UserManageControllerTest {
 	@Test
 	public void Test_2_GetMemberList() throws Exception {
 		
-		UserSearch search = new UserSearch();
-		search.setAgeStart(10L);
-		search.setAgeEnd(50L);
-		search.setBuyPriceStart(10000L);
-		search.setBuyPriceEnd(500000L);
+		// 정상동작1 - 검색 조건에 아무것도 없는 경우
+		AdminUserSearchDto search = new AdminUserSearchDto();
 		
 		ResultActions resultActions = 
 				mockMvc
@@ -72,9 +69,25 @@ public class UserManageControllerTest {
 							.content(new Gson().toJson(search)));
 		
 				resultActions
-					.andExpect(status().isOk());
-				
-		// 검색 객체의 유효성 검사
+					.andExpect(status().isOk())
+					.andDo(print());
+		
+		// 정상동작2 - 복합 옵션을 통한 검색
+		search = new AdminUserSearchDto();
+		search.setAgeStart(1L);
+		search.setAgeEnd(50L);
+		search.setBuyPriceStart(10000L);
+		search.setBuyPriceEnd(500000L);
+		
+		resultActions = 
+				mockMvc
+					.perform(post("/api/admin/manage/user/list")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(new Gson().toJson(search)));
+		
+				resultActions
+					.andExpect(status().isOk())
+					.andDo(print());		
 				
 		// 관리자 계정으로 접속 되어있는지 확인
 	}
@@ -82,26 +95,38 @@ public class UserManageControllerTest {
 	@Test
 	public void Test_3_updateCheckedUsers() throws Exception {
 		
-	    List<String> userId = new ArrayList<String>();
-	    userId.add("user1");
-	    userId.add("user2");
-
-	    String status = "비활성";
-	    
-	    List<Object> params = new ArrayList<Object>();
-	    params.add(userId);
-	    params.add(status);
+		// 정상동작
+		AdminCheckedUserUpdateDto dto = new AdminCheckedUserUpdateDto();
+		dto.setUserid(Arrays.asList("user1"));
+		dto.setMileage(100L);
+		dto.setStatus("비활성");
 	    
 		ResultActions resultActions = 
 				mockMvc
 					.perform(put("/api/admin/manage/user")
 							.contentType(MediaType.APPLICATION_JSON)
-							.content(new Gson().toJson(params)));
+							.content(new Gson().toJson(dto)));
 		
 		resultActions
-			.andExpect(status().isOk());
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result", is("success")))
+			.andExpect(jsonPath("$.data", is(true)));
 		
-		// 사용자의 아이디와 사용자 상태가 제대로 넘어오는지 확인
+		// 존재하지 않는 사용자에 대한 처리
+		dto = new AdminCheckedUserUpdateDto();
+		dto.setUserid(Arrays.asList("user99, user100"));
+		dto.setMileage(100L);
+		dto.setStatus("비활성");
+	    
+		resultActions = 
+				mockMvc
+					.perform(put("/api/admin/manage/user")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(new Gson().toJson(dto)));
+		
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result", is("fail")));
 		
 		// 관리자 계정으로 접속 되어있는지 확인
 	}

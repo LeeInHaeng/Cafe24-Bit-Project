@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="usermanage">
+	
+	<select id="getList" parameterType="adminusersearchdto" resultType="membervo">
+		select id,
+			cast(aes_decrypt(unhex(name), SHA2('this is dummy salt',512)) as char) as name,
+			cast(aes_decrypt(unhex(address), SHA2('this is dummy salt',512)) as char) as address,
+			cast(aes_decrypt(unhex(phone), SHA2('this is dummy salt',512)) as char) as phone,
+			cast(aes_decrypt(unhex(email), SHA2('this is dummy salt',512)) as char) as email,
+		    FLOOR( (CAST(REPLACE(CURRENT_DATE,'-','') AS UNSIGNED) - 
+		       CAST(REPLACE(cast(aes_decrypt(unhex(birth), SHA2('this is dummy salt',512)) as date),'-','') AS UNSIGNED)) / 10000 )+1 as age,
+		    reg_date as regDate, status
+		from member a
+		left join `order` b on a.id=b.member_id
+		where ismessage=#{ismessage} and isemail=#{ismail}
+		<if test="memberId != null">
+			and id=#{memberId}
+		</if>
+		<if test="name != null">
+			and name=hex(aes_encrypt(#{name}, SHA2('this is dummy salt', 512)))
+		</if>
+		<if test="ageStart != 0">
+			and (FLOOR( (CAST(REPLACE(CURRENT_DATE,'-','') AS UNSIGNED) - 
+		       CAST(REPLACE(cast(aes_decrypt(unhex(birth), SHA2('this is dummy salt',512)) as date),'-','') AS UNSIGNED)) / 10000 )+1) >= #{ageStart}
+		</if>
+		<if test="ageEnd != 0">
+			<![CDATA[
+			and (FLOOR( (CAST(REPLACE(CURRENT_DATE,'-','') AS UNSIGNED) - 
+		       CAST(REPLACE(cast(aes_decrypt(unhex(birth), SHA2('this is dummy salt',512)) as date),'-','') AS UNSIGNED)) / 10000 )+1) <= #{ageEnd}
+		    ]]>
+		</if>
+		<if test="joinDateStart != null">
+			<![CDATA[
+			and #{joinDateStart} <= reg_date
+			]]>
+		</if>
+		<if test="joinDateEnd != null">
+			and #{joinDateEnd} >= reg_date
+		</if>
+		<if test="status != null">
+			and status=#{status}
+		</if>
+		<if test="orderDateStart != null">
+			and order_date >= #{orderDateStart}
+		</if>
+		<if test="orderDateEnd != null">
+			<![CDATA[
+			and order_date <= #{orderDateEnd}
+			]]>
+		</if>
+		group by member_id
+		having true
+		<if test="buyPriceStart != 0">
+			and sum(total_price)>=#{buyPriceStart}
+		</if>
+		<if test="buyPriceEnd != 0">
+			<![CDATA[
+			and sum(total_price)<=#{buyPriceEnd}
+			]]>
+		</if>
+		<if test="buyCountStart != 0">
+			and count(*)>=#{buyCountStart}
+		</if>
+		<if test="buyCountEnd != 0">
+			<![CDATA[
+			and count(*)<=#{buyCountEnd}
+			]]>
+		</if>
+	
+	</select>
+	
+	<update id="update" parameterType="admincheckeduserupdatedto">
+		update member set
+		mileage=#{mileage}, status=#{status}
+		where
+		<foreach collection="userid" item="uid" separator=" or ">
+			id=#{uid}
+		</foreach>
+	</update>
+	
+</mapper>
