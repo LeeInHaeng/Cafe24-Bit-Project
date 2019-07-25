@@ -1,9 +1,6 @@
 package com.cafe24.controller.api;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +11,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cafe24.dto.AdminCheckedProductsDisplayUpdateDto;
 import com.cafe24.dto.AdminProductRegisterDto;
 import com.cafe24.dto.AdminProductSearchDto;
 import com.cafe24.dto.AdminProductSearchResultDto;
@@ -183,94 +180,171 @@ public class ProductManageController {
 	
 	@ApiOperation(value = "여러개의 상품 진열 설정 정보 업데이트")
 	@RequestMapping(value= "/display", method=RequestMethod.PUT)
-	public Map<String, Object> updateMultiple(@RequestBody Object updateInfo) {
-		Map<String, Object> result = new HashMap<String, Object>();
+	public ResponseEntity<JSONResult> updateMultiple(
+			@RequestBody AdminCheckedProductsDisplayUpdateDto dto) {
+
+		if(dto==null)
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail("잘못된 요청 입니다."));
 		
-		productManageService.updateDisplaySelectedProducts(updateInfo);
+		boolean queryResult = productManageService.updateDisplaySelectedProducts(dto);
+		if(!queryResult)
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(JSONResult.fail("데이터베이스 쿼리 실패"));
 		
-		return result;
-		
-		// 상품 번호, 진열 여부, 판매 여부가 비어있지 않은지 확인
-		
-		// 상품 번호, 진열 여부, 판매 여부에 악의적인 공격이 있을 수 있는 데이터가 들어있는지 확인
-		
-		// 진열 여부, 판매 여부의 전달되는 값이 true 일 경우 진열과 판매가 가능한지 체크한다
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(queryResult));
 		
 		// 관리자 권한으로 요청했는지 검사
 	}
 	
 	@ApiOperation(value = "여러개의 상품 삭제")
 	@RequestMapping(value= "", method=RequestMethod.DELETE)
-	public Map<String, Object> delete(@RequestParam(value="productNo") List<String> productNo) {
-		Map<String, Object> result = new HashMap<String, Object>();
+	public ResponseEntity<JSONResult> delete(@RequestBody List<Long> productNo) {
 		
-		productManageService.deleteSelectedProducts(productNo);
+		if(productNo==null || productNo.size()==0)
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail("잘못된 요청 입니다."));
 		
-		return result;
+		boolean queryResult = productManageService.deleteSelectedProducts(productNo);
+		if(!queryResult)
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(JSONResult.fail("데이터베이스 쿼리 실패"));
 		
-		// 넘어오는 상품 번호가 비어있지 않은지 확인
-		
-		// 넘어오는 상품 번호에 악의적인 공격이 있을만한 특수문자 등의 경우 처리
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(queryResult));
 		
 		// 관리자 권한으로 요청했는지 검사
 	}
 	
 	@ApiOperation(value = "상품 분류 관리 페이지")
 	@RequestMapping(value= "/category", method=RequestMethod.GET)
-	public Map<String, Object> category() {
-		Map<String, Object> result = new HashMap<String, Object>();
+	public ResponseEntity<JSONResult> category() {
 		
 		List<CategoryVo> categorys = productManageService.getCategoryList();
 		
-		return result;
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(categorys));
 		
 		// 관리자 계정으로 접속 되어있는지 확인
 	}
 	
-	@ApiOperation(value = "상품 분류 관리 페이지에서 카테고리 추가")
+	@ApiOperation(value = "상품 분류 관리 페이지에서 대분류 카테고리 추가")
+	@RequestMapping(value= "/category/parent", method=RequestMethod.POST)
+	public ResponseEntity<JSONResult> categoryAddParent(
+			@RequestBody @Valid CategoryVo categoryVo,
+			BindingResult br) {
+		
+		if(categoryVo==null)
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail("잘못된 요청 입니다."));
+		
+		// 객체 Validation에 맞지 않는 경우
+		if(br.hasErrors())
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail(br.getAllErrors().get(0).getDefaultMessage()));
+		
+		boolean queryResult = productManageService.addCategoryParent(categoryVo);
+		if(!queryResult)
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(JSONResult.fail("데이터베이스 쿼리 실패"));
+		
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(queryResult));
+				
+		// 관리자 계정으로 접속 되어있는지 확인
+	}
+	
+	@ApiOperation(value = "상품 분류 관리 페이지에서 하위 카테고리 추가")
 	@RequestMapping(value= "/category", method=RequestMethod.POST)
-	public Map<String, Object> category(CategoryVo categoryVo) {
-		Map<String, Object> result = new HashMap<String, Object>();
+	public ResponseEntity<JSONResult> categoryAdd(
+			@RequestBody @Valid CategoryVo categoryVo,
+			BindingResult br) {
 		
-		productManageService.addCategory(categoryVo);
+		if(categoryVo==null)
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail("잘못된 요청 입니다."));
 		
-		return result;
+		// 객체 Validation에 맞지 않는 경우
+		if(br.hasErrors())
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail(br.getAllErrors().get(0).getDefaultMessage()));
 		
-		// 카테고리 객체가 제대로 넘어오는지 확인
+		boolean queryResult = productManageService.addCategory(categoryVo);
+		if(!queryResult)
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(JSONResult.fail("데이터베이스 쿼리 실패"));
 		
-		// 카테고리 객체의 내용이 비어있지 않은지 확인
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(queryResult));
 				
 		// 관리자 계정으로 접속 되어있는지 확인
 	}
 	
 	@ApiOperation(value = "상품 분류 관리 페이지에서 카테고리 수정")
 	@RequestMapping(value= "/category", method=RequestMethod.PUT)
-	public Map<String, Object> categoryUpdate(CategoryVo categoryVo) {
-		Map<String, Object> result = new HashMap<String, Object>();
+	public ResponseEntity<JSONResult> categoryUpdate(
+			@RequestBody @Valid CategoryVo categoryVo,
+			BindingResult br) {
 		
-		productManageService.updateCategory(categoryVo);
+		if(categoryVo==null)
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail("잘못된 요청 입니다."));
 		
-		return result;
+		// 객체 Validation에 맞지 않는 경우
+		if(br.hasErrors())
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail(br.getAllErrors().get(0).getDefaultMessage()));
 		
-		// 카테고리 객체가 제대로 넘어오는지 확인
+		boolean queryResult = productManageService.updateCategory(categoryVo);
+		if(!queryResult)
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(JSONResult.fail("데이터베이스 쿼리 실패"));
 		
-		// 카테고리 객체의 내용이 비어있지 않은지 확인
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(queryResult));
 				
 		// 관리자 계정으로 접속 되어있는지 확인
 	}
 	
 	@ApiOperation(value = "상품 분류 관리 페이지에서 카테고리 삭제")
 	@RequestMapping(value= "/category/{categoryNo}", method=RequestMethod.DELETE)
-	public Map<String, Object> categoryDelete(@PathVariable(value="categoryNo") String categoryNo) {
-		Map<String, Object> result = new HashMap<String, Object>();
+	public ResponseEntity<JSONResult> categoryDelete(@PathVariable(value="categoryNo") String categoryNo) {
 		
-		productManageService.deleteCategory(categoryNo);
+		if(!isNumeric(categoryNo))
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(JSONResult.fail("잘못된 요청 입니다."));
 		
-		return result;
+		boolean queryResult = productManageService.deleteCategory(categoryNo);
+		if(!queryResult)
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(JSONResult.fail("데이터베이스 쿼리 실패"));
 		
-		// 카테고리 번호가 제대로 넘어오는지 확인
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(null));
 		
-		// 카테고리 번호가 비어있지 않은지 확인
 				
 		// 관리자 계정으로 접속 되어있는지 확인
 	}

@@ -30,6 +30,9 @@
 		<typeAlias alias="adminproductregisterdto" type="com.cafe24.dto.AdminProductRegisterDto"></typeAlias>
 		<typeAlias alias="adminproductsearchdto" type="com.cafe24.dto.AdminProductSearchDto"></typeAlias>
 		<typeAlias alias="adminproductsearchresultdto" type="com.cafe24.dto.AdminProductSearchResultDto"></typeAlias>
+		<typeAlias alias="admincheckedproductsdisplayupdatedto" type="com.cafe24.dto.AdminCheckedProductsDisplayUpdateDto"></typeAlias>
+		
+		<typeAlias alias="categoryvo" type="com.cafe24.vo.CategoryVo"></typeAlias>
     </typeAliases>	
 	<mappers>
 		<mapper resource="mybatis/mapper/member.xml" />

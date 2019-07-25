@@ -149,7 +149,141 @@
 	</select>
 	
 	<update id="update" parameterType="adminproductregisterdto">
+		update product set
+			title=#{title}, image=#{image}, price=#{price}, mileage_add=#{mileageAdd},
+			description=#{description}, description_detail=#{descriptionDetail}, 
+		    shipping_price=#{shippingPrice}, reg_date=now(), end_date=#{endDate},
+		    product_category_no=#{productCategoryNo},
+		    product_manage_no=(select no from product_manage
+								where isdisplay=#{isdisplay} and issell=#{issell} and isdisplay_main=#{isdisplayMain})
+		where no=#{productNo};
 		
+		delete from product_image where product_no=#{productNo};
+		insert into product_image values
+		<foreach collection="productImageVo" item="image" separator=", " close=";">
+			(default, #{productNo}, #{image.imageDetail}, #{image.imageTitle}, #{image.imageDescription})
+		</foreach>
+		
+		<foreach collection="productOptionVo" item="option">
+			insert into product_option(product_no, name)
+			select #{productNo}, #{option.optionName} from dual
+			where not exists(select no from product_option
+							where product_no=#{productNo} and name=#{option.optionName});
+				
+			insert into product_option_detail
+			values(default, (select max(no) from product_option), #{option.optionValue});
+		</foreach>
+		
+		delete from product_quantity where product_no=#{productNo};
+		insert into product_quantity values
+		<foreach collection="productQuantityVo" item="quantity" separator=", " close=";">
+			(default, #{productNo}, #{quantity.optionCode}, #{quantity.realQuantity}, #{quantity.availableQuantity})
+		</foreach>
 	</update>
+	
+	<update id="updateListDisplay" parameterType="admincheckedproductsdisplayupdatedto">
+		
+		update product set
+		product_manage_no=(select no from product_manage
+							where isdisplay=#{isdisplay} and issell=#{issell} and isdisplay_main=#{isdisplayMain})
+		where
+		<foreach collection="productNo" item="no" separator=" or ">
+			no=#{no}
+		</foreach>
+	</update>
+	
+	<update id="deleteList" parameterType="list">
+		
+		update product set
+		product_manage_no=(select no from product_manage
+							where isdisplay=false and issell=false and isdisplay_main=false)
+		where
+		<foreach collection="list" item="no" separator=" or ">
+			no=#{no}
+		</foreach>
+	</update>
+	
+	<select id="getCategoryList" resultType="categoryvo">
+		select no as categoryNo, name as categoryName,
+			groupno, orderno, depth, parentno
+		from product_category
+		order by groupno, orderno
+	</select>
+	
+	<insert id="insertCategoryParent" parameterType="categoryvo">
+		insert into product_category
+		values ( default, #{categoryName}, (select ifnull( max(groupno), 0 ) + 1
+											from product_category a),
+					1, 1, 0 )
+	</insert>
+	
+	<insert id="insertCategory" parameterType="categoryvo">
+		update product_category set orderno = orderno + 1
+		where groupno = (select * from (select groupno from product_category
+										where no=#{categoryNo}) a)
+			and
+				orderno > (select * from (select orderno from product_category
+											where no=#{categoryNo}) b);
+			
+		
+		insert into product_category
+		values(default, #{categoryName},
+				(select * from (select groupno from product_category
+								where no=#{categoryNo}) a),
+				(select * from (select orderno from product_category
+								where no=#{categoryNo}) b)+1,
+				(select * from (select depth from product_category
+								where no=#{categoryNo}) c)+1,
+					#{categoryNo});
+	</insert>
+	
+	<select id="isExistCategory" parameterType="long" resultType="int">
+		select count(*) from product_category
+		where no=#{categoryNo}
+	</select>
+	
+	<update id="updateCategory" parameterType="categoryvo">
+		update product_category set
+		name=#{categoryName}
+		where no=#{categoryNo}
+	</update>
+	
+	<delete id="deleteCategory" parameterType="long">
+		update product set
+		product_manage_no=(select no from product_manage
+							where isdisplay=false and issell=false and isdisplay_main=false)
+		where product_category_no=#{categoryNo};
+		
+		delete from product_category
+		where no=#{categoryNo}
+	</delete>
+	
+	<select id="getDeleteCategoryNo" parameterType="long" resultType="long">
+		select no from product_category
+		where orderno > (select * from (select orderno from product_category
+								where no=#{categoryNo}) a)
+			and
+			depth > (select * from (select depth from product_category
+								where no=#{categoryNo}) b)
+			and
+			groupno = (select * from (select groupno from product_category
+										where no=#{categoryNo}) c)
+	</select>
+	
+	<delete id="deleteCategoryChild" parameterType="list">
+		update product set
+		product_manage_no=(select no from product_manage
+							where isdisplay=false and issell=false and isdisplay_main=false)
+		where
+		<foreach collection="list" item="categoryNo" separator=" or " close=";">
+			product_category_no=#{categoryNo}
+		</foreach>
+		
+		delete from product_category
+		where
+		<foreach collection="list" item="categoryNo2" separator=" or ">
+			no=#{categoryNo2}
+		</foreach>
+	</delete>
 	
 </mapper>

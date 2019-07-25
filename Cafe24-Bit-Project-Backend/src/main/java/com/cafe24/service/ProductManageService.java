@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cafe24.dao.ProductManageDao;
+import com.cafe24.dto.AdminCheckedProductsDisplayUpdateDto;
 import com.cafe24.dto.AdminProductRegisterDto;
 import com.cafe24.dto.AdminProductSearchDto;
 import com.cafe24.dto.AdminProductSearchResultDto;
@@ -38,36 +39,48 @@ public class ProductManageService {
 		return queryResult;
 	}
 
-	public void updateDisplaySelectedProducts(Object updateInfo) {
-		// TODO Auto-generated method stub
-		
+	public boolean updateDisplaySelectedProducts(AdminCheckedProductsDisplayUpdateDto dto) {
+		boolean queryResult = productManageDao.updateListDisplay(dto);
+		return queryResult;
 	}
 
-	public void deleteSelectedProducts(List<String> productNo) {
-		// TODO Auto-generated method stub
-		
+	public boolean deleteSelectedProducts(List<Long> productNo) {
+		boolean queryResult = productManageDao.deleteList(productNo);
+		return queryResult;
 	}
 
 	public List<CategoryVo> getCategoryList() {
-		
-		// List<CategoryVo> categorys = categoryDao.getList();
-		
-		return null;
-	}
-
-	public void addCategory(CategoryVo categoryVo) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void updateCategory(CategoryVo categoryVo) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void deleteCategory(String categoryNo) {
-		// TODO Auto-generated method stub
-		
+		return productManageDao.getCategoryList();
 	}
 	
+	public boolean addCategoryParent(@Valid CategoryVo categoryVo) {
+		boolean queryResult = productManageDao.insertCategoryParent(categoryVo);
+		return queryResult;
+	}
+
+	public boolean addCategory(CategoryVo categoryVo) {
+		if(!productManageDao.existCategory(categoryVo.getCategoryNo()))
+			return false;
+		boolean queryResult = productManageDao.insertCategory(categoryVo);
+		return queryResult;
+	}
+
+	public boolean updateCategory(CategoryVo categoryVo) {
+		if(!productManageDao.existCategory(categoryVo.getCategoryNo()))
+			return false;
+		boolean queryResult = productManageDao.updateCategory(categoryVo);
+		return queryResult;
+	}
+
+	public boolean deleteCategory(String categoryNo) {
+		if(!productManageDao.existCategory(Long.parseLong(categoryNo)))
+			return false;
+		
+		List<Long> deleteCategoryNo = productManageDao.getDeleteCategoryNo(Long.parseLong(categoryNo));
+		boolean queryResult = productManageDao.deleteCategoryChild(deleteCategoryNo);
+		productManageDao.deleteCategory(Long.parseLong(categoryNo));
+		
+		return queryResult;
+	}
+
 }

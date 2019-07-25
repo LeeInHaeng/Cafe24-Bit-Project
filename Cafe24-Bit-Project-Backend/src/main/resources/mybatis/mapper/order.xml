@@ -104,7 +104,8 @@
 			
 			<foreach collection="product.productOptionDetailNo" item="option">
 				insert into order_product_option values
-				(default, #{orderNo}, #{product.productNo}, #{option});
+				(default, #{orderNo}, #{product.productNo}, (select value from product_option_detail
+															where no=#{option}));
 			</foreach>
 		</foreach>
 	</insert>
@@ -135,7 +136,8 @@
 			
 			<foreach collection="product.productOptionDetailNo" item="option">
 				insert into order_product_option values
-				(default, #{orderNo}, #{product.productNo}, #{option});
+				(default, #{orderNo}, #{product.productNo}, (select value from product_option_detail
+															where no=#{option}));
 			</foreach>
 		</foreach>
 	</insert>
@@ -180,8 +182,6 @@
 			<result property="quantity" column="quantity"/>
 			
 			<collection property="productOptionVo" ofType="productoptionvo">
-				<result property="optionNo" column="optionNo"/>
-				<result property="optionDetailNo" column="optionDetailNo"/>
 				<result property="optionValue" column="optionValue"/>
 			</collection>
 			
@@ -198,13 +198,11 @@
 		    b.order_status as orderStatus, b.order_status_change_reason as orderStatusChangeReason,
 		    c.title as title, c.image as image, c.price as price, c.mileage_add as mileageAdd,
 		    c.description as description, c.shipping_price as shippingPrice,
-		    d.no as optionNo,
-		    e.no as optionDetailNo, e.value as optionValue
+		    d.option_value as optionValue
 		from `order` a
 		join order_product b on a.no=b.order_no
 		join product c on b.product_no=c.no
 		join order_product_option d on b.order_no=d.order_no and b.product_no=d.product_no
-		join product_option_detail e on d.product_option_detail_no=e.no
 		where member_id=#{memberId}
 		order by order_date desc
 	</select>
@@ -219,13 +217,11 @@
 		    b.order_status as orderStatus, b.order_status_change_reason as orderStatusChangeReason,
 		    c.title as title, c.image as image, c.price as price, c.mileage_add as mileageAdd,
 		    c.description as description, c.shipping_price as shippingPrice,
-		    d.no as optionNo,
-		    e.no as optionDetailNo, e.value as optionValue
+		    d.option_value as optionValue
 		from `order` a
 		join order_product b on a.no=b.order_no
 		join product c on b.product_no=c.no
 		join order_product_option d on b.order_no=d.order_no and b.product_no=d.product_no
-		join product_option_detail e on d.product_option_detail_no=e.no
 		where a.nonmember_mac=(select mac from nonmember
 								where phone=hex(aes_encrypt(#{nonmemberPhone}, SHA2('this is dummy salt', 512)))
 									and pass=#{nonmemberPass} limit 0,1)

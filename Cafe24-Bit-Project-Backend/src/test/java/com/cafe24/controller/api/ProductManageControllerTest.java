@@ -5,13 +5,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -25,17 +23,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.cafe24.dto.AdminCheckedProductsDisplayUpdateDto;
 import com.cafe24.dto.AdminProductRegisterDto;
 import com.cafe24.dto.AdminProductSearchDto;
 import com.cafe24.vo.CategoryVo;
 import com.cafe24.vo.ProductImageVo;
 import com.cafe24.vo.ProductOptionVo;
 import com.cafe24.vo.ProductQuantityVo;
-import com.cafe24.vo.ProductVo;
 import com.google.gson.Gson;
 
 @RunWith(SpringRunner.class)
@@ -944,13 +940,14 @@ public class ProductManageControllerTest {
 		// 상품 정보 추가
 		dto.setProductNo(2L);
 		dto.setProductCategoryNo(2L);
-		dto.setTitle("신상 코트");
-		dto.setImage("http://신상 코트의 대표이미지.jpg");
+		dto.setTitle("업데이트된 신상 코트");
+		dto.setImage("http://업데이트된 신상 코트의 대표이미지.jpg");
 		dto.setPrice(10000L);
 		dto.setMileageAdd(100L);
-		dto.setDescription("신상 코트 설명");
-		dto.setDescriptionDetail("신상 코트 상세 설명");
+		dto.setDescription("업데이트된 신상 코트 설명");
+		dto.setDescriptionDetail("업데이트된 신상 코트 상세 설명");
 		dto.setShippingPrice(1000L);
+		dto.setEndDate("2222-02-22");
 		
 		// 상품의 추가 이미지 여러개 추가
 		ProductImageVo imageVo1 = new ProductImageVo();
@@ -1006,7 +1003,11 @@ public class ProductManageControllerTest {
 							.content(new Gson().toJson(dto)));
 		
 		resultActions
-			.andExpect(status().isOk());
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result", is("success")))
+			.andExpect(jsonPath("$.data", is(true)));
+		
+		// 유효성 검사는 상품 등록과 동일하므로 생략
 		
 		// 관리자 권한으로 요청했는지 검사
 	}
@@ -1014,32 +1015,23 @@ public class ProductManageControllerTest {
 	@Test
 	public void Test_8_SelectedProductsDisplayUpdate() throws Exception {
 		
-		List<Long> selectedProduct = new ArrayList<Long>();
-		selectedProduct.add(1L);
-		selectedProduct.add(2L);
-		
-		String isdisplay = "진열함";
-		String issell = "판매안함";
-		
-		List<Object> params = new ArrayList<Object>();
-		params.add(selectedProduct);
-		params.add(isdisplay);
-		params.add(issell);
+		// 정상 동작
+		AdminCheckedProductsDisplayUpdateDto dto = new AdminCheckedProductsDisplayUpdateDto();
+		dto.setProductNo(Arrays.asList(3L, 4L));
+		dto.setIsdisplay(false);
+		dto.setIssell(false);
+		dto.setIsdisplayMain(false);
 		
 		ResultActions resultActions = 
 				mockMvc
 					.perform(put("/api/admin/manage/product/display")
 							.contentType(MediaType.APPLICATION_JSON)
-							.content(new Gson().toJson(params)));
+							.content(new Gson().toJson(dto)));
 		
 		resultActions
-			.andExpect(status().isOk());
-		
-		// 상품 번호, 진열 여부, 판매 여부가 비어있지 않은지 확인
-		
-		// 상품 번호, 진열 여부, 판매 여부에 악의적인 공격이 있을 수 있는 데이터가 들어있는지 확인
-		
-		// 진열 여부, 판매 여부의 전달되는 값이 true 일 경우 진열과 판매가 가능한지 체크한다
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result", is("success")))
+			.andExpect(jsonPath("$.data", is(true)));
 		
 		// 관리자 권한으로 요청했는지 검사
 	}
@@ -1047,23 +1039,17 @@ public class ProductManageControllerTest {
 	@Test
 	public void Test_90_DeleteCheckedProducts() throws Exception {
 
-	    List<String> productNo = new ArrayList<String>();
-	    productNo.add("2");
-	    MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-	    params.addAll("productNo", productNo);
-	    
+		// 정상 동작
 		ResultActions resultActions = 
 				mockMvc
 					.perform(delete("/api/admin/manage/product")
 							.contentType(MediaType.APPLICATION_JSON)
-							.params(params));
+							.content(new Gson().toJson(Arrays.asList(1L))));
 		
 		resultActions
-			.andExpect(status().isOk());
-		
-		// 넘어오는 상품 번호가 비어있지 않은지 확인
-		
-		// 넘어오는 상품 번호에 악의적인 공격이 있을만한 특수문자 등의 경우 처리
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result", is("success")))
+			.andExpect(jsonPath("$.data", is(true)));
 		
 		// 관리자 권한으로 요청했는지 검사
 	}
@@ -1071,22 +1057,75 @@ public class ProductManageControllerTest {
 	@Test
 	public void Test_91_ProductCategoryManagePageConnect() throws Exception {
 		
+		// 정상 동작
 		ResultActions resultActions = 
 				mockMvc
 					.perform(get("/api/admin/manage/product/category").contentType(MediaType.APPLICATION_JSON));
 		
 				resultActions
-					.andExpect(status().isOk());
+					.andExpect(status().isOk())
+					.andExpect(jsonPath("$.result", is("success")))
+					.andDo(print());
 				
 		// 관리자 계정으로 접속 되어있는지 확인
 	}
 	
 	@Test
-	public void Test_92_ProductCategoryAdd() throws Exception {
+	public void Test_92_ProductCategoryAddParent() throws Exception {
 		
+		// 정상 동작
 		CategoryVo category = new CategoryVo();
-		category.setCategoryNo(2L);
-		//category.setBigClassifyName("코트");
+		category.setCategoryName("새로운 부모 카테고리");
+
+		
+		ResultActions resultActions = 
+				mockMvc
+					.perform(post("/api/admin/manage/product/category/parent")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(new Gson().toJson(category)));
+		
+				resultActions
+					.andExpect(status().isOk())
+					.andExpect(jsonPath("$.result", is("success")))
+					.andExpect(jsonPath("$.data", is(true)));
+				
+		// 카테고리 명을 넣지 않은 경우
+		category = new CategoryVo();
+
+		resultActions = 
+				mockMvc
+				.perform(post("/api/admin/manage/product/category/parent")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(new Gson().toJson(category)));
+
+		resultActions
+		.andExpect(status().isBadRequest())
+		.andExpect(jsonPath("$.result", is("fail")));
+		
+		// 카테고리명이 255자가 넘는 경우
+		category = new CategoryVo();
+		category.setCategoryName("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+
+		resultActions = 
+				mockMvc
+				.perform(post("/api/admin/manage/product/category/parent")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(new Gson().toJson(category)));
+
+		resultActions
+		.andExpect(status().isBadRequest())
+		.andExpect(jsonPath("$.result", is("fail")));
+				
+		// 관리자 계정으로 접속 되어있는지 확인
+	}
+	
+	@Test
+	public void Test_93_ProductCategoryAdd() throws Exception {
+		
+		// 정상 동작
+		CategoryVo category = new CategoryVo();
+		category.setCategoryNo(1L);
+		category.setCategoryName("자켓");
 		
 		ResultActions resultActions = 
 				mockMvc
@@ -1095,21 +1134,49 @@ public class ProductManageControllerTest {
 							.content(new Gson().toJson(category)));
 		
 				resultActions
-					.andExpect(status().isOk());
+					.andExpect(status().isOk())
+					.andExpect(jsonPath("$.result", is("success")))
+					.andExpect(jsonPath("$.data", is(true)));
 				
-		// 카테고리 객체가 제대로 넘어오는지 확인
-				
-		// 카테고리 객체의 내용이 비어있지 않은지 확인
+		// 카테고리 번호가 없는 경우
+		category = new CategoryVo();
+		category.setCategoryName("자켓");
+
+		resultActions = 
+				mockMvc
+				.perform(post("/api/admin/manage/product/category")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(new Gson().toJson(category)));
+
+		resultActions
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.result", is("fail")));
+		
+		// 카테고리 테이블에 존재하지 않는 카테고리인 경우
+		category = new CategoryVo();
+		category.setCategoryNo(9999L);
+		category.setCategoryName("자켓");
+
+		resultActions = 
+				mockMvc
+				.perform(post("/api/admin/manage/product/category")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(new Gson().toJson(category)));
+
+		resultActions
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.result", is("fail")));
 				
 		// 관리자 계정으로 접속 되어있는지 확인
 	}
 	
 	@Test
-	public void Test_92_ProductCategoryModify() throws Exception {
+	public void Test_94_ProductCategoryModify() throws Exception {
 		
+		// 정상 동작
 		CategoryVo category = new CategoryVo();
-		category.setCategoryNo(2L);
-		//category.setBigClassifyName("하의");
+		category.setCategoryNo(3L);
+		category.setCategoryName("수정된 카테고리 이름");
 		
 		ResultActions resultActions = 
 				mockMvc
@@ -1120,28 +1187,44 @@ public class ProductManageControllerTest {
 				resultActions
 					.andExpect(status().isOk());
 				
-		// 카테고리 객체가 제대로 넘어오는지 확인
-				
-		// 카테고리 객체의 내용이 비어있지 않은지 확인
+		// 유효성 검사는 위와 동일하므로 생략
 				
 		// 관리자 계정으로 접속 되어있는지 확인
 	}
 	
 	@Test
-	public void Test_93_ProductCategoryDelete() throws Exception {
+	public void Test_95_ProductCategoryDelete() throws Exception {
 		
+		// 정상 동작
 		ResultActions resultActions = 
 				mockMvc
 					.perform(delete("/api/admin/manage/product/category/1")
 							.contentType(MediaType.APPLICATION_JSON));
 		
 				resultActions
-					.andExpect(status().isOk());
+					.andExpect(status().isOk())
+					.andExpect(jsonPath("$.result", is("success")));
 				
-		// 카테고리 번호가 제대로 넘어오는지 확인
-				
-		// 카테고리 번호가 비어있지 않은지 확인
-				
+		// 삭제하고자 하는 카테고리의 번호가 숫자가 아닌 경우
+		resultActions = 
+				mockMvc
+				.perform(delete("/api/admin/manage/product/category/asd")
+						.contentType(MediaType.APPLICATION_JSON));
+
+		resultActions
+		.andExpect(status().isBadRequest())
+		.andExpect(jsonPath("$.result", is("fail")));
+		
+		// 삭제하고자 하는 카테고리의 번호가 없는 경우
+		resultActions = 
+				mockMvc
+				.perform(delete("/api/admin/manage/product/category/9999")
+						.contentType(MediaType.APPLICATION_JSON));
+
+		resultActions
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.result", is("fail")));
+
 		// 관리자 계정으로 접속 되어있는지 확인
 	}
 }

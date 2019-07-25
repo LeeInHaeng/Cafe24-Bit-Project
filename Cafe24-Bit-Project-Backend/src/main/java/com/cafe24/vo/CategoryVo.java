@@ -1,13 +1,26 @@
 package com.cafe24.vo;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+
+import org.hibernate.validator.constraints.Length;
+
 // 상품 카테고리 테이블
 public class CategoryVo {
 
 	private long categoryNo;
+	
+	@NotEmpty(message="카테고리 이름은 필수 입력 항목 입니다.")
+	@Length(max=255, message="카테고리 이름을 255자 내로 입력해 주세요.")
 	private String categoryName;
+	
+	@Min(value = 0L, message = "잘못된 요청 입니다.")
 	private long groupno;
+	@Min(value = 0L, message = "잘못된 요청 입니다.")
 	private long orderno;
+	@Min(value = 0L, message = "잘못된 요청 입니다.")
 	private long depth;
+	@Min(value = 0L, message = "잘못된 요청 입니다.")
 	private long parentno;
 	
 	public long getCategoryNo() {

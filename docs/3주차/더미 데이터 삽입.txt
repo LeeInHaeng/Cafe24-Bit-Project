@@ -1,3 +1,27 @@
+ALTER TABLE cart_product_option DROP FOREIGN KEY FK_cart_TO_cart_product_option;
+ALTER TABLE cart_product_option ADD CONSTRAINT FK_cart_TO_cart_product_option FOREIGN KEY (cart_no)
+REFERENCES cart(no) ON DELETE CASCADE ON UPDATE CASCADE;
+  
+ALTER TABLE product_option_detail DROP FOREIGN KEY FK_product_option_TO_product_option_detail;
+ALTER TABLE product_option_detail ADD CONSTRAINT FK_product_option_TO_product_option_detail FOREIGN KEY (option_no)
+REFERENCES product_option(no) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE cart_product_option DROP FOREIGN KEY FK_product_option_detail_TO_cart_product_option;
+ALTER TABLE cart_product_option ADD CONSTRAINT FK_product_option_detail_TO_cart_product_option FOREIGN KEY (product_option_detail_no)
+REFERENCES product_option_detail(no) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE cart_product_option DROP FOREIGN KEY FK_cart_TO_cart_product_option;
+ALTER TABLE cart_product_option ADD CONSTRAINT FK_cart_TO_cart_product_option FOREIGN KEY (cart_no)
+REFERENCES cart(no) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE cart DROP FOREIGN KEY FK_product_TO_cart;
+ALTER TABLE cart ADD CONSTRAINT FK_product_TO_cart FOREIGN KEY (product_no)
+REFERENCES product(no) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE product DROP FOREIGN KEY FK_product_category_TO_product;
+ALTER TABLE product ADD CONSTRAINT FK_product_category_TO_product FOREIGN KEY (product_category_no)
+REFERENCES product_category(no) ON DELETE SET NULL ON UPDATE SET NULL;
+
 insert into member
 values('user1','user1!@#$%^&*(',
 hex(aes_encrypt('이름1', SHA2('this is dummy salt', 512))),

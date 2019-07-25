@@ -4,10 +4,12 @@
 <mapper namespace="cart">
 	
 	<delete id="clear">
+		SET FOREIGN_KEY_CHECKS=0;
 		delete from cart;
 		alter table cart auto_increment=0;
 		delete from cart_product_option;
 		alter table cart_product_option auto_increment=0;
+		SET FOREIGN_KEY_CHECKS=1;
 	</delete>
 	
 	<insert id="insert" parameterType="cartvo">
