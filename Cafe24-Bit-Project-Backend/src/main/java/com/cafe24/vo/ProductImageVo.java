@@ -1,7 +1,5 @@
 package com.cafe24.vo;
 
-import javax.validation.constraints.NotEmpty;
-
 import org.hibernate.validator.constraints.Length;
 
 // 상품 이미지 테이블

@@ -234,7 +234,7 @@ public class OrderControllerTest {
 	@Test
 	public void Test_3_BuyProducts() throws Exception {
 		
-		// orderDao.clear();
+		orderDao.clear();
 		
 		// 정상 동작 - 회원 주문
 		OrderBuyDto dto = new OrderBuyDto();
