@@ -22,7 +22,7 @@ mybatis:
 # 개발 환경
 ---
 server:
-   port: 8081
+   port: 8080
    context-path: /
 spring:
    profiles: dev
@@ -36,7 +36,7 @@ spring:
 # 배포 환경
 ---
 server:
-   port: 8081
+   port: 8080
    context-path: /
 spring:
    profiles: real
