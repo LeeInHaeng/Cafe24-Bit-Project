@@ -1,10 +1,6 @@
 spring:
    profiles:
       active: dev
-   mvc:
-      view:
-         prefix: /WEB-INF/views/
-         suffix: .jsp
    devtools:
       livereload:
          enabled: true
@@ -20,17 +16,13 @@ spring:
    aop:
       auto: true
    aop-proxy-target-class: true
-   messages:
-      always-use-message-format: true
-      basename: classpath:messages/messages_ko.properties
-      encoding: UTF-8
 mybatis:
    config-location: classpath:mybatis/configuration.xml
    
 # 개발 환경
 ---
 server:
-   port: 8080
+   port: 8081
    context-path: /
 spring:
    profiles: dev
@@ -44,13 +36,13 @@ spring:
 # 배포 환경
 ---
 server:
-   port: 8080
+   port: 8081
    context-path: /
 spring:
    profiles: real
    datasource:
       driver-class-name: org.mariadb.jdbc.Driver
-      url: jdbc:mariadb://192.168.1.218:3307/cafe24mall
+      url: jdbc:mariadb://192.168.1.218:3307/cafe24mall?allowMultiQueries=true
       username: cafe24mall
       password: cafe24mall
 ---
