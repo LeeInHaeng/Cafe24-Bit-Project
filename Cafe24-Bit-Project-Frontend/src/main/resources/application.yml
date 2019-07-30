@@ -1,0 +1,39 @@
+spring:
+   profiles:
+      active: dev
+   mvc:
+      view:
+         prefix: /WEB-INF/views/
+         suffix: .jsp
+   devtools:
+      livereload:
+         enabled: true
+   http:
+      encoding:
+         charset: UTF-8
+         enabled: true
+         force: true
+         force-request: true
+         force-response: true
+   messages:
+      always-use-message-format: true
+      basename: classpath:messages/messages_ko.properties
+      encoding: UTF-8
+      
+# 개발 환경
+---
+server:
+   port: 8080
+   context-path: /
+spring:
+   profiles: dev
+---
+
+# 배포 환경
+---
+server:
+   port: 8080
+   context-path: /
+spring:
+   profiles: real
+---
