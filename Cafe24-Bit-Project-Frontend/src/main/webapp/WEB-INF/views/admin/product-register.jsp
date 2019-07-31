@@ -75,6 +75,21 @@
 										<textarea style="height:150px;" name="descriptionDetail" class="form-control"></textarea>
 									</div>
 								</div>
+								<div class="form-group">
+									<div class="input-group">
+										<div class="input-group-addon">
+											이미지
+										</div>
+										<div class="col-sm-5" id="rep-image">
+											대표 이미지
+											<div id="rep-image-upload" class="sf-box-out" style="height:50px;"></div>
+										</div>
+										<div class="col-sm-5" id="add-image">
+											추가 이미지
+											<div id="add-image-upload" class="sf-box-out" style="height:50px;"></div>
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>

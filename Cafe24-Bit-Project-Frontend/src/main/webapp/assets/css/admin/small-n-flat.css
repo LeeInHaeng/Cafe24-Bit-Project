@@ -9,7 +9,7 @@
 .sf-book{background-image:url("../../images/admin/sf/book.svg")!important;}
 .sf-box-full{background-image:url("../../images/admin/sf/box-full.svg")!important;}
 .sf-box-in{background-image:url("../../images/admin/sf/box-in.svg")!important;}
-.sf-box-out{background-image:url("../../images/admin/sf/box-out.svg")!important;}
+.sf-box-out{background-image:url("../../images/admin/sf/box-out.svg")!important; background-repeat:no-repeat; background-size:50px 50px; cursor: pointer;}
 .sf-box{background-image:url("../../images/admin/sf/box.svg")!important;}
 .sf-brick-alt{background-image:url("../../images/admin/sf/brick-alt.svg")!important;}
 .sf-brick{background-image:url("../../images/admin/sf/brick.svg")!important;}
