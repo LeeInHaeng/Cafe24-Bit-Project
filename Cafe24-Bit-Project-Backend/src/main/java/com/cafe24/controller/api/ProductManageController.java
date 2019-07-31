@@ -1,6 +1,7 @@
 package com.cafe24.controller.api;
 
 import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +12,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cafe24.dto.AdminCheckedProductsDisplayUpdateDto;
 import com.cafe24.dto.AdminProductRegisterDto;
 import com.cafe24.dto.AdminProductSearchDto;
 import com.cafe24.dto.AdminProductSearchResultDto;
 import com.cafe24.dto.JSONResult;
+import com.cafe24.service.FileuploadService;
 import com.cafe24.service.ProductManageService;
 import com.cafe24.validator.ClassInListValidator;
 import com.cafe24.vo.CategoryVo;
@@ -33,6 +37,9 @@ public class ProductManageController {
 	
 	@Autowired
 	ClassInListValidator classInListValidator;
+	
+	@Autowired
+	private FileuploadService fileuploadService;
 	
 	public static boolean isNumeric(String str) {
 		return str.matches("-?\\d+(\\.\\d+)?");
@@ -56,6 +63,17 @@ public class ProductManageController {
 		return ResponseEntity
 				.status(HttpStatus.OK)
 				.body(JSONResult.success(null));
+		// 관리자 계정으로 접속 되어있는지 확인
+	}
+	
+	@ApiOperation(value = "이미지 업로드")
+	@RequestMapping(value= "/image", method=RequestMethod.POST)
+	public ResponseEntity<JSONResult> imageUpload(
+			@RequestParam(value="upload-file", required=true) MultipartFile multipartFile) {
+		
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(fileuploadService.restore(multipartFile)));
 		// 관리자 계정으로 접속 되어있는지 확인
 	}
 	

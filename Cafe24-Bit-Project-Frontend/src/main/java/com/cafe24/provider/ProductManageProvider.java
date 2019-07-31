@@ -15,4 +15,9 @@ public class ProductManageProvider {
 		
 		// 관리자 계정으로 접속 되어있는지 확인
 	}
+	
+	@RequestMapping(value="/register", method=RequestMethod.GET)
+	public String register() {
+		return "admin/product-register";
+	}
 }

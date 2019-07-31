@@ -16,6 +16,11 @@ spring:
    aop:
       auto: true
    aop-proxy-target-class: true
+   servlet:
+      multipart:
+         enabled: true
+         max-file-size: 200MB
+         max-request-size: 200MB
 mybatis:
    config-location: classpath:mybatis/configuration.xml
    

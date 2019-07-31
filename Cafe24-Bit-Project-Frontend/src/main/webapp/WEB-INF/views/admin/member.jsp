@@ -16,46 +16,17 @@
   </head>
   <body class="cm-no-transition cm-1-navbar">
   	<c:import url="/WEB-INF/views/admin/includes/menu.jsp">
-		<c:param name="menu" value="product"/>
+		<c:param name="menu" value="member"/>
 	</c:import>
-	<c:import url="/WEB-INF/views/admin/includes/header.jsp">
-		<c:param name="menu" value="product"/>
-	</c:import>
+	<c:import url="/WEB-INF/views/admin/includes/header.jsp" />
 	
     <div id="global">
-      <div class="container-fluid" style="margin-top:40px;">
-      	<div class="panel panel-default">
-      		<div class="panel-body">
-      			<div class="row cm-fix-height">
-		      		<div class="col-sm-6" id="product-register">
-		      			<div class="panel panel-default">
-		      				<div class="panel-heading">상품 등록</div>
-		      				<div class="panel-body demo-btn" style="min-height: 196px;">
-		      				새로운 상품을 등록할 수 있습니다.
-		      				</div>
-		      			</div>
-		      		</div>
-		      		<div class="col-sm-6" id="product-list">
-		      		    <div class="panel panel-default">
-		      				<div class="panel-heading">상품 목록</div>
-		      				<div class="panel-body demo-btn" style="min-height: 196px;">
-		      				상품을 검색하고, 검색 결과로 나온 상품에 대해서 수정할 수 있습니다.
-		      				</div>
-		      			</div>
-		      		</div>
-		      	</div>
-		      	<div class="row cm-fix-height">
-		      	    <div class="col-sm-6" id="product-category">
-		      		    <div class="panel panel-default">
-		      				<div class="panel-heading">상품 분류 관리</div>
-		      				<div class="panel-body demo-btn" style="min-height: 196px;">
-		      				상품의 카테고리를 추가하거나 삭제할 수 있습니다.
-		      				</div>
-		      			</div>
-		      		</div>
-		      	</div>
-      		</div>
-      	</div>
+      <div class="container-fluid">
+        <div class="panel panel-default"  id="member-manage">
+	          <div class="panel-body">
+		    <h2 style="margin:0">회원 관리 페이지</h2> 
+		  	</div>
+		</div>
       </div>
       <c:import url="/WEB-INF/views/admin/includes/footer.jsp" />
     </div>
@@ -68,19 +39,11 @@
     <script src="${pageContext.request.contextPath}/assets/js/admin/clearmin.min.js"></script>
     
     <script>
-    	$(function(){
-    		$("#product-register").click(function(){
-    			window.location.href='/admin/manage/product/register';
-    		});
-    		
-    		$("#product-list").click(function(){
-    			window.location.href='/admin/manage/product/list';
-    		});
-    		
-    		$("#product-category").click(function(){
-    			window.location.href='/admin/manage/product/category';
-    		});
-    	});
+    $(function(){
+		$("#member-manage").click(function(){
+			window.location.href='/admin/manage/user';
+		});
+    });
     </script>
   </body>
 </html>
