@@ -24,7 +24,7 @@
 	</c:import>
 	
     <div id="global">
-      <div class="container-fluid" style="margin-top:40px;">
+      <div class="container-fluid">
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<div class="row cm-fix-height">
@@ -72,7 +72,7 @@
 										<div class="input-group-addon">
 											상품 상세 설명
 										</div>
-										<textarea style="height:150px;" name="descriptionDetail" class="form-control"></textarea>
+										<textarea name="descriptionDetail" class="form-control"></textarea>
 									</div>
 								</div>
 								<div class="form-group">
@@ -82,11 +82,17 @@
 										</div>
 										<div class="col-sm-5" id="rep-image">
 											대표 이미지
-											<div id="rep-image-upload" class="sf-box-out" style="height:50px;"></div>
+											<div id="rep-image-upload" class="sf-box-out"></div>
+											<span id="rep-image-upload-cancel" class="sf-sign-error"></span>
+											<input type="file" id="rep-image-upload-file" accept=".jpg,.jpeg,.png,.gif,.bmp"/>
+											<img class="image-preview" src="#"/>
 										</div>
 										<div class="col-sm-5" id="add-image">
 											추가 이미지
-											<div id="add-image-upload" class="sf-box-out" style="height:50px;"></div>
+											<div id="add-image-upload" class="sf-box-out"></div>
+											<span id="add-image-upload-cancel" class="sf-sign-error"></span>
+											<input type="file" id="add-image-upload-file" accept=".jpg,.jpeg,.png,.gif,.bmp" multiple/>
+											<div class="image-multiple-preview"></div>
 										</div>
 									</div>
 								</div>
@@ -120,6 +126,54 @@
 		          $('#description-counter').html(title.length + '/255');
 		      });
 		      $('#register-description').keyup();
+
+		      $("#rep-image-upload").click(function(e){
+		    	  e.preventDefault();
+		    	  $('#rep-image-upload-file').click();
+		      });
+		      
+		      $("#add-image-upload").click(function(e){
+		    	  e.preventDefault();
+		    	  $('#add-image-upload-file').click();
+		      });
+		      
+		      function oneImagePreview(input) {
+		          if (input.files && input.files[0]) {
+		              var reader = new FileReader();
+		              reader.onload = function(e) {
+		            	  $('.image-preview').show();
+		                  $('.image-preview').attr('src', e.target.result);
+		              }
+		              reader.readAsDataURL(input.files[0]);
+		          }
+		      }
+		      
+		      function multipleImagePreview(input, placeToInsertImagePreview) {
+
+		          if (input.files) {
+		              var filesAmount = input.files.length;
+	                  $('.image-multiple-preview').show();
+
+		              for (i = 0; i < filesAmount; i++) {
+		                  var reader = new FileReader();
+
+		                  reader.onload = function(event) {
+		                      $($.parseHTML('<img>')).attr({src: event.target.result, style: "width:240px;"}).appendTo(placeToInsertImagePreview);
+		                  }
+
+		                  reader.readAsDataURL(input.files[i]);
+		              }
+		          }
+
+		      };
+	
+		      $("#rep-image-upload-file").change(function() {
+		    	  oneImagePreview(this);
+		      });
+		      
+		      $('#add-image-upload-file').change(function() {
+		    	  multipleImagePreview(this, 'div.image-multiple-preview');
+		      });
 		});
 	</script>
 
