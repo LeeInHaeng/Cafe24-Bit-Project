@@ -3,10 +3,15 @@ package com.cafe24.service;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 @Service
 public class FileuploadService {
@@ -16,29 +21,59 @@ public class FileuploadService {
 	// URL에 생성할 경로
 	private static final String URL = "/images";
 	
-	public String restore(MultipartFile multipartFile) {
+	public Map<String, Object> restore(MultipartHttpServletRequest request) {
 		String url = "";
+		Map<String, Object> result = new HashMap<String,Object>();
 		
-		if(multipartFile.isEmpty()) {
-			return url;
+		MultipartFile repImage = request.getFile("repImage");
+		List<MultipartFile> addImage = request.getFiles("addImage[]");
+		
+		if(repImage==null && addImage.size()==0) {
+			return null;
 		}
 		
-		String originalFilename = multipartFile.getOriginalFilename();
-		String extName = originalFilename.substring(originalFilename.lastIndexOf('.')+1);
-		String saveFileName = generateSaveFileName(extName);
-
-		try {
-			byte[] fileData = multipartFile.getBytes();
-			OutputStream os = new FileOutputStream(SAVE_PATH + "/" + saveFileName);
-			os.write(fileData);
-			os.close();
+		if(repImage!=null) {
+			String repImageOriginalFilename = repImage.getOriginalFilename();
+			String repImageExtName = repImageOriginalFilename.substring(repImageOriginalFilename.lastIndexOf('.')+1);
+			String repImageSaveFileName = generateSaveFileName(repImageExtName);
 			
-			url = URL + "/" + saveFileName;
-		} catch (IOException e) {
-			throw new RuntimeException("Fileupload error : " + e);
+			try {
+				byte[] fileData = repImage.getBytes();
+				OutputStream os = new FileOutputStream(SAVE_PATH + "/" + repImageSaveFileName);
+				os.write(fileData);
+				os.close();
+				
+				url = URL + "/" + repImageSaveFileName;
+				result.put("repImage", url);
+			} catch (IOException e) {
+				throw new RuntimeException("Fileupload error : " + e);
+			}
 		}
 		
-		return url;
+		if(addImage.size()!=0) {
+			List<String> addImageUrls = new ArrayList<String>();
+			for(MultipartFile addImageFile : addImage) {
+				String addImageOriginalFilename = addImageFile.getOriginalFilename();
+				String addImageExtName = addImageOriginalFilename.substring(addImageOriginalFilename.lastIndexOf('.')+1);
+				String addImageSaveFileName = generateSaveFileName(addImageExtName);
+				
+				try {
+					byte[] fileData = addImageFile.getBytes();
+					OutputStream os = new FileOutputStream(SAVE_PATH + "/" + addImageSaveFileName);
+					os.write(fileData);
+					os.close();
+					
+					url = URL + "/" + addImageSaveFileName;
+					addImageUrls.add(url);
+				} catch (IOException e) {
+					throw new RuntimeException("Fileupload error : " + e);
+				}
+			}
+			
+			result.put("addImage", addImageUrls);
+		}
+		
+		return result;
 	}
 	
 	private String generateSaveFileName(String extName) {

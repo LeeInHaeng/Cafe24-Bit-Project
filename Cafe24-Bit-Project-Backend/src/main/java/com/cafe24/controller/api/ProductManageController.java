@@ -12,9 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.cafe24.dto.AdminCheckedProductsDisplayUpdateDto;
 import com.cafe24.dto.AdminProductRegisterDto;
@@ -69,11 +68,11 @@ public class ProductManageController {
 	@ApiOperation(value = "이미지 업로드")
 	@RequestMapping(value= "/image", method=RequestMethod.POST)
 	public ResponseEntity<JSONResult> imageUpload(
-			@RequestParam(value="upload-file", required=true) MultipartFile multipartFile) {
+			MultipartHttpServletRequest request) {
 		
 		return ResponseEntity
 				.status(HttpStatus.OK)
-				.body(JSONResult.success(fileuploadService.restore(multipartFile)));
+				.body(JSONResult.success(fileuploadService.restore(request)));
 		// 관리자 계정으로 접속 되어있는지 확인
 	}
 	
