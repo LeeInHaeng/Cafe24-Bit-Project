@@ -68,7 +68,7 @@ public class ProductManageController {
 	@ApiOperation(value = "이미지 업로드")
 	@RequestMapping(value= "/image", method=RequestMethod.POST)
 	public ResponseEntity<JSONResult> imageUpload(
-			MultipartHttpServletRequest request) {
+			@RequestBody MultipartHttpServletRequest request) {
 		
 		return ResponseEntity
 				.status(HttpStatus.OK)
