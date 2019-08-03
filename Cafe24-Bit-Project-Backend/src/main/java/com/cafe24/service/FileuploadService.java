@@ -17,7 +17,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 public class FileuploadService {
 	
 	// 로컬에 저장될 파일 경로
-	private static final String SAVE_PATH = "/mysite-uploads";
+	private static final String SAVE_PATH = "/cafe24mall-uploads";
 	// URL에 생성할 경로
 	private static final String URL = "/images";
 	
