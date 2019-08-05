@@ -37,7 +37,8 @@
 				cast(aes_decrypt(unhex(name), SHA2('this is dummy salt',512)) as char) as name,
 				cast(aes_decrypt(unhex(address), SHA2('this is dummy salt',512)) as char) as address,
 				cast(aes_decrypt(unhex(phone), SHA2('this is dummy salt',512)) as char) as phone,
-				cast(aes_decrypt(unhex(email), SHA2('this is dummy salt',512)) as char) as email
+				cast(aes_decrypt(unhex(email), SHA2('this is dummy salt',512)) as char) as email,
+				role
 			from member
 			where id=#{id} and pass=#{pass}
 		]]>

@@ -27,15 +27,15 @@
         	<img id="profile-img" class="profile-img-card" src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" />
             <p id="profile-name" class="profile-name-card"></p>
             <form method="post" action="login" class="form-signin" name="loginForm">
-                <span id="reauth-email" class="reauth-email"></span>
-                <input type="email" id="inputEmail" class="form-control" placeholder="이메일" name="username" required autofocus>
+                <span id="reauth-memberid" class="reauth-memberid"></span>
+                <input type="text" id="memberid" class="form-control" placeholder="아이디" name="memberid" required autofocus>
                 <input type="password" id="inputPassword" class="form-control" placeholder="비밀번호" name="password" required>
                 <div id="remember" class="checkbox">
                     <label>
                         <input type="checkbox" value="remember-me"> 자동 로그인
                     </label>
                 </div>
-                <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit">로그인</button>
+                <button id="login-btn" class="btn btn-lg btn-primary btn-block btn-signin" type="submit">로그인</button>
             </form><!-- /form -->
             <a href="javascript:loginForm.submit();" class="forgot-password">
                 비밀번호를 잊으셨습니까?
@@ -48,5 +48,37 @@
 	<!-- Footer -->
 	<c:import url='/WEB-INF/views/client/includes/footer.jsp' />
 	<!-- /.Footer -->
+	
+	<script>
+	$(function(){
+		$("#login-btn").click(function(e){
+			e.preventDefault();
+			
+			var param = {
+				id: $("#memberid").val(),
+				pass: $("#inputPassword").val()
+			};
+			
+			  $.ajax({
+	    		  url: "/member/login",
+	    		  data: JSON.stringify(param),
+	    		  dataType: 'json',
+	    		  contentType: "application/json; charset=UTF-8",
+	    		  type: 'post',
+	    		  headers: {'X-CSRF-TOKEN': '${_csrf.token}'},
+	    		  success: function(loginResponse){
+	    			  if(loginResponse.result==="success" && loginResponse.data.id!==undefined){
+	    				  alert("로그인 성공!");
+	    				  window.location.href = "/";
+	    			  }
+	    			  else{
+	    				  alert(loginResponse.message || loginResponse.data);
+	    			  }
+	    		  }
+			  });
+		});
+	});
+	</script>
+	
 </body>
 </html>

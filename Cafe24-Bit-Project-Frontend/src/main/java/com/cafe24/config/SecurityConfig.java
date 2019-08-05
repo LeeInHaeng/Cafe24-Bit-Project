@@ -3,6 +3,7 @@ package com.cafe24.config;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.csrf.CsrfFilter;
@@ -12,6 +13,14 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+	@Override
+	public void configure(WebSecurity web) throws Exception {
+		// super.configure(web);
+		// 보안과 관련되지 않은 URL을 설정
+		web.ignoring().antMatchers("/assets/**");
+		web.ignoring().antMatchers("/favicon.ico");
+	}
+	
 	@Override
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
 
@@ -25,7 +34,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         filter.setForceEncoding(true);
         http.addFilterBefore(filter,CsrfFilter.class);
         
-		http.authorizeRequests().antMatchers("/**").permitAll();
+		http.authorizeRequests()
+			.antMatchers("/admin/**").authenticated()
+			.anyRequest().permitAll();
 		
+		// 로그인 설정
+		http
+			.formLogin()
+			.loginPage("/member/login")
+			.loginProcessingUrl("/member/auth");
+
 	}
 }
