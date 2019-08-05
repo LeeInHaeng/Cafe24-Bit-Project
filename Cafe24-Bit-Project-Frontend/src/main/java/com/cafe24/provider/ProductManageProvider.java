@@ -1,13 +1,22 @@
 package com.cafe24.provider;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.cafe24.service.ProductManageService;
 
 @Controller
 @RequestMapping("/admin/manage/product")
 public class ProductManageProvider {
 
+	@Autowired
+	private ProductManageService productManageService;
+	
 	@RequestMapping(value= {"", "/main", "/index"}, method=RequestMethod.GET)
 	public String main() {
 		
@@ -17,7 +26,14 @@ public class ProductManageProvider {
 	}
 	
 	@RequestMapping(value="/register", method=RequestMethod.GET)
-	public String register() {
+	public String register(Model model) {
+		model.addAttribute("infos", productManageService.getInfoForProductRegisterPage());
 		return "admin/product-register";
+	}
+
+	@RequestMapping(value="/register", method=RequestMethod.POST)
+	@ResponseBody
+	public String register(@RequestBody String param) {
+		return productManageService.newProductRegist(param);
 	}
 }

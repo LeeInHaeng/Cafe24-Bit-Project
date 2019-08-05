@@ -11,7 +11,14 @@
 
 textarea {
 	resize: none;
-	height:150px;
+}
+
+textarea.form-control {
+	height: 200px !important;
+}
+
+.descriptionDetail {
+	height: 200px;
 }
 
 #rep-image-upload, #add-image-upload {
@@ -19,7 +26,7 @@ textarea {
 	height:50px;
 }
 
-.sf-sign-error {
+#rep-image-upload-cancel, #add-image-upload-cancel {
 	position: relative;
 	float: right;
 	width: 30px;
@@ -41,4 +48,57 @@ textarea {
 .image-multiple-preview {
 	display: none;
 	width: 240px;
+}
+
+.radio {
+	margin-left: 20px;
+}
+
+.display-text {
+	margin-right: 40px;
+}
+
+.table {
+	margin-bottom: 0px;
+}
+
+.table tr {
+	cursor: pointer;
+}
+
+.table .selected {
+	background-color : rgba(181,218,242, 0.3);
+}
+
+.nav-register {
+	position:fixed;
+	z-index: 140;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.btn-register {
+	width: 100px;
+}
+
+#input-option-add {
+	width:500px;
+}
+
+.option-value-list {
+	width: 500px;
+	border: 2px solid rgba(18,69,103,1);
+	display: none;
+}
+
+.option-value-remove {
+	float:left;
+	width:25px;
+	height:25px;
+	cursor:pointer;
+}
+
+#quantity-manage {
+	display: none;
 }

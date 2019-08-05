@@ -9,6 +9,6 @@ public class MainProvider {
 
 	@RequestMapping(value= {"", "/", "/main", "/index"}, method=RequestMethod.GET)
 	public String main() {
-		return "main/index";
+		return "/client/main/index";
 	}
 }
