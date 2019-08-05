@@ -146,7 +146,6 @@ public class ProductManageControllerTest {
 		quantity2.setAvailableQuantity(50L);
 		
 		dto.setProductQuantityVo(Arrays.asList(quantity1, quantity2));
-		
 	    
 		ResultActions resultActions = 
 				mockMvc
