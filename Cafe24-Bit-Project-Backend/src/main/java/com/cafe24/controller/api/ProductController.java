@@ -61,6 +61,30 @@ public class ProductController {
 				.body(JSONResult.success(productsWithPageInfo));
 	}
 	
+	@ApiOperation(value = "메인 페이지의 상품 리스트")
+	@RequestMapping(value= {"/main", "/main/{pageNo}"},
+		method=RequestMethod.GET)
+	public ResponseEntity<JSONResult> list(
+			@PathVariable(value="pageNo") Optional<String> pageNo) {
+		
+		// 페이지를 적지 않은 경우 1페이지로 간주
+		// 페이지 번호가 숫자가 아닌 경우 1페이지로 간주
+		// 페이지가 0보다 작은 경우 1페이지로 간주
+		// 페이지 번호가 최대 페이지 번호를 넘어간 경우 마지막 페이지로 간주 (service)
+		if(!pageNo.isPresent() || !isNumeric(pageNo.get()) || Integer.parseInt(pageNo.get()) < 1) {
+			Map<String, Object> productsWithPageInfo = productService.getMainPageProductList(1L);
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(JSONResult.success(productsWithPageInfo));
+		}
+		
+		// 정상 동작
+		Map<String, Object> productsWithPageInfo = productService.getMainPageProductList(Long.parseLong(pageNo.get()));
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(productsWithPageInfo));
+	}
+	
 	@ApiOperation(value = "상품 리스트 검색 페이지")
 	@RequestMapping(value= {"/search", "/search/{keyword}", "/search/{keyword}/{pageNo}"}, method=RequestMethod.GET)
 	public ResponseEntity<JSONResult> searchList(

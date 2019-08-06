@@ -17,11 +17,6 @@ public class ProductDao {
 	@Autowired
 	private SqlSession sqlSession;
 
-	public List<ProductVo> getSearchList(String keyword, Long pageNo) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public ProductDetailDto get(Long productNo) {
 		ProductDetailDto productDto = sqlSession.selectOne("product.getDetail", productNo);
 		return productDto;
@@ -55,5 +50,19 @@ public class ProductDao {
 		map.put( "size", showSize );
 		
 		return sqlSession.selectList( "product.getListWithSearch", map );
+	}
+
+	public int getMainPageTotalCount() {
+		int count = sqlSession.selectOne("product.getMainPageTotalCount");
+		return count;
+	}
+	
+	public List<ProductVo> getMainPageList(long pageNo, int showSize) {
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put( "startIndex", (pageNo-1)*showSize );
+		map.put( "size", showSize );
+		
+		return sqlSession.selectList( "product.getMainPageList", map );
 	}
 }

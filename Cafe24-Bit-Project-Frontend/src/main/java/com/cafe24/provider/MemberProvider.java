@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cafe24.annotation.AuthUser;
 import com.cafe24.service.MemberService;
 import com.google.gson.Gson;
 
@@ -61,5 +62,16 @@ public class MemberProvider {
 	@ResponseBody
 	public String join(@RequestBody String param) {
 		return memberService.registNewMember(param);
+	}
+	
+	@RequestMapping(value="/logout", method=RequestMethod.GET)
+	@AuthUser
+	public String logout(HttpSession session) {
+		
+		session.removeAttribute("authUser");
+		session.removeAttribute("role");
+		session.invalidate();
+		
+		return "redirect:/";
 	}
 }

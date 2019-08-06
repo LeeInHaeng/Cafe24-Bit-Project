@@ -8,7 +8,9 @@
 			select count(*)
 			from product a
 			join product_category b on a.product_category_no = b.no
-			where b.name=#{category}
+			join product_manage c on a.product_manage_no = c.no
+			where b.name=#{category} and
+				c.isdisplay=true;
 		]]>
 	</select>
 	
@@ -17,7 +19,18 @@
 			select count(*)
 			from product a
 			join product_category b on a.product_category_no = b.no
-			where b.name like concat('%',#{keyword},'%') or a.title like concat('%',#{keyword},'%')
+			join product_manage c on a.product_manage_no = c.no
+			where b.name like concat('%',#{keyword},'%') or a.title like concat('%',#{keyword},'%') and
+				c.isdisplay=true;
+		]]>
+	</select>
+	
+	<select id="getMainPageTotalCount" resultType="integer">
+		<![CDATA[
+			select count(*)
+			from product a
+			join product_manage b on a.product_manage_no=b.no
+			where b.isdisplay_main=true;
 		]]>
 	</select>
 	
@@ -49,6 +62,25 @@
 			join product_category b on a.product_category_no = b.no
 			join product_manage c on a.product_manage_no = c.no
 			where b.name like concat('%',#{keyword},'%') or a.title like concat('%',#{keyword},'%') and isdisplay=true
+		]]>
+			<if test="end_date != null">
+			<![CDATA[
+				and now() < end_date
+			]]>
+			</if>
+		<![CDATA[
+			order by reg_date desc
+			limit #{startIndex}, #{size};		
+		]]>
+	</select>
+	
+	<select id="getMainPageList" parameterType="map" resultType="productvo">
+		<![CDATA[
+			select a.no as productNo, a.title as title, a.image as image,
+			    a.price as price, a.description as description
+			from product a
+			join product_manage b on a.product_manage_no = b.no
+			where b.isdisplay_main=true
 		]]>
 			<if test="end_date != null">
 			<![CDATA[
