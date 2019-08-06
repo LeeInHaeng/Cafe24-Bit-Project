@@ -14,8 +14,11 @@
 	<link href="${pageContext.servletContext.contextPath }/assets/css/client/bootstrap/bootstrap.min.css" rel="stylesheet">
 	<!-- Custom styles for this template -->
 	<link href="${pageContext.servletContext.contextPath }/assets/css/client/shop-homepage.css" rel="stylesheet">
+	<!-- icon -->
+	<link href="${pageContext.servletContext.contextPath }/assets/css/client/small-n-flat.css" rel="stylesheet">
 </head>
 <body>
+	${ infos.products.data }<br/><br/>
 	<!-- Navigation -->
 	<c:import url='/WEB-INF/views/client/includes/navigation.jsp'>
 		<c:param name="active" value="shopping" />
@@ -28,9 +31,15 @@
 			<div class="col-lg-3">
 				<h1 class="my-4">Cafe24 Mall</h1>
 				<div class="list-group">
-					<a href="#" class="list-group-item">Category 1</a> <a href="#"
-						class="list-group-item">Category 2</a> <a href="#"
-						class="list-group-item">Category 3</a>
+					<table class="table table-bordered table-hover" id="product-category">
+						<c:forEach items="${infos.categorys.data }"	var="category" varStatus="status">	
+							<tr data-no=<fmt:formatNumber value="${category.categoryNo }" type="number"/>>
+								<td style="padding-left:${30*category.depth }px">
+									${category.categoryName }
+								</td>
+							</tr>
+						</c:forEach>
+					</table>
 				</div>
 			</div>
 			<!-- /.col-lg-3 -->
@@ -181,19 +190,59 @@
 						</div>
 					</div>
 
+					<div class="pager">
+						<ul>
+							<c:if test="${infos.products.data.prevPage > 0 }" >
+								<li><a href="#">◀</a></li>
+							</c:if>
+							
+							${infos.products.data.beginPage + infos.products.data.showSize - 1 }
+							<c:forEach begin="${infos.products.data.beginPage }" end="${infos.products.data.beginPage + infos.products.data.listSize - 1 }" var="page">
+								<c:choose>
+									<c:when test="${infos.products.data.endPage < page }">
+										<li>${page }</li>
+									</c:when> 
+									<c:when test="${infos.products.data.currentPage == page }">
+										<li class="selected">${page }</li>
+									</c:when>
+									<c:otherwise> 
+										<li><a href="#">${page }</a></li>
+									</c:otherwise>
+								</c:choose>
+							</c:forEach>
+							
+							<c:if test="${infos.products.data.nextPage > 0 }" >
+								<li><a href="#">▶</a></li>
+							</c:if>	
+						</ul>
+					</div>
+
 				</div>
 				<!-- /.row -->
 			</div>
 			<!-- /.col-lg-9 -->
-			
+
 		</div>
 		<!-- /.row -->
+
 	</div>
 	<!-- /.container -->
 
 	<!-- Footer -->
 	<c:import url='/WEB-INF/views/client/includes/footer.jsp' />
 	<!-- /.Footer -->
+	
+	<script>
+	$(function() {
+        
+		$('.list-group-item').on('click', function() {
+			$('.sf-sign', this)
+		      .toggleClass('sf-sign-right')
+		      .toggleClass('sf-sign-down');
+		});
+
+	});
+	</script>
 </body>
 
 </html>
