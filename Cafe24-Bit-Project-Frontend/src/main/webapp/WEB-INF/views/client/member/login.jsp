@@ -18,7 +18,7 @@
 <body>
 	<!-- Navigation -->
 	<c:import url='/WEB-INF/views/client/includes/navigation.jsp'>
-		<c:param name="active" value="shopping" />
+		<c:param name="active" value="login" />
 	</c:import>
 	<!-- /.Navigation -->
 
@@ -26,7 +26,7 @@
  		<div class="card card-container">
         	<img id="profile-img" class="profile-img-card" src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" />
             <p id="profile-name" class="profile-name-card"></p>
-            <form method="post" action="login" class="form-signin" name="loginForm">
+            <form class="form-signin" name="loginForm">
                 <span id="reauth-memberid" class="reauth-memberid"></span>
                 <input type="text" id="memberid" class="form-control" placeholder="아이디" name="memberid" required autofocus>
                 <input type="password" id="inputPassword" class="form-control" placeholder="비밀번호" name="password" required>
@@ -51,31 +51,30 @@
 	
 	<script>
 	$(function(){
-		$("#login-btn").click(function(e){
-			e.preventDefault();
-			
+		$("form").submit(function(e){
 			var param = {
 				id: $("#memberid").val(),
 				pass: $("#inputPassword").val()
 			};
-			
-			  $.ajax({
-	    		  url: "/member/login",
-	    		  data: JSON.stringify(param),
-	    		  dataType: 'json',
-	    		  contentType: "application/json; charset=UTF-8",
-	    		  type: 'post',
-	    		  headers: {'X-CSRF-TOKEN': '${_csrf.token}'},
-	    		  success: function(loginResponse){
-	    			  if(loginResponse.result==="success" && loginResponse.data.id!==undefined){
-	    				  alert("로그인 성공!");
-	    				  window.location.href = "/";
-	    			  }
-	    			  else{
-	    				  alert(loginResponse.message || loginResponse.data);
-	    			  }
-	    		  }
-			  });
+				
+			$.ajax({
+		    	url: "/member/login",
+		    	data: JSON.stringify(param),
+		    	dataType: 'json',
+		    	contentType: "application/json; charset=UTF-8",
+		    	type: 'post',
+		    	headers: {'X-CSRF-TOKEN': '${_csrf.token}'},
+		    	success: function(loginResponse){
+		    		if(loginResponse.result==="success" && loginResponse.data.id!==undefined){
+		    			alert("로그인 성공!");
+		    			window.location.href = "/";
+		    		}
+		    		else{
+		    			alert(loginResponse.message || loginResponse.data);
+		    		}
+		    	}
+			});
+			return false;
 		});
 	});
 	</script>

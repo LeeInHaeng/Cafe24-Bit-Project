@@ -3,6 +3,7 @@ package com.cafe24.service;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.cafe24.dao.MemberDao;
@@ -14,6 +15,9 @@ public class MemberService {
 
 	@Autowired
 	private MemberDao memberDao;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	public void clearMemberTable(){
 		memberDao.clear();
@@ -35,6 +39,7 @@ public class MemberService {
 	}
 
 	public boolean joinUser(MemberVo memberVo) {
+		memberVo.setPass(passwordEncoder.encode(memberVo.getPass()));
 		boolean queryResult = memberDao.insert(memberVo);
 		return queryResult;
 	}

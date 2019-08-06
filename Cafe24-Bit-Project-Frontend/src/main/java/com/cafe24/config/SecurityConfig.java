@@ -33,16 +33,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         filter.setEncoding("UTF-8");
         filter.setForceEncoding(true);
         http.addFilterBefore(filter,CsrfFilter.class);
-        
-		http.authorizeRequests()
-			.antMatchers("/admin/**").authenticated()
-			.anyRequest().permitAll();
-		
-		// 로그인 설정
-		http
-			.formLogin()
-			.loginPage("/member/login")
-			.loginProcessingUrl("/member/auth");
 
 	}
 }

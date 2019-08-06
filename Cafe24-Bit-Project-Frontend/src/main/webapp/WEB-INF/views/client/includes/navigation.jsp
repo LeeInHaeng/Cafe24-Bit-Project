@@ -18,12 +18,24 @@
 						<li class="nav-item">
 							<a class="nav-link" href="${pageContext.servletContext.contextPath }/">홈</a>
 						</li>
-						<li class="nav-item active">
-							<a class="nav-link" href="${pageContext.servletContext.contextPath }/member/login">로그인<span class="sr-only">(current)</span></a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="${pageContext.servletContext.contextPath }/member/join">회원가입</a>
-						</li>
+						<c:choose>
+							<c:when test='${empty authUser }'>
+								<li class="nav-item active">
+									<a class="nav-link" href="${pageContext.servletContext.contextPath }/member/login">로그인<span class="sr-only">(current)</span></a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" href="${pageContext.servletContext.contextPath }/member/join">회원가입</a>
+								</li>
+							</c:when>
+							<c:otherwise>
+								<li class="nav-item">
+									<a class="nav-link" href="${pageContext.servletContext.contextPath }/member/logout">로그아웃<span class="sr-only">(current)</span></a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" href="${pageContext.servletContext.contextPath }/member/update">회원정보 수정</a>
+								</li>
+							</c:otherwise>
+						</c:choose>
 						<li class="nav-item">
 							<a class="nav-link" href="${pageContext.servletContext.contextPath }/cs">고객센터</a>
 						</li>
@@ -32,12 +44,24 @@
 						<li class="nav-item">
 							<a class="nav-link" href="${pageContext.servletContext.contextPath }/">홈</a>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="${pageContext.servletContext.contextPath }/member/login">로그인</a>
-						</li>
-						<li class="nav-item active">
-							<a class="nav-link" href="${pageContext.servletContext.contextPath }/member/join">회원가입<span class="sr-only">(current)</span></a>
-						</li>
+						<c:choose>
+							<c:when test='${empty authUser }'>
+								<li class="nav-item">
+									<a class="nav-link" href="${pageContext.servletContext.contextPath }/member/login">로그인</a>
+								</li>
+								<li class="nav-item active">
+									<a class="nav-link" href="${pageContext.servletContext.contextPath }/member/join">회원가입<span class="sr-only">(current)</span></a>
+								</li>
+							</c:when>
+							<c:otherwise>
+								<li class="nav-item">
+									<a class="nav-link" href="${pageContext.servletContext.contextPath }/member/logout">로그아웃<span class="sr-only">(current)</span></a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" href="${pageContext.servletContext.contextPath }/member/update">회원정보 수정</a>
+								</li>
+							</c:otherwise>
+						</c:choose>
 						<li class="nav-item">
 							<a class="nav-link" href="${pageContext.servletContext.contextPath }/cs">고객센터</a>
 						</li>
@@ -46,12 +70,24 @@
 						<li class="nav-item">
 							<a class="nav-link" href="${pageContext.servletContext.contextPath }/">홈</a>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="${pageContext.servletContext.contextPath }/member/login">로그인</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="${pageContext.servletContext.contextPath }/member/join">회원가입</a>
-						</li>
+						<c:choose>
+							<c:when test='${empty authUser }'>
+								<li class="nav-item">
+									<a class="nav-link" href="${pageContext.servletContext.contextPath }/member/login">로그인</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" href="${pageContext.servletContext.contextPath }/member/join">회원가입</a>
+								</li>
+							</c:when>
+							<c:otherwise>
+								<li class="nav-item">
+									<a class="nav-link" href="${pageContext.servletContext.contextPath }/member/logout">로그아웃<span class="sr-only">(current)</span></a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" href="${pageContext.servletContext.contextPath }/member/update">회원정보 수정</a>
+								</li>
+							</c:otherwise>
+						</c:choose>
 						<li class="nav-item active">
 							<a class="nav-link" href="${pageContext.servletContext.contextPath }/cs">고객센터<span class="sr-only">(current)</span></a>
 						</li>
@@ -60,12 +96,24 @@
 						<li class="nav-item active">
 							<a class="nav-link" href="${pageContext.servletContext.contextPath }/">홈<span class="sr-only">(current)</span></a>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="${pageContext.servletContext.contextPath }/member/login">로그인</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="${pageContext.servletContext.contextPath }/member/join">회원가입</a>
-						</li>
+						<c:choose>
+							<c:when test='${empty authUser }'>
+								<li class="nav-item">
+									<a class="nav-link" href="${pageContext.servletContext.contextPath }/member/login">로그인</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" href="${pageContext.servletContext.contextPath }/member/join">회원가입</a>
+								</li>
+							</c:when>
+							<c:otherwise>
+								<li class="nav-item">
+									<a class="nav-link" href="${pageContext.servletContext.contextPath }/member/logout">로그아웃<span class="sr-only">(current)</span></a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" href="${pageContext.servletContext.contextPath }/member/update">회원정보 수정</a>
+								</li>
+							</c:otherwise>
+						</c:choose>
 						<li class="nav-item">
 							<a class="nav-link" href="${pageContext.servletContext.contextPath }/cs">고객센터</a>
 						</li>
