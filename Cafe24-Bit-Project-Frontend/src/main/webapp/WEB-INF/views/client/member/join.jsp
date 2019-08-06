@@ -182,14 +182,12 @@
 		    	type: 'post',
 		    	headers: {'X-CSRF-TOKEN': '${_csrf.token}'},
 		    	success: function(registResponse){
-		    		console.log(registResponse);
-		    		var jsonRegistResponse = JSON.parse(registResponse);
-		    		if(jsonRegistResponse.result==="success" && jsonRegistResponse.data==null){
+		    		if(registResponse.result==="success" && registResponse.data==null){
 		    			alert("회원가입 성공!");
 		    			window.location.href = "/member/login";
 		    		}
 		    		else{
-		    			alert(jsonRegistResponse.message || jsonRegistResponse.data);
+		    			alert(registResponse.message || registResponse.data);
 		    		}
 		    	}
 			});

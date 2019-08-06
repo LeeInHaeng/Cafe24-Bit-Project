@@ -29,9 +29,11 @@ public class MemberService {
 	}
 
 	public MemberVo memberLoginTry(LoginDto loginDto) {
-		
 		MemberVo memberVo = memberDao.login(loginDto);
-		return memberVo;
+		if(passwordEncoder.matches(loginDto.getPass(), memberVo.getPass()))
+			return memberVo;
+		else
+			return null;
 	}
 
 	public void deleteTestData(String userid) {
