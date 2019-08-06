@@ -152,6 +152,7 @@ public class ProductService {
 		map.put( "products", products );
 		map.put( "totalCount", totalCount );
 		map.put( "showSize", SHOW_SIZE );
+		map.put( "pageSize", PAGE_SIZE );
 		map.put( "currentPage", pageNo );
 		map.put( "beginPage", beginPage );
 		map.put( "endPage", endPage );
