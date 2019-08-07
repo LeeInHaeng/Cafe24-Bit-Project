@@ -7,12 +7,14 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/admin/bootstrap-clearmin.min.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/admin/roboto.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/admin/material-design.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/admin/small-n-flat.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/admin/font-awesome.min.css">
-    <title>Clearmin Docs</title>
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/admin/clearmin/bootstrap-clearmin.min.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/admin/clearmin/roboto.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/admin/clearmin/material-design.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/admin/clearmin/small-n-flat.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/admin/clearmin/font-awesome.min.css">
+    
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/admin/product.css">
+    <title>Cafe24mall 관리자</title>
   </head>
   <body class="cm-no-transition cm-1-navbar">
   	<c:import url="/WEB-INF/views/admin/includes/menu.jsp">
@@ -60,12 +62,12 @@
       <c:import url="/WEB-INF/views/admin/includes/footer.jsp" />
     </div>
     
-    <script src="${pageContext.request.contextPath}/assets/js/admin/jquery-2.1.3.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets/js/admin/jquery.mousewheel.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets/js/admin/jquery.cookie.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets/js/admin/fastclick.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets/js/admin/bootstrap.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets/js/admin/clearmin.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/admin/jquery/jquery-2.1.3.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/admin/jquery/jquery.mousewheel.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/admin/jquery/jquery.cookie.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/admin/clearmin/fastclick.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/admin/clearmin/bootstrap.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/admin/clearmin/clearmin.min.js"></script>
     
     <script>
     	$(function(){

@@ -14,10 +14,12 @@
 			select last_insert_id() as productNo;
 		</selectKey>
 
-		insert into product_image values
-		<foreach collection="productImageVo" item="image" separator=", " close=";">
-			(default, #{productNo}, #{image.imageDetail}, #{image.imageTitle}, #{image.imageDescription})
-		</foreach>
+		<if test="${productImageVo != null">
+			insert into product_image values
+			<foreach collection="productImageVo" item="image" separator=", " close=";">
+				(default, #{productNo}, #{image.imageDetail}, #{image.imageTitle}, #{image.imageDescription})
+			</foreach>
+		</if>
 		
 		<foreach collection="productOptionVo" item="option">
 			insert into product_option(product_no, name)

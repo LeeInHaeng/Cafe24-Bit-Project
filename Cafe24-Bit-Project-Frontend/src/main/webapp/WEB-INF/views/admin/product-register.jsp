@@ -7,13 +7,14 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/admin/bootstrap-clearmin.min.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/admin/roboto.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/admin/material-design.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/admin/small-n-flat.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/admin/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/admin/custom.css">
-    <title>Clearmin Docs</title>
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/admin/clearmin/bootstrap-clearmin.min.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/admin/clearmin/roboto.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/admin/clearmin/material-design.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/admin/clearmin/small-n-flat.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/admin/clearmin/font-awesome.min.css">
+
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/admin/product-register.css">
+    <title>Cafe24mall 관리자</title>
   </head>
   <body class="cm-no-transition cm-1-navbar">
   	<c:import url="/WEB-INF/views/admin/includes/menu.jsp">
@@ -25,6 +26,8 @@
 	
     <div id="global">
       <div class="container-fluid">
+      
+      	<form id="regist-form">
       
       	<!-- 기본 정보 -->
 		<div class="panel panel-default">
@@ -39,7 +42,7 @@
 										<div class="input-group-addon">
 											상품명 (필수)
 										</div>
-										<input type="text" id="register-title" name="title" class="form-control">
+										<input type="text" id="register-title" name="title" class="form-control" required>
 										<span id="title-counter">###</span>
 									</div>
 									
@@ -47,9 +50,9 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">
-											가격
+											가격 (필수)
 										</div>
-										<input type="number" id="price" name="price" class="form-control" value="0"/>
+										<input type="number" id="price" name="price" class="form-control" value="0" required/>
 									</div>
 								</div>
 								<div class="form-group">
@@ -71,9 +74,9 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">
-											상품 요약 설명
+											상품 요약 설명 (필수)
 										</div>
-										<input type="text" id="register-description" name="description" class="form-control"/>
+										<input type="text" id="register-description" name="description" class="form-control" required/>
 										<span id="description-counter">###</span>
 									</div>
 								</div>
@@ -166,7 +169,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">
-											상품 분류
+											상품 분류 (필수)
 										</div>
 										<div>
 											<c:if test='${infos.categorys.result == "success" }'>
@@ -202,7 +205,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">
-											옵션 추가
+											옵션 추가 (필수)
 										</div>
 										<input type="text" id="input-option-add" placeholder="여러 개의 옵션을 콤마로 구분하여 추가할 수 있습니다."/>
 									</div>
@@ -213,14 +216,14 @@
 											옵션 값 추가
 										</div>
 										<div class="option-value-list">
-											<button class="btn btn-turquoise" id="quantity-add">재고 추가하기</button>
+											<button type="button" class="btn btn-turquoise" id="quantity-add">재고 추가하기</button>
 										</div>
 									</div>
 								</div>
 								<div class="form-group" id="quantity-manage">
 									<div class="input-group">
 										<div class="input-group-addon">
-											재고 관리
+											재고 관리 (필수)
 										</div>
 										<div id="quantity-manage-list">
 											
@@ -238,19 +241,21 @@
 		<!-- 재고 정보 끝 -->
 		
 		<nav class="cm-navbar cm-navbar-midnight text-center nav-register">
-			<button type="button" class="btn btn-success btn-register">상품 등록</button>
+			<button type="submit" class="btn btn-success btn-register">상품 등록</button>
 		</nav>
+		
+		</form>
 		
       </div>
       <c:import url="/WEB-INF/views/admin/includes/footer.jsp" />
     </div>
     
-    <script src="${pageContext.request.contextPath}/assets/js/admin/jquery-2.1.3.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets/js/admin/jquery.mousewheel.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets/js/admin/jquery.cookie.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets/js/admin/fastclick.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets/js/admin/bootstrap.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets/js/admin/clearmin.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/admin/jquery/jquery-2.1.3.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/admin/jquery/jquery.mousewheel.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/admin/jquery/jquery.cookie.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/admin/clearmin/fastclick.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/admin/clearmin/bootstrap.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/admin/clearmin/clearmin.min.js"></script>
 
 	<script>
 		$(function() {
@@ -370,6 +375,7 @@
 		      });
 		      
 		      $("#quantity-add").click(function(){
+		    	  
 		    	  $("#quantity-manage").show();
 		    	  $("#quantity-manage-list").empty();
 		    	  
@@ -402,9 +408,30 @@
 			      }
 		      });
    
-		      $(".btn-register").click(function(){
+		      $(document).on("keydown", ":input:not(textarea):not(:submit)", function(event) {
+		    	    if (event.key == "Enter") {
+		    	        event.preventDefault();
+		    	    }
+		    	});
+		      
+		      $("#regist-form").submit(function(e){
 		    	  var repImage = $("#rep-image-upload-file").prop("files")[0];  
 		    	  var addImage = $("#add-image-upload-file").prop("files");
+		    	  
+		    	  if($("#product-category .selected").length==0){
+		    		  alert("상품 분류는 필수 선택 항목 입니다.");
+		    		  return false;
+		    	  }
+		    	  
+		    	  if($(".option-value-list .form-group").length==0){
+		    		  alert("상품 옵션은 필수 추가 항목 입니다.");
+		    		  return false;
+		    	  }
+		    	  
+		    	  if($("#quantity-result").html().split("<br>")[0]===""){
+		    		  alert("상품 옵션에 따른 수량은 필수 추가 항목 입니다.");
+		    		  return false;
+		    	  }
 		    	  
 		    	  var formData = new FormData();
 		    	  formData.append("repImage", repImage);
@@ -422,12 +449,6 @@
 		    		  success: function(uploadResponse){
 		    			  var jsonUploadResponse = JSON.parse(uploadResponse);
 		    			  if(jsonUploadResponse.result==="success"){
-
-		    				  var productImageVo = [];
-		    				  if(jsonUploadResponse.data!==null && jsonUploadResponse.data.addImage!==undefined)
-			    				  for(var i=0; i<jsonUploadResponse.data.addImage.length; i++){
-			    					  productImageVo.push({imageDetail: jsonUploadResponse.data.addImage[i]});
-			    				  }
 		    				  
 		    				  var productOptionVo = [];
 		    				  for(var i=0; i<$(".option-value-list .form-group").length; i++){
@@ -450,23 +471,52 @@
 		    					  });
 		    				  }
 		    				  
+		    				  // 필수 항목들
 		    				  var registerData = {
 		    						productCategoryNo: parseInt($($("#product-category .selected")[0].parentElement).data("no")),
 		    						title: $("#register-title").val(),
-		    						image: jsonUploadResponse.data.repImage,
 		    						price: parseInt($("#price").val()),
-		    						mileageAdd: parseInt($("#mileageAdd").val()),
 		    						description: $("#register-description").val(),
-		    						descriptionDetail: $("#descriptionDetail").val(),
-		    						shippingPrice: parseInt($("#shippingPrice").val()),
 		    						isdisplay: $("#isdisplay input:checked").val()==="isdisplay-true",
 		    						issell: $("#issell input:checked").val()==="issell-true",
 		    						isdisplayMain: $("#isdisplay-main input:checked").val()==="isdisplay-main-true",
-		    						productImageVo: productImageVo,
 		    						productOptionVo: productOptionVo,
 		    						productQuantityVo: productQuantityVo
 		    				  }
 		    				  
+		    				  // 선택 항목들
+		    				  if(jsonUploadResponse.data!==null && jsonUploadResponse.data.repImage!==undefined)
+		    					  registerData["image"] = jsonUploadResponse.data.repImage;
+		    				  else
+		    					  registerData["image"] = null;
+		    				  
+		    				  if($("#mileageAdd").val()=="")
+		    					  registerData["mileageAdd"] = parseInt("0");
+		    				  else
+		    					  registerData["mileageAdd"] = parseInt($("#mileageAdd").val());
+		    				  
+		    				  if($("#shippingPrice").val()=="")
+		    					  registerData["shippingPrice"] = parseInt("0");
+		    				  else
+		    					  registerData["shippingPrice"] = parseInt($("#shippingPrice").val())
+		    				  
+		    				  if($("#descriptionDetail").val()!="")
+		    					  registerData["descriptionDetail"] = $("#descriptionDetail").val();
+		    				  else
+		    					  registerData["descriptionDetail"] = null;
+		    				  
+		    				  var productImageVo = [];
+		    				  if(jsonUploadResponse.data!==null && jsonUploadResponse.data.addImage!==undefined){
+			    				  for(var i=0; i<jsonUploadResponse.data.addImage.length; i++){
+			    					  productImageVo.push({imageDetail: jsonUploadResponse.data.addImage[i]});
+			    				  }
+			    				  
+			    				  registerData["productImageVo"] = productImageVo;
+		    				  }else{
+		    					  registerData["productImageVo"] = null;
+		    				  }
+		    				  
+		    				  // 상품 등록 요청
 		    				  $.ajax({
 		    		    		  url: "/admin/manage/product/register",
 		    		    		  data: JSON.stringify(registerData),
@@ -484,6 +534,8 @@
 		    			  }
 		    		  }
 		    	  });
+		    	  
+		    	  return false;
 		      });
 		});
 		      

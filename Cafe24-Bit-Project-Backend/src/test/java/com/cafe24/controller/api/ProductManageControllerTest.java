@@ -88,7 +88,7 @@ public class ProductManageControllerTest {
 	public void Test_3_NewProductRegistRequest() throws Exception {
 		
 		//////////// 정상 동작 /////////
-		
+
 		AdminProductRegisterDto dto = new AdminProductRegisterDto();
 		// 상품 정보 추가
 		dto.setProductCategoryNo(2L);
