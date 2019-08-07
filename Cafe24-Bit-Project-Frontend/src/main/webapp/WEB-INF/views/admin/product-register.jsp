@@ -91,7 +91,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">
-											이미지
+											이미지 (필수)
 										</div>
 										<div class="col-sm-5" id="rep-image">
 											대표 이미지
@@ -415,14 +415,27 @@
 		    	});
 		      
 		      $("#regist-form").submit(function(e){
+		    	  e.preventDefault();
 		    	  var repImage = $("#rep-image-upload-file").prop("files")[0];  
 		    	  var addImage = $("#add-image-upload-file").prop("files");
+		    	  
+		    	  if(repImage==undefined){
+		    		  alert("상품의 이미지는 필수 추가 항목 입니다.");
+		    		  return false;
+		    	  }
+
+		    	  /*
+		    	  console.log(addIamge);
+		    	  if(addIamge.length==0){
+		    		  alert("추가 이미지는 필수 추가 항목 입니다.");
+		    		  return false;
+		    	  }*/
 		    	  
 		    	  if($("#product-category .selected").length==0){
 		    		  alert("상품 분류는 필수 선택 항목 입니다.");
 		    		  return false;
 		    	  }
-		    	  
+
 		    	  if($(".option-value-list .form-group").length==0){
 		    		  alert("상품 옵션은 필수 추가 항목 입니다.");
 		    		  return false;
@@ -432,9 +445,10 @@
 		    		  alert("상품 옵션에 따른 수량은 필수 추가 항목 입니다.");
 		    		  return false;
 		    	  }
-		    	  
+
 		    	  var formData = new FormData();
 		    	  formData.append("repImage", repImage);
+	  
 		    	  for(var i=0; i<addImage.length; i++)
 		    	  	formData.append("addImage[]", addImage[i]);
 
@@ -471,6 +485,13 @@
 		    					  });
 		    				  }
 		    				  
+		    				  var productImageVo = [];
+		    				  if(jsonUploadResponse.data!==null && jsonUploadResponse.data.addImage!==undefined){
+			    				  for(var i=0; i<jsonUploadResponse.data.addImage.length; i++){
+			    					  productImageVo.push({imageDetail: jsonUploadResponse.data.addImage[i]});
+			    				  }
+		    				  }
+		    				  
 		    				  // 필수 항목들
 		    				  var registerData = {
 		    						productCategoryNo: parseInt($($("#product-category .selected")[0].parentElement).data("no")),
@@ -481,20 +502,12 @@
 		    						issell: $("#issell input:checked").val()==="issell-true",
 		    						isdisplayMain: $("#isdisplay-main input:checked").val()==="isdisplay-main-true",
 		    						productOptionVo: productOptionVo,
-		    						productQuantityVo: productQuantityVo
+		    						productQuantityVo: productQuantityVo,
+		    						image: jsonUploadResponse.data.repImage,
+		    						productImageVo: productImageVo
 		    				  }
 		    				  
-		    				  // 선택 항목들
-		    				  if(jsonUploadResponse.data!==null && jsonUploadResponse.data.repImage!==undefined)
-		    					  registerData["image"] = jsonUploadResponse.data.repImage;
-		    				  else
-		    					  registerData["image"] = null;
-		    				  
-		    				  if($("#mileageAdd").val()=="")
-		    					  registerData["mileageAdd"] = parseInt("0");
-		    				  else
-		    					  registerData["mileageAdd"] = parseInt($("#mileageAdd").val());
-		    				  
+		    				  // 선택 항목들	  
 		    				  if($("#shippingPrice").val()=="")
 		    					  registerData["shippingPrice"] = parseInt("0");
 		    				  else
@@ -505,16 +518,10 @@
 		    				  else
 		    					  registerData["descriptionDetail"] = null;
 		    				  
-		    				  var productImageVo = [];
-		    				  if(jsonUploadResponse.data!==null && jsonUploadResponse.data.addImage!==undefined){
-			    				  for(var i=0; i<jsonUploadResponse.data.addImage.length; i++){
-			    					  productImageVo.push({imageDetail: jsonUploadResponse.data.addImage[i]});
-			    				  }
-			    				  
-			    				  registerData["productImageVo"] = productImageVo;
-		    				  }else{
-		    					  registerData["productImageVo"] = null;
-		    				  }
+		    				  if($("#mileageAdd").val()=="")
+		    					  registerData["mileageAdd"] = parseInt("0");
+		    				  else
+		    					  registerData["mileageAdd"] = parseInt($("#mileageAdd").val());
 		    				  
 		    				  // 상품 등록 요청
 		    				  $.ajax({
@@ -528,6 +535,9 @@
 		    		    			  if(registerResponse.result==="success"){
 		    		    				  alert("상품 등록 성공");
 		    		    				  window.location.href = "/admin/manage/product/register";
+		    		    			  }
+		    		    			  else{
+		    		    				  alert(registResponse.message || registResponse.data);
 		    		    			  }
 		    		    		  }
 		    				  });

@@ -48,7 +48,6 @@ public class ProductManageService {
 	}
 
 	public String newProductRegist(String param) {
-		System.out.println(param);
 		entity = new HttpEntity<String>(param, headers);
 		return restTemplate.postForObject(URI+"/register", entity, String.class);
 	}
