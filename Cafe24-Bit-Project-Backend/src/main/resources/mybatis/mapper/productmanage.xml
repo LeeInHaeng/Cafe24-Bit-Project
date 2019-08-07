@@ -14,7 +14,7 @@
 			select last_insert_id() as productNo;
 		</selectKey>
 
-		<if test="${productImageVo != null">
+		<if test="productImageVo != null">
 			insert into product_image values
 			<foreach collection="productImageVo" item="image" separator=", " close=";">
 				(default, #{productNo}, #{image.imageDetail}, #{image.imageTitle}, #{image.imageDescription})
