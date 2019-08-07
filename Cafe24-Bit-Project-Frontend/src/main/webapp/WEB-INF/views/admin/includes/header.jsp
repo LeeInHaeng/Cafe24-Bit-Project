@@ -52,5 +52,29 @@
 					</div>
 				</nav>
 			</c:when>
+			
+			<c:when test='${param.menu == "product-list" }'>
+			    <nav class="cm-navbar cm-navbar-default cm-navbar-slideup">
+					<div class="cm-flex">
+						<div class="cm-breadcrumb-container">
+
+				        	<ol class="breadcrumb">
+								<li>
+									<a href="/admin">관리자 페이지</a>
+								</li>
+								<li>
+									<a href="/admin/manage/product">상품 관리</a>
+								</li>
+								<li class="active">
+									<a href="/admin/manage/product/list">상품 목록</a>
+								</li>
+							</ol>
+		            			
+		            		
+						</div>
+					</div>
+				</nav>
+			</c:when>
+			
 		</c:choose>
     </header>

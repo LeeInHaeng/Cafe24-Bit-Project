@@ -52,4 +52,9 @@ public class ProductManageService {
 		return restTemplate.postForObject(URI+"/register", entity, String.class);
 	}
 
+	public String getProductListWithSearch(String param) {
+		entity = new HttpEntity<String>(param, headers);
+		return restTemplate.postForObject(URI+"/list", entity, String.class);
+	}
+
 }

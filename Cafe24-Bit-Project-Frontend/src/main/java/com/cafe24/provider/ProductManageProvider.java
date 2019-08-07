@@ -36,4 +36,15 @@ public class ProductManageProvider {
 	public String register(@RequestBody String param) {
 		return productManageService.newProductRegist(param);
 	}
+	
+	@RequestMapping(value="/list", method=RequestMethod.GET)
+	public String list(Model model) {
+		return "admin/product-list";
+	}
+	
+	@RequestMapping(value="/list", method=RequestMethod.POST)
+	@ResponseBody
+	public String list(@RequestBody String param) {
+		return productManageService.getProductListWithSearch(param);
+	}
 }
