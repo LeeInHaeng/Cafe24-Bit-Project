@@ -181,23 +181,6 @@
 									    </tr>
 									  </thead>
 									  <tbody id="member-list-result">
-									  	<!-- 
-									  	<tr>
-									  		<th>
-								  				<div class="form-check" data-id="user1">
-													<input type="checkbox" class="form-check-input">
-												</div>
-								  			</th>
-								  			<th>이름일</th>
-								  			<th>user1</th>
-								  			<th>2019-08-08</th>
-								  			<th>010-1234-1234</th>
-								  			<th>26</th>
-								  			<th>서울시 마포구 망원동</th>
-								  			<th>수신 안함/수신 안함</th>
-								  			<th>활성</th>
-									  	</tr>
-									  	 -->
 									  </tbody>
 								</table>
 							</div>
@@ -275,79 +258,81 @@
 			    	type: 'post',
 			    	headers: {'X-CSRF-TOKEN': '${_csrf.token}'},
 			    	success: function(userListResponse){
-			    		
-			    		console.log(userListResponse);
-			    		/*
-			    		if(productListResponse.result==="success"){
-			    			var products = productListResponse.data;
-			    			$("#product-list-result").empty();
-			    			for(var i=0; i<products.length; i++){
+
+			    		if(userListResponse.result==="success"){
+			    			var users = userListResponse.data;
+			    			$("#member-list-result").empty();
+			    			for(var i=0; i<users.length; i++){
 			    				
-			    				var productNo = products[i].productNo;
-			    				var productImage = products[i].image;
-			    				var productTitle = products[i].title;
-			    				var productPrice = products[i].price;
-			    				var isdisplay = products[i].isdisplay ? '진열함' : '진열안함';
-			    				var isdisplayMain = products[i].isdisplayMain ? '메인에 진열함' : '메인에 진열안함';
-			    				var issell = products[i].issell ? '판매함' : '판매안함';
-			    				var productCategory = products[i].category;
-			    				var productRegDate = products[i].regDate.split(' ')[0];
+			    				var memberName = users[i].name;
+			    				var memberId = users[i].id;
+			    				var memberRegDate = users[i].regDate.split(' ')[0];
+			    				var phone = users[i].phone;
+			    				var age = users[i].age;
 			    				
-			    				var productOption = "";
-			    				for(var j=0; j<products[i].productOptionVo.length; j++)
-			    					productOption += ("<p>"+products[i].productOptionVo[j].optionName+":"+products[i].productOptionVo[j].optionValue+"</p>");
+			    				var addressSi = users[i].address.split(' ')[0] ? users[i].address.split(' ')[0] : '';
+			    				var addressDo = users[i].address.split(' ')[1] ? users[i].address.split(' ')[1] : '';
+			    				var addressGu = users[i].address.split(' ')[2] ? users[i].address.split(' ')[2] : '';
+			    				var address = addressSi + addressDo + addressGu;
+
+			    				var isemail = users[i].ismail ? '수신' : '수신안함';
+			    				var ismessage = users[i].ismessage ? '수신' : '수신안함';
+			    				var isAgree = isemail + "/" + ismessage;
 			    				
-			    				$("#product-list-result").append(
-						    		'<tr>'+
-								  		'<th>'+
-							  				'<div class="form-check" data-no="'+productNo+'">'+
-												'<input type="checkbox" class="form-check-input">'+
-											'</div>'+
-							  			'</th>'+
-							  			'<th>'+
-							  				'<img src="'+productImage+'" class="product-image">'+
-							  				productTitle+
-							  			'</th>'+
-							  			'<th>'+
-							  			productOption+
-							  			'</th>'+
-							  			'<th>&#8361;'+productPrice+'</th>'+
-							  			'<th>'+isdisplay+'</th>'+
-							  			'<th>'+isdisplayMain+'</th>'+
-							  			'<th>'+issell+'</th>'+
-							  			'<th>'+productCategory+'</th>'+
-							  			'<th>'+productRegDate+'</th>'+
-						  			'</tr>'
+			    				var status = users[i].status;
+
+			    				$("#member-list-result").append(
+									'<tr>' + 
+								  		'<th>' +
+							  				'<div class="form-check" data-id="' + memberId + '">' +
+												'<input type="checkbox" class="form-check-input">' +
+											'</div>' +
+							  			'</th>' +
+							  			'<th>' + memberName + '</th>' +
+							  			'<th>' + memberId + '</th>' +
+							  			'<th>' + memberRegDate + '</th>' +
+							  			'<th>' + phone + '</th>' +
+							  			'<th>' + age + '</th>' +
+							  			'<th>' + address + '</th>' +
+							  			'<th>' + isAgree + '</th>' +
+							  			'<th>' + status + '</th>' +
+								  	'</tr>'
 			    				);
 			    			}
 			    		}
-			    		*/
 			    	}
 				});
 		}
 
 		$("#search-btn").click(searchMember);
-		
-		/*
-		$("#search-clear").click(function(){
-			$("#isdisplay input").removeAttr("checked");
-			$("#issell input").removeAttr("checked");
-			$("#isdisplay-main input").removeAttr("checked");
 
-			$($("#isdisplay input")[0]).prop("checked", true);
-			$($("#issell input")[0]).prop("checked", true);
-			$($("#isdisplay-main input")[0]).prop("checked", true);
+		$("#search-clear").click(function(){
+			$("#ismessage input").removeAttr("checked");
+			$("#isemail input").removeAttr("checked");
+
+			$($("#ismessage input")[0]).prop("checked", true);
+			$($("#isemail input")[0]).prop("checked", true);
 			
-			$("#product-title").val("");
-			$("#product-category").val("");
-			$("#product-regist-date").val("");
+			$("#memberid").val("");
+			$("#membername").val("");
+			$("#age-start").val("");
+			$("#age-end").val("");
+			$("#regdate-start").val("");
+			$("#regdate-end").val("");
+			$("#member-status").val("");
+			$("#orderdate-start").val("");
+			$("#orderdate-end").val("");
+			$("#buyprice-start").val("");
+			$("#buyprice-end").val("");
+			$("#buycount-start").val("");
+			$("#buycount-end").val("");
 		});
 		
 		$(document).keyup(function(key){
 			if(key.keyCode===13){
-				searchProduct();
+				searchMember();
 			}
-		});*/
+		});
     });
     </script>
   </body>

@@ -12,7 +12,7 @@
 			cast(aes_decrypt(unhex(email), SHA2('this is dummy salt',512)) as char) as email,
 		    FLOOR( (CAST(REPLACE(CURRENT_DATE,'-','') AS UNSIGNED) - 
 		       CAST(REPLACE(cast(aes_decrypt(unhex(birth), SHA2('this is dummy salt',512)) as date),'-','') AS UNSIGNED)) / 10000 )+1 as age,
-		    reg_date as regDate, status
+		    reg_date as regDate, status, ismessage, isemail as ismail
 		from member a
 		left join `order` b on a.id=b.member_id
 		where ismessage=#{ismessage} and isemail=#{ismail} and a.role<>'ROLE_ADMIN'
