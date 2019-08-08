@@ -8,10 +8,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cafe24.annotation.AuthAdmin;
 import com.cafe24.service.ProductManageService;
 
 @Controller
 @RequestMapping("/admin/manage/product")
+@AuthAdmin
 public class ProductManageProvider {
 
 	@Autowired

@@ -141,19 +141,28 @@
 										<!-- 
 									  	<tr>
 									  		<th>
-									  			<div class="form-check">
+									  			<div class="form-check" data-no="32">
 													<input type="checkbox" class="form-check-input" id="exampleCheck1">
 												</div>
 									  		</th>
-									  		<th>이미지+상품명</th>
-									  		<th>상품옵션</th>
-									  		<th>판매가</th>
-									  		<th>진열여부</th>
-									  		<th>메인 진열여부</th>
-									  		<th>판매여부</th>
-									  		<th>카테고리</th>
-									  		<th>상품 등록일</th>
-									  	</tr> -->
+									  		<th>
+									  			<img src="/images/2019777567341.jpg" class="product-image">
+									  			베이지색 블라우스9
+									  		</th>
+									  		<th>
+									  			<p>색상:흰색</p>
+									  			<p>색상:빨강</p>
+									  			<p>사이즈:80</p>
+									  			<p>사이즈:90</p>
+									  		</th>
+									  		<th>&#8361;99000</th>
+									  		<th>진열함</th>
+									  		<th>메인에 진열함</th>
+									  		<th>판매함</th>
+									  		<th>수정된 카테고리</th>
+									  		<th>2019-08-07</th>
+									  	</tr> 
+									  	 -->
 									  </tbody>
 								</table>
 							</div>
@@ -178,40 +187,96 @@
 	<script>
 		$(function(){
 			
-			$("#search-btn").click(function(){
+			var searchProduct = function(){
 				
 				var param = {
-					isdisplay: $("#isdisplay input:checked").val()==="isdisplay-true",
-					issell: $("#issell input:checked").val()==="issell-true",
-					isdisplayMain: $("#isdisplay-main input:checked").val()==="isdisplay-main-true"
-				};
+						isdisplay: $("#isdisplay input:checked").val()==="isdisplay-true",
+						issell: $("#issell input:checked").val()==="issell-true",
+						isdisplayMain: $("#isdisplay-main input:checked").val()==="isdisplay-main-true"
+					};
+					
+					if($("#product-title").val()!=="")
+						param["productName"] = $("#product-title").val();
+					if($("#product-category").val()!=="")
+						param["categoryName"] = $("#product-category").val();
+					if($("#product-regist-date").val()!=="")
+						param["regDateStart"] = $("#product-regist-date").val();
+					
+					$.ajax({
+						url: "/admin/manage/product/list",
+						data: JSON.stringify(param),
+				    	dataType: 'json',
+				    	contentType: "application/json; charset=UTF-8",
+				    	type: 'post',
+				    	headers: {'X-CSRF-TOKEN': '${_csrf.token}'},
+				    	success: function(productListResponse){
+				    		if(productListResponse.result==="success"){
+				    			var products = productListResponse.data;
+				    			$("#product-list-result").empty();
+				    			for(var i=0; i<products.length; i++){
+				    				
+				    				var productNo = products[i].productNo;
+				    				var productImage = products[i].image;
+				    				var productTitle = products[i].title;
+				    				var productPrice = products[i].price;
+				    				var isdisplay = products[i].isdisplay ? '진열함' : '진열안함';
+				    				var isdisplayMain = products[i].isdisplayMain ? '메인에 진열함' : '메인에 진열안함';
+				    				var issell = products[i].issell ? '판매함' : '판매안함';
+				    				var productCategory = products[i].category;
+				    				var productRegDate = products[i].regDate.split(' ')[0];
+				    				
+				    				var productOption = "";
+				    				for(var j=0; j<products[i].productOptionVo.length; j++)
+				    					productOption += ("<p>"+products[i].productOptionVo[j].optionName+":"+products[i].productOptionVo[j].optionValue+"</p>");
+				    				
+				    				$("#product-list-result").append(
+							    		'<tr>'+
+									  		'<th>'+
+								  				'<div class="form-check" data-no="'+productNo+'">'+
+													'<input type="checkbox" class="form-check-input">'+
+												'</div>'+
+								  			'</th>'+
+								  			'<th>'+
+								  				'<img src="'+productImage+'" class="product-image">'+
+								  				productTitle+
+								  			'</th>'+
+								  			'<th>'+
+								  			productOption+
+								  			'</th>'+
+								  			'<th>&#8361;'+productPrice+'</th>'+
+								  			'<th>'+isdisplay+'</th>'+
+								  			'<th>'+isdisplayMain+'</th>'+
+								  			'<th>'+issell+'</th>'+
+								  			'<th>'+productCategory+'</th>'+
+								  			'<th>'+productRegDate+'</th>'+
+							  			'</tr>'
+				    				);
+				    			}
+				    		}
+				    	}
+					});
+			}
+			
+			$("#search-btn").click(searchProduct);
+			
+			$("#search-clear").click(function(){
+				$("#isdisplay input").removeAttr("checked");
+				$("#issell input").removeAttr("checked");
+				$("#isdisplay-main input").removeAttr("checked");
+
+				$($("#isdisplay input")[0]).prop("checked", true);
+				$($("#issell input")[0]).prop("checked", true);
+				$($("#isdisplay-main input")[0]).prop("checked", true);
 				
-				if($("#product-title").val()!=="")
-					param["productName"] = $("#product-title").val();
-				if($("#product-category").val()!=="")
-					param["categoryName"] = $("#product-category").val();
-				if($("#product-regist-date").val()!=="")
-					param["regDateStart"] = $("#product-regist-date").val();
-				
-				$.ajax({
-					url: "/admin/manage/product/list",
-					data: JSON.stringify(param),
-			    	dataType: 'json',
-			    	contentType: "application/json; charset=UTF-8",
-			    	type: 'post',
-			    	headers: {'X-CSRF-TOKEN': '${_csrf.token}'},
-			    	success: function(productListResponse){
-			    		if(productListResponse.result==="success"){
-			    			var products = productListResponse.data;
-			    			console.log(products);
-			    			for(var i=0; i<products.length; i++){
-			    				$("#product-list-result").append(
-			    					
-			    				);
-			    			}
-			    		}
-			    	}
-				});
+				$("#product-title").val("");
+				$("#product-category").val("");
+				$("#product-regist-date").val("");
+			});
+			
+			$(document).keyup(function(key){
+				if(key.keyCode===13){
+					searchProduct();
+				}
 			});
 		});
 	</script>

@@ -28,7 +28,7 @@ public class AuthAdminInterceptor extends HandlerInterceptorAdapter {
 		// 4. Method에 어노테이션이 없으면
 		// Class(Type)에 어노테이션을 받아오기
 		if(auth==null) {
-			auth = handlerMethod.getMethod().getAnnotation(AuthAdmin.class);
+			auth = handlerMethod.getMethod().getDeclaringClass().getDeclaredAnnotation(AuthAdmin.class);
 		}
 		
 		// 5. 어노테이션이 안 붙어있는 경우 (Method에도 없고 클래스에도 없음)

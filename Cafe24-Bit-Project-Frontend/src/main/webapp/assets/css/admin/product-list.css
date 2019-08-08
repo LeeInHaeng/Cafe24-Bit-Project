@@ -9,3 +9,8 @@
 .display-text {
 	margin-right: 40px;
 }
+
+.product-image {
+	width: 80px;
+	height: 80px;
+}

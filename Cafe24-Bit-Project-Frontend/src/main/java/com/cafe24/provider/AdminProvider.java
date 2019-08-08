@@ -8,10 +8,10 @@ import com.cafe24.annotation.AuthAdmin;
 
 @Controller
 @RequestMapping("/admin")
+@AuthAdmin
 public class AdminProvider {
 
 	@RequestMapping(value= {"", "/", "/main", "/index"}, method=RequestMethod.GET)
-	@AuthAdmin
 	public String main() {
 		return "admin/index";
 		// 관리자 계정으로 접속 되어있는지 확인
