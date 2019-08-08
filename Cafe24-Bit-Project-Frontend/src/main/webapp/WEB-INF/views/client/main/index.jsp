@@ -30,6 +30,7 @@
 
 			<div class="col-lg-3">
 				<h1 class="my-4">Cafe24 Mall</h1>
+				<c:if test="${infos.categorys.data != null }">
 				<div class="list-group">
 					<table class="table table-bordered table-hover" id="product-category">
 						<c:forEach items="${infos.categorys.data }"	var="category" varStatus="status">	
@@ -41,9 +42,11 @@
 						</c:forEach>
 					</table>
 				</div>
+				</c:if>
 			</div>
 			<!-- /.col-lg-3 -->
 
+			<c:if test="${infos.products.data != null }">
 			<div class="col-lg-9">
 				<div id="carouselExampleIndicators" class="carousel slide my-4"
 					data-ride="carousel">
@@ -103,29 +106,32 @@
 					</c:forEach>
 
 					<div class="pager">
-						<ul>
-							<c:if test="${infos.products.data.prevPage > 0 }" >
-								<li><a href="/main/${infos.products.data.prevPage }">◀</a></li>
-							</c:if>
-
-							<c:forEach begin="${infos.products.data.beginPage }" end="${infos.products.data.beginPage + infos.products.data.pageSize - 1 }" var="page">
-								<c:choose>
-									<c:when test="${page < infos.products.data.endPage+1 }">
-										<li><a href="/main/${page }">${page }</a></li>
-									</c:when> 
-								</c:choose>
-							</c:forEach>
-							
-							<c:if test="${infos.products.data.nextPage > 0 }" >
-								<li><a href="/main/${infos.products.data.nextPage }">▶</a></li>
-							</c:if>	
-						</ul>
+						<c:if test="${infos.products.data != null }">
+							<ul>
+								<c:if test="${infos.products.data.prevPage > 0 }" >
+									<li><a href="/main/${infos.products.data.prevPage }">◀</a></li>
+								</c:if>
+	
+								<c:forEach begin="${infos.products.data.beginPage }" end="${infos.products.data.beginPage + infos.products.data.pageSize - 1 }" var="page">
+									<c:choose>
+										<c:when test="${page < infos.products.data.endPage+1 }">
+											<li><a href="/main/${page }">${page }</a></li>
+										</c:when> 
+									</c:choose>
+								</c:forEach>
+								
+								<c:if test="${infos.products.data.nextPage > 0 }" >
+									<li><a href="/main/${infos.products.data.nextPage }">▶</a></li>
+								</c:if>	
+							</ul>
+						</c:if>
 					</div>
 
 				</div>
 				<!-- /.row -->
 			</div>
 			<!-- /.col-lg-9 -->
+			</c:if>
 
 		</div>
 		<!-- /.row -->
