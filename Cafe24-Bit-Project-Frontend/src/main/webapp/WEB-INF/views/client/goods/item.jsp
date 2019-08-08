@@ -128,13 +128,13 @@
 			        '<div class="quantity-controller">' +
 			            '<div class="input-group">' +
 			            	'<span class="input-group-btn">' +
-				              	'<button type="button" class="btn btn-default btn-number" disabled="disabled" data-type="minus" data-field="quant[1]">' +
+				              	'<button type="button" class="btn btn-default btn-number" disabled="disabled" data-type="minus" data-field="'+$(this).html()+'">' +
 				                  	'<span class="sf-sign sf-sign-delete"></span>' +
 				                '</button>' +
 			                '</span>' +
-			                '<input type="text" name="quant[1]" class="form-control input-number" size="1" value="1" min="1" max="99">' +
+			                '<input type="text" name="'+$(this).html()+'" class="form-control input-number" size="1" value="1" min="1" max="99">' +
 			                '<span class="input-group-btn">' +
-				              	'<button type="button" class="btn btn-default btn-number" data-type="plus" data-field="quant[1]">' +
+				              	'<button type="button" class="btn btn-default btn-number" data-type="plus" data-field="'+$(this).html()+'">' +
 				                	'<span class="sf-sign sf-sign-add"></span>' +
 				                '</button>' +
 			                '</span>' +
