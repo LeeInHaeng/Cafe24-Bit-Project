@@ -87,7 +87,22 @@ public class UserManageControllerTest {
 		
 				resultActions
 					.andExpect(status().isOk())
-					.andDo(print());		
+					.andDo(print());
+				
+		// 정상동작3
+		search = new AdminUserSearchDto();
+		search.setIsmail(true);
+		search.setIsmessage(true);
+				
+		resultActions = 
+				mockMvc
+					.perform(post("/api/admin/manage/user/list")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(new Gson().toJson(search)));
+				
+				resultActions
+					.andExpect(status().isOk())
+					.andDo(print());	
 				
 		// 관리자 계정으로 접속 되어있는지 확인
 	}

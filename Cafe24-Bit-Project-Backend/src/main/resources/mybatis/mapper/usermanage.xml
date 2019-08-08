@@ -4,6 +4,7 @@
 <mapper namespace="usermanage">
 	
 	<select id="getList" parameterType="adminusersearchdto" resultType="membervo">
+		<![CDATA[
 		select id,
 			cast(aes_decrypt(unhex(name), SHA2('this is dummy salt',512)) as char) as name,
 			cast(aes_decrypt(unhex(address), SHA2('this is dummy salt',512)) as char) as address,
@@ -14,7 +15,8 @@
 		    reg_date as regDate, status
 		from member a
 		left join `order` b on a.id=b.member_id
-		where ismessage=#{ismessage} and isemail=#{ismail}
+		where ismessage=#{ismessage} and isemail=#{ismail} and a.role<>'ROLE_ADMIN'
+		]]>
 		<if test="memberId != null">
 			and id=#{memberId}
 		</if>
@@ -50,7 +52,7 @@
 			and order_date <= #{orderDateEnd}
 			]]>
 		</if>
-		group by member_id
+		group by id
 		having true
 		<if test="buyPriceStart != 0">
 			and sum(total_price)>=#{buyPriceStart}
@@ -68,6 +70,7 @@
 			and count(*)<=#{buyCountEnd}
 			]]>
 		</if>
+		order by a.reg_date desc
 	
 	</select>
 	

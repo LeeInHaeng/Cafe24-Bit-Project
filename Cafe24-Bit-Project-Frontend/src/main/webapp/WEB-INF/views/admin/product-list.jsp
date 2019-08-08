@@ -138,31 +138,6 @@
 									    </tr>
 									  </thead>
 									  <tbody id="product-list-result">
-										<!-- 
-									  	<tr>
-									  		<th>
-									  			<div class="form-check" data-no="32">
-													<input type="checkbox" class="form-check-input" id="exampleCheck1">
-												</div>
-									  		</th>
-									  		<th>
-									  			<img src="/images/2019777567341.jpg" class="product-image">
-									  			베이지색 블라우스9
-									  		</th>
-									  		<th>
-									  			<p>색상:흰색</p>
-									  			<p>색상:빨강</p>
-									  			<p>사이즈:80</p>
-									  			<p>사이즈:90</p>
-									  		</th>
-									  		<th>&#8361;99000</th>
-									  		<th>진열함</th>
-									  		<th>메인에 진열함</th>
-									  		<th>판매함</th>
-									  		<th>수정된 카테고리</th>
-									  		<th>2019-08-07</th>
-									  	</tr> 
-									  	 -->
 									  </tbody>
 								</table>
 							</div>
@@ -171,7 +146,7 @@
 				</div>
 			</div>
 		</div>
-		<!-- 검색 정보 끝 -->
+		<!-- 검색 결과 끝 -->
 
       </div>
       <c:import url="/WEB-INF/views/admin/includes/footer.jsp" />
