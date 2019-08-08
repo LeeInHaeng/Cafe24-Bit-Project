@@ -13,6 +13,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.HttpClientErrorException.BadRequest;
 
 import com.cafe24.BootApp;
 import com.google.gson.Gson;
@@ -48,8 +49,12 @@ public class ProductManageService {
 	}
 
 	public String newProductRegist(String param) {
-		entity = new HttpEntity<String>(param, headers);
-		return restTemplate.postForObject(URI+"/register", entity, String.class);
+		try {
+			entity = new HttpEntity<String>(param, headers);
+			return restTemplate.postForObject(URI+"/register", entity, String.class);
+		}catch(BadRequest e) {
+			return e.getResponseBodyAsString();
+		}
 	}
 
 	public String getProductListWithSearch(String param) {

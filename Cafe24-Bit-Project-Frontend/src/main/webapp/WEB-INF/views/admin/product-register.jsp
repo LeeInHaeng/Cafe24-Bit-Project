@@ -497,11 +497,13 @@
 		    		    		  type: 'post',
 		    		    		  headers: {'X-CSRF-TOKEN': '${_csrf.token}'},
 		    		    		  success: function(registerResponse){
-		    		    			  //console.log(registerResponse);
-		    		    			  //if(registerResponse.result==="success"){
+		    		    			  console.log(registerResponse);
+		    		    			  if(registerResponse.message==="데이터베이스 쿼리 실패"){
 		    		    				  alert("상품 등록 성공");
 		    		    				  window.location.href = "/admin/manage/product/register";
-		    		    			  //}
+		    		    			  }else{
+		    		    				  alert(registResponse.message || registResponse.data);
+		    		    			  }
 		    		    		  }
 		    				  });
 		    			  }
