@@ -224,6 +224,35 @@
 			}
 		});
 		
+		$("#add-cart-btn").click(function(){
+			if($("#option-result")[0].childElementCount===0){
+				alert("옵션을 선택해 주세요.");
+				return;
+			}
+
+			for(var i=0; i<$("#option-result")[0].childElementCount; i++){
+				var optionCode = $($($("#option-result")[0]).children()[i]).data("code");
+				var param = {
+					productNo : parseInt(window.location.pathname.split('/')[window.location.pathname.split('/').length-1]),
+					optionCode : optionCode,
+					quantity : parseInt($($(".quantity-controller input[name='"+optionCode+"']")[0]).val())
+				};
+
+				$.ajax({
+				    url: "/cart",
+				    data: JSON.stringify(param),
+				    dataType: 'json',
+				    contentType: "application/json; charset=UTF-8",
+				    type: 'post',
+				    headers: {'X-CSRF-TOKEN': '${_csrf.token}'},
+				    success: function(addCartResponse){
+
+				    }
+				});
+			}
+
+		});
+		
 	    var currentPosition = parseInt($(".list-group").css("top"));
 	    $(window).scroll(function() { 
 	    	var position = $(window).scrollTop();

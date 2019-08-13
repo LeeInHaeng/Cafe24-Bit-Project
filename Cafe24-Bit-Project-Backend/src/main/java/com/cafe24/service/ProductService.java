@@ -162,4 +162,14 @@ public class ProductService {
 		return map;
 	}
 
+	public List<Long> getProductOptionDetailNoByProductNoAndOptionCode(long productNo, String optionCode) {
+		
+		List<Long> productOptionNo = productDao.getOptionNo(productNo);
+		
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("productOptionNo", productOptionNo);
+		param.put("optionCode", optionCode.split("/"));
+		return productDao.getOptionDetailNo(param);
+	}
+
 }

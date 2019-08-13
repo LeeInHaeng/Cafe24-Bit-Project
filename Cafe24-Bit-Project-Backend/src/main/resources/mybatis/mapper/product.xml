@@ -143,4 +143,20 @@
 		where a.no=#{productNo} and b.isdisplay=true
 	</select>
 	
+	<select id="getOptionNo" parameterType="long" resultType="long">
+		select no from product_option where product_no=#{productNo}
+	</select>
+	
+	<select id="getOptionDetailNo" parameterType="map" resultType="long">
+		select no from product_option_detail
+		where
+		<foreach collection="productOptionNo" item="optionNo" open="(" close=")" separator=" or ">
+		option_no=#{optionNo}
+		</foreach>
+		and
+		<foreach collection="optionCode" item="optionCode" separator=" or ">
+		value=#{optionCode}
+		</foreach>
+	</select>
+
 </mapper>

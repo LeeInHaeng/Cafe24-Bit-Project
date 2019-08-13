@@ -1,5 +1,6 @@
 package com.cafe24.controller.api;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -7,12 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cafe24.dto.JSONResult;
 import com.cafe24.dto.ProductDetailDto;
+import com.cafe24.dto.ProductOptionDetailNoConvertDto;
 import com.cafe24.service.ProductService;
 
 import io.swagger.annotations.ApiOperation;
@@ -143,4 +146,13 @@ public class ProductController {
 				.body(JSONResult.success(product));
 	}
 	
+	@RequestMapping(value= "/getOptionDetailNo", method=RequestMethod.POST)
+	public ResponseEntity<JSONResult> getOptionDetailNo(
+			@RequestBody ProductOptionDetailNoConvertDto dto){
+		
+		List<Long> optionDetailNo = productService.getProductOptionDetailNoByProductNoAndOptionCode(dto.getProductNo(), dto.getOptionCode());
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(JSONResult.success(optionDetailNo));
+	}
 }

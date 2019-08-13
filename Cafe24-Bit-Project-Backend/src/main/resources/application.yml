@@ -19,6 +19,15 @@ spring:
 mybatis:
    config-location: classpath:mybatis/configuration.xml
    
+security:
+   user:
+      name: user
+      password: test
+   oauth2:
+      client:
+         client-id: foo
+         client-secret: bar
+   
 # 개발 환경
 ---
 server:

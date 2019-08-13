@@ -76,8 +76,20 @@ body {
 	float: left;
 }
 
+@media screen and (min-width:0px) and (max-width:1000px) {
+
 .list-group {
-	position:absolute;
+	position: static;
+}
+	
+}
+
+@media screen and (min-width:1000px) and (max-width:1900px) {
+
+.list-group {
+	position: absolute;
+}
+	
 }
 
 .list-group tr {

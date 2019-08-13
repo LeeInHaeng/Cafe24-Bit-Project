@@ -1,8 +1,9 @@
 package com.cafe24.controller.api;
 
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -20,6 +21,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
+
+import com.cafe24.dto.ProductOptionDetailNoConvertDto;
+import com.google.gson.Gson;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -236,4 +240,25 @@ public class ProductControllerTest {
 			.andExpect(jsonPath("$.result", is("fail")));
 
 	}
+	
+	@Test
+	public void Test_4_getOptionDetailNo() throws Exception {
+		
+		// 정상 동작
+		
+		ProductOptionDetailNoConvertDto dto = new ProductOptionDetailNoConvertDto();
+		dto.setProductNo(24L);
+		dto.setOptionCode("흰색/80");
+		
+		ResultActions resultActions = 
+				mockMvc
+					.perform(post("/api/product/getOptionDetailNo")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(new Gson().toJson(dto)));
+		
+		resultActions
+			.andExpect(status().isOk())
+			.andDo(print());
+	}
+
 }

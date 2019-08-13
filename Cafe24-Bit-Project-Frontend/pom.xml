@@ -59,7 +59,7 @@
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
-		
+
 		<!-- gson -->
 		<dependency>
 		    <groupId>com.google.code.gson</groupId>

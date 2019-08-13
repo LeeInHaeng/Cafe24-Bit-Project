@@ -65,4 +65,12 @@ public class ProductDao {
 		
 		return sqlSession.selectList( "product.getMainPageList", map );
 	}
+	
+	public List<Long> getOptionNo(long productNo) {
+		return sqlSession.selectList("product.getOptionNo", productNo);
+	}
+
+	public List<Long> getOptionDetailNo(Map<String, Object> param) {
+		return sqlSession.selectList("product.getOptionDetailNo", param);
+	}
 }
