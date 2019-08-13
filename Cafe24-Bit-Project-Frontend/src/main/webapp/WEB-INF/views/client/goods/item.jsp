@@ -111,6 +111,8 @@
 	
 	<script>
 
+	$(function(){
+		
 		if("${infos.product.result }"==="fail"){
 			alert("잘못된 요청입니다!");
 			window.location.href="/";
@@ -262,6 +264,12 @@
 	    	var position = $(window).scrollTop();
 	    	$(".list-group").stop().animate({"top":position+currentPosition+"px"},500);
 	    });
+	    
+	    
+	    $("#cart-list").click(function(){
+	    	window.location.href = "/cart";
+	    });
+	});
 		
 	</script>
 	

@@ -31,7 +31,6 @@ public class CartProvider {
 			@RequestBody String param,
 			HttpSession session,
 			HttpServletResponse response,
-			HttpServletRequest request,
 			@CookieValue(value="nonmemberId", required=false) Cookie nonmemberCookie) {
 	
 		Map<String, Object> jsonParam = new Gson().fromJson(param, Map.class);
@@ -52,5 +51,18 @@ public class CartProvider {
 		}
 		
 		return cartService.addCart(new Gson().toJson(jsonParam));
+	}
+	
+	@ResponseBody
+	@RequestMapping(value= "/cart", method=RequestMethod.GET)
+	public String cartList(
+			HttpSession session,
+			@CookieValue(value="nonmemberId", required=false) Cookie nonmemberCookie) {
+		
+		if(session.getAttribute("authUser") != null) {
+			return cartService.getCartDetailInfo((String) session.getAttribute("authUser"));
+		}else {
+			return cartService.getCartDetailInfo(nonmemberCookie.getValue());
+		}
 	}
 }

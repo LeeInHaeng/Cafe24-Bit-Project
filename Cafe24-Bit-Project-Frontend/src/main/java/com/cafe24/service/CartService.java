@@ -56,4 +56,12 @@ public class CartService {
 		}
 	}
 
+	public String getCartDetailInfo(String userId) {
+		try {
+			return restTemplate.getForObject(URI+"/"+userId, String.class);
+		}catch(BadRequest e) {
+			return e.getResponseBodyAsString();
+		}
+	}
+
 }

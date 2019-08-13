@@ -76,18 +76,13 @@ public class CartController {
 	}
 	
 	@ApiOperation(value = "장바구니 조회")
-	@RequestMapping(value= "", method=RequestMethod.GET)
-	public ResponseEntity<JSONResult> cartDetail() {
+	@RequestMapping(value= "/{userId}", method=RequestMethod.GET)
+	public ResponseEntity<JSONResult> cartDetail(
+			@PathVariable(value="userId") String userId) {
 		
 		// 세션에대한 예외 처리는 프론트엔드의 컨트롤러에서 처리
 		
-		// 세션에서 얻어온 사용자가 회원인 경우
-//		String userid = "user1";
-//		List<CartDetailDto> carts = cartService.showCartDetail(userid);
-		
-		// 세션에서 얻어온 사용자가 비회원인 경우
-		String userid = "non1-mac-address";
-		List<CartDetailDto> carts = cartService.showCartDetail(userid);
+		List<CartDetailDto> carts = cartService.showCartDetail(userId);
 		
 		return ResponseEntity
 				.status(HttpStatus.OK)

@@ -166,6 +166,9 @@
 	    	$(".list-group").stop().animate({"top":position+currentPosition+"px"},500);
 	    });
 
+	    $("#cart-list").click(function(){
+	    	window.location.href = "/cart";
+	    });
 	});
 	</script>
 </body>

@@ -194,6 +194,10 @@
 			
 			return false;
 		});
+		
+	    $("#cart-list").click(function(){
+	    	window.location.href = "/cart";
+	    });
 	});
 	</script>
 	

@@ -121,6 +121,6 @@
 				</c:choose>
 			</ul>
 		</div>
-		<div class="sf-basket" style="cursor:pointer; width:30px; height:30px; background-repeat: no-repeat; background-size: cover;"></div>
+		<div id="cart-list" class="sf-basket" style="cursor:pointer; width:30px; height:30px; background-repeat: no-repeat; background-size: cover;"></div>
 	</div>
 </nav>
