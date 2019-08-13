@@ -246,7 +246,11 @@
 				    type: 'post',
 				    headers: {'X-CSRF-TOKEN': '${_csrf.token}'},
 				    success: function(addCartResponse){
-
+						if(addCartResponse.result==="success"){
+							alert("장바구니 추가 완료!");
+						}
+						else
+							alert(addCartResponse.message || addCartResponse.data);
 				    }
 				});
 			}

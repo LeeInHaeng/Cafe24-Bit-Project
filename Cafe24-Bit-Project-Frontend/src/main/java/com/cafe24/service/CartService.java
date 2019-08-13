@@ -39,14 +39,18 @@ public class CartService {
 	    headers.setContentType(MediaType.APPLICATION_JSON);
 	}
 
-	public String addCart(String param) {
+	public String memberAddCart(String param) {
 		try {
-			Map cartMap = new Gson().fromJson(param, Map.class);
-			System.out.println(cartMap);
+			entity = new HttpEntity<String>(param, headers);
+			String jsonResult = restTemplate.postForObject(BootApp.APIURI+"/product/getOptionDetailNo", entity, String.class);
+			List<Long> productOptionDetailNo = (List<Long>) new Gson().fromJson(jsonResult, Map.class).get("data");
+			System.out.println(productOptionDetailNo);
 			
-			//entity = new HttpEntity<String>(param, headers);
-			//return restTemplate.postForObject(URI+"/register", entity, String.class);
-			return null;
+			Map<String, Object> jsonParam = new Gson().fromJson(param, Map.class);
+			jsonParam.put("productOptionDetailNo", productOptionDetailNo);
+			
+			entity = new HttpEntity<String>(new Gson().toJson(jsonParam), headers);
+			return restTemplate.postForObject(URI, entity, String.class);
 		}catch(BadRequest e) {
 			return e.getResponseBodyAsString();
 		}
