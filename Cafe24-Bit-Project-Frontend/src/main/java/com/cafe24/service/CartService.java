@@ -1,9 +1,9 @@
 package com.cafe24.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -56,12 +56,16 @@ public class CartService {
 		}
 	}
 
-	public String getCartDetailInfo(String userId) {
-		try {
-			return restTemplate.getForObject(URI+"/"+userId, String.class);
-		}catch(BadRequest e) {
-			return e.getResponseBodyAsString();
-		}
+	public Map<String, Map> getCartDetailInfo(String userId) {
+		Map<String, Map> result = new HashMap<String, Map>();
+		
+		String categorys = restTemplate.getForObject(BootApp.APIURI+"/admin/manage/product/category", String.class);
+		result.put("categorys", new Gson().fromJson(categorys, Map.class));
+		
+		String carts = restTemplate.getForObject(URI+"/"+userId, String.class);
+		result.put("carts", new Gson().fromJson(carts, Map.class));
+		
+		return result;
 	}
 
 }

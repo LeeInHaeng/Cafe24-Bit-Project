@@ -4,12 +4,12 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,16 +53,17 @@ public class CartProvider {
 		return cartService.addCart(new Gson().toJson(jsonParam));
 	}
 	
-	@ResponseBody
 	@RequestMapping(value= "/cart", method=RequestMethod.GET)
 	public String cartList(
 			HttpSession session,
-			@CookieValue(value="nonmemberId", required=false) Cookie nonmemberCookie) {
+			@CookieValue(value="nonmemberId", required=false) Cookie nonmemberCookie,
+			Model model) {
 		
 		if(session.getAttribute("authUser") != null) {
-			return cartService.getCartDetailInfo((String) session.getAttribute("authUser"));
+			model.addAttribute("infos", cartService.getCartDetailInfo((String) session.getAttribute("authUser")));
 		}else {
-			return cartService.getCartDetailInfo(nonmemberCookie.getValue());
+			model.addAttribute("infos", cartService.getCartDetailInfo(nonmemberCookie.getValue()));
 		}
+		return "client/cart/cart";
 	}
 }
