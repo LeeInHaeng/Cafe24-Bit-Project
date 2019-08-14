@@ -22,6 +22,6 @@ public class ProductProvider {
 			@PathVariable(value="productNo") Optional<String> productNo,
 			Model model) {
 		model.addAttribute("infos", productService.getInfoForProductDetailPage(productNo));
-		return "/client/goods/item";
+		return "client/goods/item";
 	}
 }

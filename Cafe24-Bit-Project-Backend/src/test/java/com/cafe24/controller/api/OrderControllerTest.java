@@ -154,7 +154,7 @@ public class OrderControllerTest {
 		productOptionDto2.setQuantity(1L);
 		
 		orderPageDto.setProductOptionDto(Arrays.asList(productOptionDto1, productOptionDto2));
-	    
+		
 		ResultActions resultActions = 
 				mockMvc
 					.perform(post("/api/order")

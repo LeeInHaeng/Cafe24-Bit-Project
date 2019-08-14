@@ -68,7 +68,7 @@
 										<input type="checkbox" class="form-check-input">
 									</div>
 								</td>
-								<td>
+								<td data-productNo=<fmt:formatNumber value="${cart.productNo }" type="number"/>>
 									<img src=${cart.image } class="cart-image">
 									${cart.title }<br/>
 									<span class="cart-option">(
@@ -96,10 +96,18 @@
 					최종 결제 금액 : &#8361;
 					<span id="final-price">0</span>
 				</div>
+				<div class="text-center">
+					<button id="buy-btn" class="btn btn-outline-success btn-lg">선택 물품 구매하기</button>
+				</div>
 			</div>
 			<!-- /.col-lg-9 -->
 
 		</div>
+
+		<form id="orderPage" method="post" action="/order">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+			<input type="hidden" id="products" name="products"/>
+		</form>
 
 	</div>
 	<!-- /.container -->
@@ -136,7 +144,44 @@
 	    		}
 	    	}
 	    	$("#final-price").html(finalPrice);
-	    })
+	    });
+	    
+	    $("#buy-btn").click(function(){
+	    	var productOptionDto = [];
+	    	for(var i=0; i<$(".form-check-input").length; i++){
+	    		if($($(".form-check-input")[i]).is(":checked")){
+	    			var checkedTD = $($(".form-check-input")[i]).closest("tr")[0].children;
+	    			var productNo = parseInt($(checkedTD[1]).data("productno"));
+	    			var optionCode = "";
+	    			var optionCodeSplit = $(checkedTD[1]).children(".cart-option")[0].innerText.replace("(","").replace(")","").trim().split(' ');
+	    			for(var j=0; j<optionCodeSplit.length; j++)
+	    				optionCode += (optionCodeSplit[j]+"/");
+	    			optionCode = optionCode.substring(0,optionCode.length-1);
+	    			var quantity = parseInt(checkedTD[3].innerText);
+	    			
+	    			var dto = {
+	    				productNo : productNo,
+	    				optionCode : optionCode,
+	    				quantity : quantity
+	    			};
+	    			
+	    			productOptionDto.push(dto);
+	    		}
+	    	}
+	    	
+	    	if(productOptionDto.length===0){
+	    		alert("구매할 물품을 선택해 주세요.");
+	    		return;
+	    	}
+	    	
+	    	var param = {
+	    		productOptionDto : productOptionDto
+	    	}
+	    	
+	    	$("#products").val(JSON.stringify(param));
+	    	$("#orderPage").submit();
+	    });
+
 	});
 		
 	</script>
